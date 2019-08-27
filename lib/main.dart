@@ -30,6 +30,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List arrayData = [];
 
+  // 省 市 区 id
+  int provinceId = 0;
+  int cityId = 0;
+  int countyId = 0;
+
   @override
   void initState() {
     super.initState();
@@ -53,8 +58,24 @@ class _MyHomePageState extends State<MyHomePage> {
     } catch (ignore) {}
   }
 
-  _queryCities(int cityCode) async {
-    var url = 'http://guolin.tech/api/china/' + '$cityCode';
+  _queryCities() async {
+    var url = 'http://guolin.tech/api/china/' + '$provinceId';
+    var httpClient = new HttpClient();
+    try {
+      var request = await httpClient.getUrl(Uri.parse(url));
+      var response = await request.close();
+      if (response.statusCode == HttpStatus.OK) {
+        var json = await response.transform(utf8.decoder).join();
+        var data = jsonDecode(json);
+        setState(() {
+          arrayData = data;
+        });
+      }
+    } catch (ignore) {}
+  }
+
+  _queryCounties() async {
+    var url = 'http://guolin.tech/api/china/' + '$provinceId' + "/$cityId";
     var httpClient = new HttpClient();
     try {
       var request = await httpClient.getUrl(Uri.parse(url));
@@ -93,7 +114,16 @@ class _MyHomePageState extends State<MyHomePage> {
         setState(() {
           title = name;
         });
-        _queryCities(code);
+
+        if (provinceId == 0) {
+          provinceId = code;
+          _queryCities();
+        } else if (cityId == 0) {
+          cityId = code;
+          _queryCounties();
+        } else if (countyId == 0) {
+          countyId = code;
+        }
       },
     );
   }
