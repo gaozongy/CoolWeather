@@ -1,9 +1,12 @@
 import 'dart:convert';
-
+import 'package:coolweather/weather.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:quiver/strings.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(MaterialApp(
+      home: MyApp(),
+    ));
 
 class MyApp extends StatelessWidget {
   @override
@@ -35,6 +38,10 @@ class _MyHomePageState extends State<MyHomePage> {
   int cityId = 0;
   int countyId = 0;
 
+  // 天气 id
+  String weatherId;
+  String countyName;
+
   @override
   void initState() {
     super.initState();
@@ -44,38 +51,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _queryProvinces() async {
     var url = 'http://guolin.tech/api/china';
-    var httpClient = new HttpClient();
-    try {
-      var request = await httpClient.getUrl(Uri.parse(url));
-      var response = await request.close();
-      if (response.statusCode == HttpStatus.OK) {
-        var json = await response.transform(utf8.decoder).join();
-        var data = jsonDecode(json);
-        setState(() {
-          arrayData = data;
-        });
-      }
-    } catch (ignore) {}
+    _queryFromServer(url);
   }
 
   _queryCities() async {
     var url = 'http://guolin.tech/api/china/' + '$provinceId';
-    var httpClient = new HttpClient();
-    try {
-      var request = await httpClient.getUrl(Uri.parse(url));
-      var response = await request.close();
-      if (response.statusCode == HttpStatus.OK) {
-        var json = await response.transform(utf8.decoder).join();
-        var data = jsonDecode(json);
-        setState(() {
-          arrayData = data;
-        });
-      }
-    } catch (ignore) {}
+    _queryFromServer(url);
   }
 
   _queryCounties() async {
     var url = 'http://guolin.tech/api/china/' + '$provinceId' + "/$cityId";
+    _queryFromServer(url);
+  }
+
+  _queryFromServer(String url) async {
     var httpClient = new HttpClient();
     try {
       var request = await httpClient.getUrl(Uri.parse(url));
@@ -100,11 +89,15 @@ class _MyHomePageState extends State<MyHomePage> {
             itemCount: arrayData.length,
             itemBuilder: (BuildContext context, int position) {
               var itemData = arrayData.elementAt(position);
-              return getRow(itemData['name'], itemData['id']);
+              if (cityId != 0) {
+                return getRow(
+                    itemData['name'], itemData['id'], itemData['weather_id']);
+              }
+              return getRow(itemData['name'], itemData['id'], "");
             }));
   }
 
-  Widget getRow(String name, int code) {
+  Widget getRow(String name, int code, String weather) {
     return new InkWell(
       child: new Container(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
@@ -123,6 +116,16 @@ class _MyHomePageState extends State<MyHomePage> {
           _queryCounties();
         } else if (countyId == 0) {
           countyId = code;
+          weatherId = weather;
+          countyName = name;
+        }
+
+        if (!isEmpty(weatherId)) {
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (context) => new prefix0.Weather(
+                      countyName: countyName, weatherId: weatherId)));
         }
       },
     );
