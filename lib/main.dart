@@ -42,6 +42,8 @@ class _MyHomePageState extends State<MyHomePage> {
   String weatherId;
   String countyName;
 
+  bool isLoading;
+
   @override
   void initState() {
     super.initState();
@@ -65,6 +67,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _queryFromServer(String url) async {
+    setState(() {
+      isLoading = true;
+    });
+
     var httpClient = new HttpClient();
     try {
       var request = await httpClient.getUrl(Uri.parse(url));
@@ -74,6 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
         var data = jsonDecode(json);
         setState(() {
           arrayData = data;
+          isLoading = false;
         });
       }
     } catch (ignore) {}
@@ -85,16 +92,23 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text(title),
         ),
-        body: new ListView.builder(
-            itemCount: arrayData.length,
-            itemBuilder: (BuildContext context, int position) {
-              var itemData = arrayData.elementAt(position);
-              if (cityId != 0) {
-                return getRow(
-                    itemData['name'], itemData['id'], itemData['weather_id']);
-              }
-              return getRow(itemData['name'], itemData['id'], "");
-            }));
+        body: isLoading
+            ? Center(
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.grey[200],
+                  valueColor: AlwaysStoppedAnimation(Colors.blue),
+                ),
+              )
+            : new ListView.builder(
+                itemCount: arrayData.length,
+                itemBuilder: (BuildContext context, int position) {
+                  var itemData = arrayData.elementAt(position);
+                  if (cityId != 0) {
+                    return getRow(itemData['name'], itemData['id'],
+                        itemData['weather_id']);
+                  }
+                  return getRow(itemData['name'], itemData['id'], "");
+                }));
   }
 
   Widget getRow(String name, int code, String weather) {
