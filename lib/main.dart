@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:coolweather/weather.dart' as prefix0;
+import 'package:coolweather/weather_detail.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:quiver/strings.dart';
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Cool Weather',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -152,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Navigator.push(
               context,
               new MaterialPageRoute(
-                  builder: (context) => new prefix0.Weather(
+                  builder: (context) => new prefix0.WeatherDetail(
                       countyName: countyName, weatherId: weatherId)));
         }
       },

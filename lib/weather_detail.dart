@@ -4,21 +4,21 @@ import 'dart:io';
 import 'package:coolweather/weather_mode.dart';
 import 'package:flutter/material.dart';
 
-class Weather extends StatefulWidget {
+class WeatherDetail extends StatefulWidget {
   final String countyName;
 
   final String weatherId;
 
-  Weather({Key key, @required this.countyName, @required this.weatherId})
+  WeatherDetail({Key key, @required this.countyName, @required this.weatherId})
       : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _WeatherState(this.countyName, this.weatherId);
+    return _WeatherDetailState(this.countyName, this.weatherId);
   }
 }
 
-class _WeatherState extends State<Weather> {
+class _WeatherDetailState extends State<WeatherDetail> {
   String countyName;
 
   String weatherId;
@@ -27,7 +27,7 @@ class _WeatherState extends State<Weather> {
 
   WeatherMode weatherMode;
 
-  _WeatherState(this.countyName, this.weatherId);
+  _WeatherDetailState(this.countyName, this.weatherId);
 
   @override
   void initState() {
@@ -44,19 +44,15 @@ class _WeatherState extends State<Weather> {
 
   Widget mainLayout(BuildContext context) {
     return Container(
+        padding: EdgeInsets.fromLTRB(16, 25, 16, 0),
         child: ListView(
           children: <Widget>[
-            Container(
-              padding: EdgeInsets.fromLTRB(16, 25, 16, 0),
-              child: Column(children: <Widget>[
-                _titleLayout(),
-                _tempLayout(),
-                _weatherLayout(),
-                _forecastLayout(),
-                _aqiLayout(),
-                _suggestionLayout(),
-              ]),
-            )
+            _titleLayout(),
+            _tempLayout(),
+            _weatherLayout(),
+            _forecastLayout(),
+            _aqiLayout(),
+            _suggestionLayout(),
           ],
         ),
         decoration: BoxDecoration(
@@ -95,7 +91,7 @@ class _WeatherState extends State<Weather> {
 
   Widget _tempLayout() {
     return Container(
-      padding: EdgeInsets.fromLTRB(0, 35, 0, 0),
+      padding: EdgeInsets.only(top: 35),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
@@ -130,7 +126,7 @@ class _WeatherState extends State<Weather> {
 
   Widget _forecastLayout() {
     return Container(
-      margin: EdgeInsets.fromLTRB(0, 22, 0, 0),
+      margin: EdgeInsets.only(top: 20),
       child: Column(
         children: <Widget>[
           Container(
@@ -146,15 +142,8 @@ class _WeatherState extends State<Weather> {
             ),
           ),
           Container(
-            height: 300,
-            child: ListView.builder(
-                itemCount: weatherMode != null
-                    ? weatherMode.HeWeather[0].daily_forecast.length
-                    : 0,
-                itemBuilder: (BuildContext context, int position) {
-                  return _getForecastRow(weatherMode.HeWeather[0].daily_forecast
-                      .elementAt(position));
-                }),
+            padding: EdgeInsets.only(bottom: 10),
+            child: _getForecastRow(),
           )
         ],
       ),
@@ -162,18 +151,26 @@ class _WeatherState extends State<Weather> {
     );
   }
 
-  Widget _getForecastRow(Daily daily) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
-      child: Row(
-        children: <Widget>[
-          _textLayout(daily.date),
-          _textLayout(daily.cond.txt_d),
-          _textLayout(daily.tmp.max),
-          _textLayout(daily.tmp.min),
-        ],
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-      ),
+  Widget _getForecastRow() {
+    List<Widget> forecastRow = new List();
+    for (int i = 0; i < weatherMode.HeWeather[0].daily_forecast.length; i++) {
+      Daily daily = weatherMode.HeWeather[0].daily_forecast.elementAt(i);
+      forecastRow.add(Container(
+        padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+        child: Row(
+          children: <Widget>[
+            _textLayout(daily.date),
+            _textLayout(daily.cond.txt_d),
+            _textLayout(daily.tmp.max),
+            _textLayout(daily.tmp.min),
+          ],
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        ),
+      ));
+    }
+
+    return Column(
+      children: forecastRow,
     );
   }
 
