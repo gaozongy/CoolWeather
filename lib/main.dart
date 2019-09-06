@@ -88,27 +88,41 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(title),
-        ),
-        body: isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                  backgroundColor: Colors.grey[200],
-                  valueColor: AlwaysStoppedAnimation(Colors.blue),
-                ),
-              )
-            : new ListView.builder(
-                itemCount: arrayData.length,
-                itemBuilder: (BuildContext context, int position) {
-                  var itemData = arrayData.elementAt(position);
-                  if (cityId != 0) {
-                    return getRow(itemData['name'], itemData['id'],
-                        itemData['weather_id']);
-                  }
-                  return getRow(itemData['name'], itemData['id'], "");
-                }));
+    return WillPopScope(
+      onWillPop: () async {
+        if (cityId != 0) {
+          cityId = 0;
+          _queryCities();
+          return false;
+        } else if (provinceId != 0) {
+          provinceId = 0;
+          _queryProvinces();
+          return false;
+        }
+        return true;
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text(title),
+          ),
+          body: isLoading
+              ? Center(
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.grey[200],
+                    valueColor: AlwaysStoppedAnimation(Colors.blue),
+                  ),
+                )
+              : new ListView.builder(
+                  itemCount: arrayData.length,
+                  itemBuilder: (BuildContext context, int position) {
+                    var itemData = arrayData.elementAt(position);
+                    if (cityId != 0) {
+                      return getRow(itemData['name'], itemData['id'],
+                          itemData['weather_id']);
+                    }
+                    return getRow(itemData['name'], itemData['id'], "");
+                  })),
+    );
   }
 
   Widget getRow(String name, int code, String weather) {
