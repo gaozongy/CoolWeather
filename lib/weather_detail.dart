@@ -45,15 +45,18 @@ class _WeatherDetailState extends State<WeatherDetail> {
   Widget mainLayout(BuildContext context) {
     return Container(
         padding: EdgeInsets.fromLTRB(16, 25, 16, 0),
-        child: ListView(
-          children: <Widget>[
-            _titleLayout(),
-            _tempLayout(),
-            _weatherLayout(),
-            _forecastLayout(),
-            _aqiLayout(),
-            _suggestionLayout(),
-          ],
+        child: RefreshIndicator(
+          onRefresh: _queryWeather,
+          child: ListView(
+            children: <Widget>[
+              _titleLayout(),
+              _tempLayout(),
+              _weatherLayout(),
+              _forecastLayout(),
+              _aqiLayout(),
+              _suggestionLayout(),
+            ],
+          ),
         ),
         decoration: BoxDecoration(
             image: DecorationImage(
@@ -153,7 +156,7 @@ class _WeatherDetailState extends State<WeatherDetail> {
 
   Widget _getForecastRow() {
     List<Widget> forecastRow = new List();
-    for (int i = 0; i < weatherMode.HeWeather[0].daily_forecast.length; i++) {
+    for (int i = 0; weatherMode != null && i < weatherMode.HeWeather[0].daily_forecast.length; i++) {
       Daily daily = weatherMode.HeWeather[0].daily_forecast.elementAt(i);
       forecastRow.add(Container(
         padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -304,7 +307,7 @@ class _WeatherDetailState extends State<WeatherDetail> {
     } catch (ignore) {}
   }
 
-  _queryWeather() async {
+  Future<Null> _queryWeather() async {
     var url = 'http://guolin.tech/api/weather?cityid=' +
         '$weatherId' +
         '&key=bc0418b57b2d4918819d3974ac1285d9';
