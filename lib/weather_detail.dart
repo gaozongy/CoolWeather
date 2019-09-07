@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:coolweather/select_county.dart';
 import 'package:coolweather/weather_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:quiver/strings.dart';
@@ -25,47 +24,33 @@ class _WeatherDetailState extends State<WeatherDetail> {
 
   WeatherMode weatherMode;
 
-  _WeatherDetailState();
-
   @override
   void initState() {
     super.initState();
 
     _queryImage();
+    _initData();
+  }
 
-    _initData().then((bool) {
+  _selectCounty() {
+    Navigator.of(context).pushNamed("select_county").then((bool) {
       if (bool) {
+        _initData();
+      }
+    });
+  }
+
+  _initData() {
+    Future<SharedPreferences> future = SharedPreferences.getInstance();
+    future.then((prefs) {
+      countyName = prefs.getString('countyName');
+      weatherId = prefs.getString('weatherId');
+      if (!isEmpty(countyName) && !isEmpty(weatherId)) {
         _queryWeather();
       } else {
         _selectCounty();
       }
     });
-  }
-
-  _selectCounty() {
-    Navigator.push(
-            context, new MaterialPageRoute(builder: (context) => SelectCounty()))
-        .then((bool) {
-      if (bool) {
-        _initData().then((bool) {
-          if (bool) {
-            _queryWeather();
-          } else {
-            _selectCounty();
-          }
-        });
-      }
-    });
-  }
-
-  Future<bool> _initData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    countyName = prefs.getString('countyName');
-    weatherId = prefs.getString('weatherId');
-    if (!isEmpty(countyName) && !isEmpty(weatherId)) {
-      return true;
-    }
-    return false;
   }
 
   @override
@@ -76,7 +61,6 @@ class _WeatherDetailState extends State<WeatherDetail> {
   Widget mainLayout(BuildContext context) {
     return Scaffold(
       body: Container(
-          padding: EdgeInsets.fromLTRB(16, 25, 16, 0),
           child: RefreshIndicator(
             onRefresh: _queryWeather,
             child: ListView(
@@ -102,9 +86,14 @@ class _WeatherDetailState extends State<WeatherDetail> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        IconButton(
-          icon: Image(image: AssetImage("image/ic_home.png"), width: 26.0),
-          onPressed: _selectCounty,
+        SizedBox(
+          width: 50,
+          height: 50,
+          child: IconButton(
+            iconSize: 50,
+            icon: Image(image: AssetImage("image/ic_home.png"), width: 28),
+            onPressed: _selectCounty,
+          ),
         ),
         Text(
           countyName != null ? countyName : "",
@@ -114,14 +103,20 @@ class _WeatherDetailState extends State<WeatherDetail> {
             decoration: TextDecoration.none,
           ),
         ),
-        Text(
-          weatherMode != null
-              ? weatherMode.HeWeather[0].update.loc.substring(11)
-              : "",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            decoration: TextDecoration.none,
+        SizedBox(
+          width: 50,
+          height: 50,
+          child: Center(
+            child: Text(
+              weatherMode != null
+                  ? weatherMode.HeWeather[0].update.loc.substring(11)
+                  : "",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                decoration: TextDecoration.none,
+              ),
+            ),
           ),
         )
       ],
@@ -129,8 +124,8 @@ class _WeatherDetailState extends State<WeatherDetail> {
   }
 
   Widget _tempLayout() {
-    return Container(
-      padding: EdgeInsets.only(top: 35),
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16, 35, 16, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
@@ -149,41 +144,39 @@ class _WeatherDetailState extends State<WeatherDetail> {
   }
 
   Widget _weatherLayout() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: <Widget>[
-        Text(
-          weatherMode != null ? weatherMode.HeWeather[0].now.cond_txt : "未知",
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              decoration: TextDecoration.none),
-        )
-      ],
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Text(
+            weatherMode != null ? weatherMode.HeWeather[0].now.cond_txt : "未知",
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                decoration: TextDecoration.none),
+          )
+        ],
+      ),
     );
   }
 
   Widget _forecastLayout() {
     return Container(
-      margin: EdgeInsets.only(top: 20),
+      margin: EdgeInsets.fromLTRB(16, 20, 16, 0),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       child: Column(
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.fromLTRB(24, 10, 0, 0),
-            child: Row(
-              children: <Widget>[
-                Text("预报",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        decoration: TextDecoration.none))
-              ],
-            ),
+          Row(
+            children: <Widget>[
+              Text("预报",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      decoration: TextDecoration.none))
+            ],
           ),
-          Container(
-            padding: EdgeInsets.only(bottom: 10),
-            child: _getForecastRow(),
-          )
+          _getForecastRow()
         ],
       ),
       decoration: BoxDecoration(color: Colors.black38),
@@ -197,8 +190,8 @@ class _WeatherDetailState extends State<WeatherDetail> {
             i < weatherMode.HeWeather[0].daily_forecast.length;
         i++) {
       Daily daily = weatherMode.HeWeather[0].daily_forecast.elementAt(i);
-      forecastRow.add(Container(
-        padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+      forecastRow.add(Padding(
+        padding: EdgeInsets.symmetric(vertical: 10),
         child: Row(
           children: <Widget>[
             _textLayout(daily.date),
@@ -206,7 +199,7 @@ class _WeatherDetailState extends State<WeatherDetail> {
             _textLayout(daily.tmp.max),
             _textLayout(daily.tmp.min),
           ],
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
         ),
       ));
     }
@@ -226,20 +219,17 @@ class _WeatherDetailState extends State<WeatherDetail> {
 
   Widget _aqiLayout() {
     return Container(
-      margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-      padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+      margin: EdgeInsets.fromLTRB(16, 20, 16, 0),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       child: Column(
         children: <Widget>[
           Row(
             children: <Widget>[
-              Container(
-                padding: EdgeInsets.fromLTRB(16, 0, 16, 10),
-                child: Text("空气质量",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        decoration: TextDecoration.none)),
-              )
+              Text("空气质量",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      decoration: TextDecoration.none))
             ],
           ),
           Row(
@@ -288,7 +278,7 @@ class _WeatherDetailState extends State<WeatherDetail> {
 
   Widget _suggestionLayout() {
     return Container(
-      margin: EdgeInsets.fromLTRB(0, 20, 0, 20),
+      margin: EdgeInsets.fromLTRB(16, 20, 16, 20),
       padding: EdgeInsets.fromLTRB(16, 10, 16, 10),
       child: Column(
         children: <Widget>[
