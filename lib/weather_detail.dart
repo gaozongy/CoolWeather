@@ -232,43 +232,46 @@ class _WeatherDetailState extends State<WeatherDetail> {
                       decoration: TextDecoration.none))
             ],
           ),
-          Row(
-            children: <Widget>[
-              Column(children: <Widget>[
-                Text(
-                  weatherMode != null
-                      ? weatherMode.HeWeather[0].aqi.city.aqi
-                      : "",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 30,
-                      decoration: TextDecoration.none),
-                ),
-                Text(
-                  'AQI指数',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      decoration: TextDecoration.none),
-                )
-              ]),
-              Column(children: <Widget>[
-                Text(
+          Padding(
+            padding: EdgeInsets.only(top: 10),
+            child: Row(
+              children: <Widget>[
+                Column(children: <Widget>[
+                  Text(
                     weatherMode != null
-                        ? weatherMode.HeWeather[0].aqi.city.pm25
+                        ? weatherMode.HeWeather[0].aqi.city.aqi
                         : "",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 30,
-                        decoration: TextDecoration.none)),
-                Text('PM2.5指数',
+                        decoration: TextDecoration.none),
+                  ),
+                  Text(
+                    'AQI指数',
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 16,
-                        decoration: TextDecoration.none))
-              ])
-            ],
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        decoration: TextDecoration.none),
+                  )
+                ]),
+                Column(children: <Widget>[
+                  Text(
+                      weatherMode != null
+                          ? weatherMode.HeWeather[0].aqi.city.pm25
+                          : "",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 30,
+                          decoration: TextDecoration.none)),
+                  Text('PM2.5指数',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          decoration: TextDecoration.none))
+                ])
+              ],
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            ),
           )
         ],
       ),
@@ -278,8 +281,8 @@ class _WeatherDetailState extends State<WeatherDetail> {
 
   Widget _suggestionLayout() {
     return Container(
-      margin: EdgeInsets.fromLTRB(16, 20, 16, 20),
-      padding: EdgeInsets.fromLTRB(16, 10, 16, 10),
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       child: Column(
         children: <Widget>[
           Row(
@@ -311,7 +314,7 @@ class _WeatherDetailState extends State<WeatherDetail> {
 
   Widget _suggestContentLayout(String content) {
     return Container(
-      padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+      padding: EdgeInsets.symmetric(vertical: 10),
       child: Text(
         content,
         style: TextStyle(
