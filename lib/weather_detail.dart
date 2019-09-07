@@ -1,20 +1,18 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:coolweather/main.dart';
 import 'package:coolweather/weather_mode.dart';
 import 'package:flutter/material.dart';
+import 'package:quiver/strings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WeatherDetail extends StatefulWidget {
-  final String countyName;
-
-  final String weatherId;
-
-  WeatherDetail({Key key, @required this.countyName, @required this.weatherId})
-      : super(key: key);
+  WeatherDetail({Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _WeatherDetailState(this.countyName, this.weatherId);
+    return _WeatherDetailState();
   }
 }
 
@@ -27,14 +25,41 @@ class _WeatherDetailState extends State<WeatherDetail> {
 
   WeatherMode weatherMode;
 
-  _WeatherDetailState(this.countyName, this.weatherId);
+  _WeatherDetailState();
 
   @override
   void initState() {
     super.initState();
 
     _queryImage();
-    _queryWeather();
+
+    _initData().then((bool) {
+      if (bool) {
+        _queryWeather();
+      } else {
+        selectCounty();
+      }
+    });
+  }
+
+  selectCounty() {
+    Navigator.push(
+            context, new MaterialPageRoute(builder: (context) => MyApp()))
+        .then((bool) {
+      if (bool) {
+        _initData();
+      }
+    });
+  }
+
+  Future<bool> _initData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    countyName = prefs.getString('countyName');
+    weatherId = prefs.getString('weatherId');
+    if (!isEmpty(countyName) && !isEmpty(weatherId)) {
+      return true;
+    }
+    return false;
   }
 
   @override
@@ -43,35 +68,40 @@ class _WeatherDetailState extends State<WeatherDetail> {
   }
 
   Widget mainLayout(BuildContext context) {
-    return Container(
-        padding: EdgeInsets.fromLTRB(16, 25, 16, 0),
-        child: RefreshIndicator(
-          onRefresh: _queryWeather,
-          child: ListView(
-            children: <Widget>[
-              _titleLayout(),
-              _tempLayout(),
-              _weatherLayout(),
-              _forecastLayout(),
-              _aqiLayout(),
-              _suggestionLayout(),
-            ],
+    return Scaffold(
+      body: Container(
+          padding: EdgeInsets.fromLTRB(16, 25, 16, 0),
+          child: RefreshIndicator(
+            onRefresh: _queryWeather,
+            child: ListView(
+              children: <Widget>[
+                _titleLayout(),
+                _tempLayout(),
+                _weatherLayout(),
+                _forecastLayout(),
+                _aqiLayout(),
+                _suggestionLayout(),
+              ],
+            ),
           ),
-        ),
-        decoration: BoxDecoration(
-            image: DecorationImage(
-          image: NetworkImage(bingImgUrl),
-          fit: BoxFit.fitHeight,
-        )));
+          decoration: BoxDecoration(
+              image: DecorationImage(
+            image: NetworkImage(bingImgUrl),
+            fit: BoxFit.fitHeight,
+          ))),
+    );
   }
 
   Widget _titleLayout() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Image(image: AssetImage("image/ic_home.png"), width: 26.0),
+        IconButton(
+          icon: Image(image: AssetImage("image/ic_home.png"), width: 26.0),
+          onPressed: selectCounty,
+        ),
         Text(
-          countyName,
+          countyName != null ? countyName : "",
           style: TextStyle(
             color: Colors.white,
             fontSize: 20,
@@ -156,7 +186,10 @@ class _WeatherDetailState extends State<WeatherDetail> {
 
   Widget _getForecastRow() {
     List<Widget> forecastRow = new List();
-    for (int i = 0; weatherMode != null && i < weatherMode.HeWeather[0].daily_forecast.length; i++) {
+    for (int i = 0;
+        weatherMode != null &&
+            i < weatherMode.HeWeather[0].daily_forecast.length;
+        i++) {
       Daily daily = weatherMode.HeWeather[0].daily_forecast.elementAt(i);
       forecastRow.add(Container(
         padding: EdgeInsets.fromLTRB(0, 10, 0, 10),

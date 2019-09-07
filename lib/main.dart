@@ -3,9 +3,10 @@ import 'package:coolweather/weather_detail.dart' as prefix0;
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:quiver/strings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(MaterialApp(
-      home: MyApp(),
+      home: prefix0.WeatherDetail(),
     ));
 
 class MyApp extends StatelessWidget {
@@ -148,12 +149,13 @@ class _MyHomePageState extends State<MyHomePage> {
           countyName = name;
         }
 
-        if (!isEmpty(weatherId)) {
-          Navigator.push(
-              context,
-              new MaterialPageRoute(
-                  builder: (context) => new prefix0.WeatherDetail(
-                      countyName: countyName, weatherId: weatherId)));
+        if (!isEmpty(weatherId) && !isEmpty(countyName)) {
+          Future<SharedPreferences> prefs =  SharedPreferences.getInstance();
+          prefs.then((pre){
+             pre.setString('countyName', countyName);
+             pre.setString('weatherId', weatherId);
+             Navigator.pop(context, true);
+          });
         }
       },
     );
