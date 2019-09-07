@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:coolweather/main.dart';
+import 'package:coolweather/select_county.dart';
 import 'package:coolweather/weather_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:quiver/strings.dart';
@@ -37,17 +37,23 @@ class _WeatherDetailState extends State<WeatherDetail> {
       if (bool) {
         _queryWeather();
       } else {
-        selectCounty();
+        _selectCounty();
       }
     });
   }
 
-  selectCounty() {
+  _selectCounty() {
     Navigator.push(
-            context, new MaterialPageRoute(builder: (context) => MyApp()))
+            context, new MaterialPageRoute(builder: (context) => SelectCounty()))
         .then((bool) {
       if (bool) {
-        _initData();
+        _initData().then((bool) {
+          if (bool) {
+            _queryWeather();
+          } else {
+            _selectCounty();
+          }
+        });
       }
     });
   }
@@ -98,7 +104,7 @@ class _WeatherDetailState extends State<WeatherDetail> {
       children: <Widget>[
         IconButton(
           icon: Image(image: AssetImage("image/ic_home.png"), width: 26.0),
-          onPressed: selectCounty,
+          onPressed: _selectCounty,
         ),
         Text(
           countyName != null ? countyName : "",
