@@ -1,18 +1,18 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'weather_mode.dart';
+part of 'weather_bean.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-WeatherMode _$WeatherModeFromJson(Map<String, dynamic> json) {
-  return WeatherMode((json['HeWeather'] as List)
+WeatherBean _$WeatherBeanFromJson(Map<String, dynamic> json) {
+  return WeatherBean((json['HeWeather'] as List)
       ?.map((e) => e == null ? null : Inf.fromJson(e as Map<String, dynamic>))
       ?.toList());
 }
 
-Map<String, dynamic> _$WeatherModeToJson(WeatherMode instance) =>
+Map<String, dynamic> _$WeatherBeanToJson(WeatherBean instance) =>
     <String, dynamic>{'HeWeather': instance.HeWeather};
 
 Inf _$InfFromJson(Map<String, dynamic> json) {

@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:coolweather/weather_mode.dart';
+import 'package:coolweather/bean/focus_county_list_bean.dart';
+import 'package:coolweather/bean/weather_bean.dart';
 import 'package:flutter/material.dart';
-import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class WeatherDetail extends StatefulWidget {
@@ -22,7 +22,7 @@ class _WeatherDetailState extends State<WeatherDetail> {
 
   String bingImgUrl = '';
 
-  WeatherMode weatherMode;
+  WeatherBean weatherMode;
 
   @override
   void initState() {
@@ -32,7 +32,7 @@ class _WeatherDetailState extends State<WeatherDetail> {
     _initData();
   }
 
-  _selectCounty() {
+  _focusCountyList() {
     Navigator.of(context).pushNamed("select_county").then((bool) {
       if (bool) {
         _initData();
@@ -43,12 +43,15 @@ class _WeatherDetailState extends State<WeatherDetail> {
   _initData() {
     Future<SharedPreferences> future = SharedPreferences.getInstance();
     future.then((prefs) {
-      countyName = prefs.getString('countyName');
-      weatherId = prefs.getString('weatherId');
-      if (!isEmpty(countyName) && !isEmpty(weatherId)) {
+      String focusCountyListJson = prefs.getString('focus_county_data');
+      FocusCountyListBean focusCountyListBean = FocusCountyListBean.fromJson(json.decode(focusCountyListJson));
+      if (focusCountyListBean != null) {
+        County county = focusCountyListBean.countyList.elementAt(focusCountyListBean.countyList.length - 1);
+        countyName = county.countyName;
+        weatherId = county.weatherId;
         _queryWeather();
       } else {
-        _selectCounty();
+        _focusCountyList();
       }
     });
   }
@@ -92,7 +95,7 @@ class _WeatherDetailState extends State<WeatherDetail> {
           child: IconButton(
             iconSize: 50,
             icon: Image(image: AssetImage("image/ic_home.png"), width: 28),
-            onPressed: _selectCounty,
+            onPressed: _focusCountyList,
           ),
         ),
         Text(
@@ -352,7 +355,7 @@ class _WeatherDetailState extends State<WeatherDetail> {
         var json = await response.transform(utf8.decoder).join();
         Map data = jsonDecode(json);
         setState(() {
-          weatherMode = new WeatherMode.fromJson(data);
+          weatherMode = new WeatherBean.fromJson(data);
         });
       }
     } catch (ignore) {}

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:coolweather/bean/focus_county_list_bean.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:quiver/strings.dart';
@@ -97,21 +98,21 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           body: isLoading
               ? Center(
-            child: CircularProgressIndicator(
-              backgroundColor: Colors.grey[200],
-              valueColor: AlwaysStoppedAnimation(Colors.blue),
-            ),
-          )
+                  child: CircularProgressIndicator(
+                    backgroundColor: Colors.grey[200],
+                    valueColor: AlwaysStoppedAnimation(Colors.blue),
+                  ),
+                )
               : new ListView.builder(
-              itemCount: arrayData.length,
-              itemBuilder: (BuildContext context, int position) {
-                var itemData = arrayData.elementAt(position);
-                if (cityId != 0) {
-                  return getRow(itemData['name'], itemData['id'],
-                      itemData['weather_id']);
-                }
-                return getRow(itemData['name'], itemData['id'], "");
-              })),
+                  itemCount: arrayData.length,
+                  itemBuilder: (BuildContext context, int position) {
+                    var itemData = arrayData.elementAt(position);
+                    if (cityId != 0) {
+                      return getRow(itemData['name'], itemData['id'],
+                          itemData['weather_id']);
+                    }
+                    return getRow(itemData['name'], itemData['id'], "");
+                  })),
     );
   }
 
@@ -139,10 +140,24 @@ class _MyHomePageState extends State<MyHomePage> {
         }
 
         if (!isEmpty(weatherId) && !isEmpty(countyName)) {
-          Future<SharedPreferences> prefs = SharedPreferences.getInstance();
-          prefs.then((pre) {
-            pre.setString('countyName', countyName);
-            pre.setString('weatherId', weatherId);
+          Future<SharedPreferences> future = SharedPreferences.getInstance();
+          future.then((prefs) {
+            FocusCountyListBean focusCountyListBean;
+            String focusCountyJson = prefs.getString('focus_county_data');
+            if (!isEmpty(focusCountyJson)) {
+              focusCountyListBean =
+                  FocusCountyListBean.fromJson(json.decode(focusCountyJson));
+            }
+
+            if (focusCountyListBean == null) {
+              focusCountyListBean = new FocusCountyListBean(new List());
+            }
+
+            County county = new County(countyName, weatherId);
+            focusCountyListBean.countyList.add(county);
+
+            focusCountyJson = focusCountyListBean.toJson().toString();
+            prefs.setString('focus_county_data', focusCountyJson);
             Navigator.pop(context, true);
           });
         }

@@ -1,16 +1,16 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'weather_mode.g.dart';
+part 'weather_bean.g.dart';
 
 @JsonSerializable()
-class WeatherMode {
+class WeatherBean {
 
   List<Inf> HeWeather;
 
-  WeatherMode(this.HeWeather);
+  WeatherBean(this.HeWeather);
 
-  factory WeatherMode.fromJson(Map<String, dynamic> json) => _$WeatherModeFromJson(json);
-  Map<String, dynamic> toJson() => _$WeatherModeToJson(this);
+  factory WeatherBean.fromJson(Map<String, dynamic> json) => _$WeatherBeanFromJson(json);
+  Map<String, dynamic> toJson() => _$WeatherBeanToJson(this);
 }
 
 @JsonSerializable()
