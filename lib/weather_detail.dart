@@ -16,12 +16,31 @@ class WeatherDetail extends StatefulWidget {
 }
 
 class _MainLayoutState extends State<WeatherDetail> {
+  String bingImgUrl = '';
+
   List<County> countyList;
 
   @override
   void initState() {
     super.initState();
+
+    _queryImage();
     _initData();
+  }
+
+  _queryImage() async {
+    String bingPicUrl = "http://guolin.tech/api/bing_pic";
+    var httpClient = new HttpClient();
+    try {
+      var request = await httpClient.getUrl(Uri.parse(bingPicUrl));
+      var response = await request.close();
+      if (response.statusCode == HttpStatus.OK) {
+        var imgUrl = await response.transform(utf8.decoder).join();
+        setState(() {
+          bingImgUrl = imgUrl;
+        });
+      }
+    } catch (ignore) {}
   }
 
   _initData() {
@@ -54,18 +73,22 @@ class _MainLayoutState extends State<WeatherDetail> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: countyList != null
-          ? PageView.builder(
-              itemCount: countyList.length,
-              itemBuilder: (BuildContext context, int position) {
-                return _WeatherDetailWidget(
-                    countyList.elementAt(position).countyName,
-                    countyList.elementAt(position).weatherId);
-              },
-            )
-          : Text('empty'),
-    );
+    return Container(
+        child: countyList != null
+            ? PageView.builder(
+                itemCount: countyList.length,
+                itemBuilder: (BuildContext context, int position) {
+                  return _WeatherDetailWidget(
+                      countyList.elementAt(position).countyName,
+                      countyList.elementAt(position).weatherId);
+                },
+              )
+            : Text('empty'),
+        decoration: BoxDecoration(
+            image: DecorationImage(
+          image: NetworkImage(bingImgUrl),
+          fit: BoxFit.fitHeight,
+        )));
   }
 }
 
@@ -87,8 +110,6 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   String weatherId;
 
-  String bingImgUrl = '';
-
   WeatherBean weatherMode;
 
   _WeatherDetailState(this.countyName, this.weatherId);
@@ -97,7 +118,6 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   void initState() {
     super.initState();
 
-    _queryImage();
     _queryWeather();
   }
 
@@ -109,30 +129,25 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return mainLayout(context);
+    return weatherDetailLayout(context);
   }
 
-  Widget mainLayout(BuildContext context) {
+  Widget weatherDetailLayout(BuildContext context) {
     return Scaffold(
-      body: Container(
-          child: RefreshIndicator(
-            onRefresh: _queryWeather,
-            child: ListView(
-              children: <Widget>[
-                _titleLayout(),
-                _tempLayout(),
-                _weatherLayout(),
-                _forecastLayout(),
-                _aqiLayout(),
-                _suggestionLayout(),
-              ],
-            ),
-          ),
-          decoration: BoxDecoration(
-              image: DecorationImage(
-            image: NetworkImage(bingImgUrl),
-            fit: BoxFit.fitHeight,
-          ))),
+      backgroundColor: Colors.transparent,
+      body: RefreshIndicator(
+        onRefresh: _queryWeather,
+        child: ListView(
+          children: <Widget>[
+            _titleLayout(),
+            _tempLayout(),
+            _weatherLayout(),
+            _forecastLayout(),
+            _aqiLayout(),
+            _suggestionLayout(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -375,21 +390,6 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
             color: Colors.white, fontSize: 14, decoration: TextDecoration.none),
       ),
     );
-  }
-
-  _queryImage() async {
-    String bingPicUrl = "http://guolin.tech/api/bing_pic";
-    var httpClient = new HttpClient();
-    try {
-      var request = await httpClient.getUrl(Uri.parse(bingPicUrl));
-      var response = await request.close();
-      if (response.statusCode == HttpStatus.OK) {
-        var imgUrl = await response.transform(utf8.decoder).join();
-        setState(() {
-          bingImgUrl = imgUrl;
-        });
-      }
-    } catch (ignore) {}
   }
 
   Future<Null> _queryWeather() async {
