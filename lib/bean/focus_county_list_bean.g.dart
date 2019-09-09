@@ -13,9 +13,9 @@ FocusCountyListBean _$FocusCountyListBeanFromJson(Map<String, dynamic> json) {
       ?.toList());
 }
 
-Map<String, dynamic> _$FocusCountyListBeanToJson(
+Map<String, List<County>> _$FocusCountyListBeanToJson(
         FocusCountyListBean instance) =>
-    <String, dynamic>{'countyList': instance.countyList};
+    <String, List<County>>{'countyList': instance.countyList};
 
 County _$CountyFromJson(Map<String, dynamic> json) {
   return County(json['countyName'] as String, json['weatherId'] as String);

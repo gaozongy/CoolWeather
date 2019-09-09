@@ -33,7 +33,7 @@ class _WeatherDetailState extends State<WeatherDetail> {
   }
 
   _focusCountyList() {
-    Navigator.of(context).pushNamed("select_county").then((bool) {
+    Navigator.of(context).pushNamed("focus_county_list").then((bool) {
       if (bool) {
         _initData();
       }
@@ -44,15 +44,20 @@ class _WeatherDetailState extends State<WeatherDetail> {
     Future<SharedPreferences> future = SharedPreferences.getInstance();
     future.then((prefs) {
       String focusCountyListJson = prefs.getString('focus_county_data');
-      FocusCountyListBean focusCountyListBean = FocusCountyListBean.fromJson(json.decode(focusCountyListJson));
-      if (focusCountyListBean != null) {
-        County county = focusCountyListBean.countyList.elementAt(focusCountyListBean.countyList.length - 1);
-        countyName = county.countyName;
-        weatherId = county.weatherId;
-        _queryWeather();
-      } else {
-        _focusCountyList();
+      if (focusCountyListJson != null) {
+        FocusCountyListBean focusCountyListBean =
+            FocusCountyListBean.fromJson(json.decode(focusCountyListJson));
+        if (focusCountyListBean.countyList.length > 0) {
+          County county = focusCountyListBean.countyList
+              .elementAt(focusCountyListBean.countyList.length - 1);
+          countyName = county.countyName;
+          weatherId = county.weatherId;
+          _queryWeather();
+          return;
+        }
       }
+
+      _focusCountyList();
     });
   }
 

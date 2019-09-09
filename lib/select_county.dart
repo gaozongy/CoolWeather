@@ -150,13 +150,20 @@ class _MyHomePageState extends State<MyHomePage> {
             }
 
             if (focusCountyListBean == null) {
-              focusCountyListBean = new FocusCountyListBean(new List());
+              focusCountyListBean = new FocusCountyListBean(new List<County>());
+            }
+
+            for (int i = 0; i < focusCountyListBean.countyList.length; i++) {
+              if (equalsIgnoreCase(focusCountyListBean.countyList.elementAt(i).weatherId, weatherId)){
+                Navigator.pop(context, false);
+                return;
+              }
             }
 
             County county = new County(countyName, weatherId);
             focusCountyListBean.countyList.add(county);
 
-            focusCountyJson = focusCountyListBean.toJson().toString();
+            focusCountyJson = jsonEncode(focusCountyListBean.toJson());
             prefs.setString('focus_county_data', focusCountyJson);
             Navigator.pop(context, true);
           });
