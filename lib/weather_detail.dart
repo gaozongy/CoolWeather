@@ -18,8 +18,6 @@ class WeatherDetail extends StatefulWidget {
 class _MainLayoutState extends State<WeatherDetail> {
   List<County> countyList;
 
-  List<_WeatherDetailWidget> weatherDetailWidgetList = new List();
-
   @override
   void initState() {
     super.initState();
@@ -37,11 +35,6 @@ class _MainLayoutState extends State<WeatherDetail> {
             focusCountyListBean.countyList.length > 0) {
           setState(() {
             countyList = focusCountyListBean.countyList;
-            weatherDetailWidgetList.clear();
-            for (int i = 0; i < countyList.length; i++) {
-              County county = countyList.elementAt(i);
-              weatherDetailWidgetList.add(_WeatherDetailWidget(county.countyName, county.weatherId));
-            }
           });
           return;
         }
@@ -63,9 +56,14 @@ class _MainLayoutState extends State<WeatherDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: countyList != null
-          ? IndexedStack(
-        index: ,
-      )
+          ? PageView.builder(
+              itemCount: countyList.length,
+              itemBuilder: (BuildContext context, int position) {
+                return _WeatherDetailWidget(
+                    countyList.elementAt(position).countyName,
+                    countyList.elementAt(position).weatherId);
+              },
+            )
           : Text('empty'),
     );
   }
