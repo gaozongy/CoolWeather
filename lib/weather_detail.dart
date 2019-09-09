@@ -11,25 +11,37 @@ class WeatherDetail extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _WeatherDetailState();
+    return _MainLayoutState();
   }
 }
 
-class _WeatherDetailState extends State<WeatherDetail> {
-  String countyName;
-
-  String weatherId;
-
-  String bingImgUrl = '';
-
-  WeatherBean weatherMode;
+class _MainLayoutState extends State<WeatherDetail> {
+  List<County> countyList;
 
   @override
   void initState() {
     super.initState();
-
-    _queryImage();
     _initData();
+  }
+
+  _initData() {
+    Future<SharedPreferences> future = SharedPreferences.getInstance();
+    future.then((prefs) {
+      String focusCountyListJson = prefs.getString('focus_county_data');
+      if (focusCountyListJson != null) {
+        FocusCountyListBean focusCountyListBean =
+            FocusCountyListBean.fromJson(json.decode(focusCountyListJson));
+        if (focusCountyListBean != null &&
+            focusCountyListBean.countyList.length > 0) {
+          setState(() {
+            countyList = focusCountyListBean.countyList;
+          });
+          return;
+        }
+      }
+
+      _focusCountyList();
+    });
   }
 
   _focusCountyList() {
@@ -40,24 +52,58 @@ class _WeatherDetailState extends State<WeatherDetail> {
     });
   }
 
-  _initData() {
-    Future<SharedPreferences> future = SharedPreferences.getInstance();
-    future.then((prefs) {
-      String focusCountyListJson = prefs.getString('focus_county_data');
-      if (focusCountyListJson != null) {
-        FocusCountyListBean focusCountyListBean =
-            FocusCountyListBean.fromJson(json.decode(focusCountyListJson));
-        if (focusCountyListBean.countyList.length > 0) {
-          County county = focusCountyListBean.countyList
-              .elementAt(focusCountyListBean.countyList.length - 1);
-          countyName = county.countyName;
-          weatherId = county.weatherId;
-          _queryWeather();
-          return;
-        }
-      }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: countyList != null
+          ? PageView.builder(
+              itemCount: countyList.length,
+              itemBuilder: (BuildContext context, int position) {
+                return _WeatherDetailWidget(
+                    countyList.elementAt(position).countyName,
+                    countyList.elementAt(position).weatherId);
+              },
+      )
+          : Text('empty'),
+    );
+  }
+}
 
-      _focusCountyList();
+class _WeatherDetailWidget extends StatefulWidget {
+  final String countyName;
+
+  final String weatherId;
+
+  _WeatherDetailWidget(this.countyName, this.weatherId);
+
+  @override
+  State<StatefulWidget> createState() {
+    return _WeatherDetailState(countyName, weatherId);
+  }
+}
+
+class _WeatherDetailState extends State<_WeatherDetailWidget> {
+  String countyName;
+
+  String weatherId;
+
+  String bingImgUrl = '';
+
+  WeatherBean weatherMode;
+
+  _WeatherDetailState(this.countyName, this.weatherId);
+
+  @override
+  void initState() {
+    super.initState();
+
+    _queryImage();
+    _queryWeather();
+  }
+
+  _focusCountyList() {
+    Navigator.of(context).pushNamed("focus_county_list").then((bool) {
+      if (bool) {}
     });
   }
 
