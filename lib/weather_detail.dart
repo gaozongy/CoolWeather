@@ -20,12 +20,29 @@ class _MainLayoutState extends State<WeatherDetail> {
 
   List<County> countyList;
 
+  int currentPage = 0;
+
+  County county;
+
+  PageController _pageController = new PageController();
+
   @override
   void initState() {
     super.initState();
 
     _queryImage();
     _initData();
+
+    _pageController.addListener(() {
+      int page = _pageController.page.toInt();
+      print('page:' + '$page' + '  currentPage:' + '$currentPage');
+      if (page != currentPage) {
+        currentPage = page;
+        setState(() {
+          county = countyList.elementAt(page);
+        });
+      }
+    });
   }
 
   _queryImage() async {
@@ -54,6 +71,7 @@ class _MainLayoutState extends State<WeatherDetail> {
             focusCountyListBean.countyList.length > 0) {
           setState(() {
             countyList = focusCountyListBean.countyList;
+            county = countyList.elementAt(0);
           });
           return;
         }
@@ -81,6 +99,7 @@ class _MainLayoutState extends State<WeatherDetail> {
                   ? Padding(
                       padding: EdgeInsets.only(top: 80),
                       child: PageView.builder(
+                        controller: _pageController,
                         itemCount: countyList.length,
                         itemBuilder: (BuildContext context, int position) {
                           return _WeatherDetailWidget(
@@ -115,17 +134,17 @@ class _MainLayoutState extends State<WeatherDetail> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  '北京',
+                  county != null ? county.countyName : "未知",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontSize: 20,
                     decoration: TextDecoration.none,
                   ),
                 ),
                 Text(
                   '10分钟之前更新',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.white70,
                     fontSize: 12,
                     decoration: TextDecoration.none,
                   ),
