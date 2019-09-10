@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:coolweather/bean/focus_county_list_bean.dart';
 import 'package:coolweather/bean/weather_bean.dart';
+import 'package:coolweather/utils/DateUtils.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -231,7 +232,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   Widget _tempLayout() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(28, 350, 28, 0),
+      padding: EdgeInsets.fromLTRB(28, 320, 28, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
@@ -286,58 +287,57 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   }
 
   Widget _forecastLayout() {
-    return Container(
-      margin: EdgeInsets.fromLTRB(16, 15, 16, 0),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-      child: Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Text("预报",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      decoration: TextDecoration.none))
-            ],
-          ),
-          _getForecastRow()
-        ],
-      ),
-      decoration: BoxDecoration(color: Colors.black38),
-    );
-  }
-
-  Widget _getForecastRow() {
     List<Widget> forecastRow = new List();
-    for (int i = 0;
-        weatherMode != null &&
-            i < weatherMode.HeWeather[0].daily_forecast.length;
-        i++) {
+    int length = weatherMode.HeWeather[0].daily_forecast.length;
+    for (int i = 0; weatherMode != null && i < length; i++) {
       Daily daily = weatherMode.HeWeather[0].daily_forecast.elementAt(i);
-      forecastRow.add(Padding(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: Row(
-          children: <Widget>[
-            _textLayout(daily.date),
-            _textLayout(daily.cond.txt_d),
-            _textLayout(daily.tmp.max),
-            _textLayout(daily.tmp.min),
-          ],
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        ),
+      DateTime dateTime = DateTime.parse(daily.date);
+      IconData iconData = _getWeatherIcon(daily.cond.txt_d);
+
+      forecastRow.add(Column(
+        children: <Widget>[
+          _textLayout(DateUtils.getWeekday(dateTime.weekday)),
+          _textLayout('${dateTime.month}' + '月' + '${dateTime.day}' + '日'),
+          Padding(
+            padding: EdgeInsets.only(top: 8),
+            child: Icon(iconData, color: Colors.white),
+          ),
+          _textLayout(daily.cond.txt_d),
+        ],
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
       ));
     }
 
-    return Column(
-      children: forecastRow,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: forecastRow,
+      ),
     );
+  }
+
+  IconData _getWeatherIcon(String weather) {
+    IconData iconData;
+    switch (weather) {
+      case '小雨':
+        {
+          iconData = Icons.ac_unit;
+        }
+        break;
+      default:
+        {
+          iconData = Icons.wb_sunny;
+        }
+    }
+    return iconData;
   }
 
   Widget _textLayout(String content) {
     return Text(content,
         style: TextStyle(
             color: Colors.white,
-            fontSize: 15,
+            fontSize: 12,
             decoration: TextDecoration.none));
   }
 
