@@ -73,35 +73,97 @@ class _MainLayoutState extends State<WeatherDetail> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+          child: Stack(
+            children: <Widget>[
+              countyList != null
+                  ? Padding(
+                      padding: EdgeInsets.only(top: 80),
+                      child: PageView.builder(
+                        itemCount: countyList.length,
+                        itemBuilder: (BuildContext context, int position) {
+                          return _WeatherDetailWidget(
+                              countyList.elementAt(position));
+                        },
+                      ),
+                    )
+                  : Text('empty'),
+              _titleLayout(),
+            ],
+          ),
+          decoration: BoxDecoration(
+              image: DecorationImage(
+            image: NetworkImage(bingImgUrl),
+            fit: BoxFit.fitHeight,
+          ))),
+    );
+  }
+
+  Widget _titleLayout() {
     return Container(
-        child: countyList != null
-            ? PageView.builder(
-                itemCount: countyList.length,
-                itemBuilder: (BuildContext context, int position) {
-                  return _WeatherDetailWidget(
-                      countyList.elementAt(position).countyName,
-                      countyList.elementAt(position).weatherId);
-                },
+      height: 50,
+      margin: EdgeInsets.only(top: 30),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(left: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  '北京',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+                Text(
+                  '10分钟之前更新',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    decoration: TextDecoration.none,
+                  ),
+                )
+              ],
+            ),
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.home),
+                color: Colors.white,
+                onPressed: _focusCountyList,
+              ),
+              IconButton(
+                icon: Icon(Icons.more_vert),
+                color: Colors.white,
+                onPressed: () {},
               )
-            : Text('empty'),
-        decoration: BoxDecoration(
-            image: DecorationImage(
-          image: NetworkImage(bingImgUrl),
-          fit: BoxFit.fitHeight,
-        )));
+            ],
+          )
+        ],
+      ),
+    );
   }
 }
 
 class _WeatherDetailWidget extends StatefulWidget {
-  final String countyName;
+  final County county;
 
-  final String weatherId;
-
-  _WeatherDetailWidget(this.countyName, this.weatherId);
+  _WeatherDetailWidget(this.county);
 
   @override
   State<StatefulWidget> createState() {
-    return _WeatherDetailState(countyName, weatherId);
+    return _WeatherDetailState(county.countyName, county.weatherId);
   }
 }
 
@@ -133,77 +195,33 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   }
 
   Widget weatherDetailLayout(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: RefreshIndicator(
-        onRefresh: _queryWeather,
-        child: ListView(
-          children: <Widget>[
-            _titleLayout(),
-            _tempLayout(),
-            _weatherLayout(),
-            _forecastLayout(),
-            _aqiLayout(),
-            _suggestionLayout(),
-          ],
-        ),
+    return RefreshIndicator(
+      onRefresh: _queryWeather,
+      child: ListView(
+        children: <Widget>[
+          _tempLayout(),
+          _weatherLayout(),
+          _from(),
+          _forecastLayout(),
+          _aqiLayout(),
+          _suggestionLayout(),
+        ],
       ),
-    );
-  }
-
-  Widget _titleLayout() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        SizedBox(
-          width: 50,
-          height: 50,
-          child: IconButton(
-            iconSize: 50,
-            icon: Image(image: AssetImage("image/ic_home.png"), width: 28),
-            onPressed: _focusCountyList,
-          ),
-        ),
-        Text(
-          countyName != null ? countyName : "",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            decoration: TextDecoration.none,
-          ),
-        ),
-        SizedBox(
-          width: 50,
-          height: 50,
-          child: Center(
-            child: Text(
-              weatherMode != null
-                  ? weatherMode.HeWeather[0].update.loc.substring(11)
-                  : "",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-                decoration: TextDecoration.none,
-              ),
-            ),
-          ),
-        )
-      ],
     );
   }
 
   Widget _tempLayout() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(16, 35, 16, 0),
+      padding: EdgeInsets.fromLTRB(28, 350, 28, 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(
             (weatherMode != null ? weatherMode.HeWeather[0].now.tmp : "0") +
-                "℃",
+                "°",
             style: TextStyle(
               color: Colors.white,
-              fontSize: 50,
+              fontSize: 60,
               decoration: TextDecoration.none,
             ),
           )
@@ -214,9 +232,9 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   Widget _weatherLayout() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 28),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(
             weatherMode != null ? weatherMode.HeWeather[0].now.cond_txt : "未知",
@@ -230,9 +248,27 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
+  Widget _from() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 28, vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            "中国天气网",
+            style: TextStyle(
+                color: Colors.white70,
+                fontSize: 10,
+                decoration: TextDecoration.none),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget _forecastLayout() {
     return Container(
-      margin: EdgeInsets.fromLTRB(16, 20, 16, 0),
+      margin: EdgeInsets.fromLTRB(16, 15, 16, 0),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       child: Column(
         children: <Widget>[
