@@ -223,6 +223,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
           _weatherLayout(),
           _from(),
           _forecastLayout(),
+          _tempLineLayout(),
           _aqiLayout(),
           _suggestionLayout(),
         ],
@@ -315,6 +316,10 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         children: forecastRow,
       ),
     );
+  }
+
+  Widget _tempLineLayout(){
+    return Text('曲线图');
   }
 
   IconData _getWeatherIcon(String weather) {
