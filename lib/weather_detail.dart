@@ -222,7 +222,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         children: <Widget>[
           _tempLayout(),
           _weatherLayout(),
-          _from(),
+          _fromLayout(),
           _forecastLayout(),
           _tempLineLayout(),
           _aqiLayout(),
@@ -270,7 +270,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
-  Widget _from() {
+  Widget _fromLayout() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 28, vertical: 5),
       child: Row(
@@ -328,8 +328,9 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
             double.parse(forecast.elementAt(i).tmp.min)));
       }
       return Container(
-        margin: EdgeInsets.only(top: 15, bottom: 40),
+        margin: EdgeInsets.symmetric(vertical: 15),
         child: TempLineWidget(tempList),
+        decoration: BoxDecoration(color: Colors.blue),
       );
     }
     return Text('曲线图');

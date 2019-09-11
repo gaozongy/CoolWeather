@@ -12,13 +12,23 @@ class TempLineWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(size: Size(200, 100), painter: TempLinePainter(dots));
+    return CustomPaint(painter: TempLinePainter(dots));
   }
 }
 
 Paint linePaint = new Paint()
   ..style = PaintingStyle.stroke
   ..color = Colors.white60
+  ..strokeWidth = 1.0;
+
+Paint averagePaint = new Paint()
+  ..style = PaintingStyle.stroke
+  ..color = Colors.red
+  ..strokeWidth = 1.0;
+
+Paint centerPaint = new Paint()
+  ..style = PaintingStyle.stroke
+  ..color = Colors.yellow
   ..strokeWidth = 1.0;
 
 Paint dotPaint = new Paint()
@@ -35,10 +45,13 @@ class TempLinePainter extends CustomPainter {
 
   TempLinePainter(this.tempList);
 
-  int margin = 20;
+  int margin = 0;
 
   @override
   void paint(Canvas canvas, Size size) {
+    canvas.drawLine(Offset(0, size.height / 2),
+        Offset(size.width, size.height / 2), centerPaint);
+
     canvas.translate(0, size.height / 2);
 
     double total = 0;
@@ -47,27 +60,38 @@ class TempLinePainter extends CustomPainter {
     });
     double average = total / (tempList.length * 2);
 
+    print('average :' + '$average');
+
+    canvas.drawLine(Offset(0, 0), Offset(size.width, 0), averagePaint);
+
     List<Temp> drawList = List();
 
     tempList.forEach((temp) {
-      drawList.add(Temp(-(temp.top - average) * 5, -(temp.bot - average) * 5));
+      drawList.add(Temp((average - temp.top) * 5, (average - temp.bot) * 5));
     });
 
-    double width = size.width / 6;
+    double distance = size.width / 6;
 
     // 画线
-    drawLine(drawList, width, canvas, linePaint);
+    drawLine(drawList, distance, canvas, linePaint);
 
     // 画点和文字
-    drawDotText(drawList, width, canvas, dotPaint);
+    drawDotText(drawList, distance, canvas, dotPaint);
 
     // 画背景颜色
-    drawBg(drawList, width, size, canvas, bgPaint);
+    drawBg(drawList, distance, size, canvas, bgPaint);
   }
 
-  void drawLine(List<Temp> dots, double width, Canvas canvas, Paint linePaint) {
+  void drawLine(
+      List<Temp> dots, double distance, Canvas canvas, Paint linePaint) {
     for (int i = 0; i < dots.length - 1; i++) {
-      double x = width * i + width / 2;
+      double x = distance * i + distance / 2;
+
+      canvas.drawLine(Offset(x, dots.elementAt(i).top),
+          Offset(x + distance, dots.elementAt(i + 1).top), linePaint);
+
+      canvas.drawLine(Offset(x, dots.elementAt(i).bot + margin),
+          Offset(x + distance, dots.elementAt(i + 1).bot + margin), linePaint);
 
       if (i == 0) {
         canvas.drawLine(Offset(0, dots.elementAt(i).top),
@@ -77,28 +101,23 @@ class TempLinePainter extends CustomPainter {
             Offset(x, dots.elementAt(i).bot + margin), linePaint);
       } else if (i == dots.length - 2) {
         canvas.drawLine(
-            Offset(x + width, dots.elementAt(i + 1).top),
-            Offset(x + width + width / 2, dots.elementAt(i + 1).top),
+            Offset(x + distance, dots.elementAt(i + 1).top),
+            Offset(x + distance + distance / 2, dots.elementAt(i + 1).top),
             linePaint);
 
         canvas.drawLine(
-            Offset(x + width, dots.elementAt(i + 1).bot + margin),
-            Offset(x + width + width / 2, dots.elementAt(i + 1).bot + margin),
+            Offset(x + distance, dots.elementAt(i + 1).bot + margin),
+            Offset(x + distance + distance / 2,
+                dots.elementAt(i + 1).bot + margin),
             linePaint);
       }
-
-      canvas.drawLine(Offset(x, dots.elementAt(i).top),
-          Offset(x + width, dots.elementAt(i + 1).top), linePaint);
-
-      canvas.drawLine(Offset(x, dots.elementAt(i).bot + margin),
-          Offset(x + width, dots.elementAt(i + 1).bot + margin), linePaint);
     }
   }
 
   void drawDotText(
-      List<Temp> dots, double width, Canvas canvas, Paint dotPaint) {
+      List<Temp> dots, double distance, Canvas canvas, Paint dotPaint) {
     for (int i = 0; i < dots.length; i++) {
-      double x = width * i + width / 2;
+      double x = distance * i + distance / 2;
 
       // 画点
       canvas.drawCircle(Offset(x, dots.elementAt(i).top), 2, dotPaint);
@@ -118,27 +137,19 @@ class TempLinePainter extends CustomPainter {
       Offset offset = Offset(x, dots.elementAt(i).top - 20);
       canvas.drawParagraph(paragraph, offset);
 
-      ParagraphBuilder pb2 = ParagraphBuilder(ParagraphStyle(
-          textAlign: TextAlign.left,
-          fontWeight: FontWeight.w500,
-          fontStyle: FontStyle.normal,
-          fontSize: 12));
-      pb2.pushStyle(ui.TextStyle(color: Colors.white70));
-
-      pb2.addText('${tempList.elementAt(i).bot.toInt()}' + '°');
-      ParagraphConstraints pc2 = ParagraphConstraints(width: 30);
-      Paragraph paragraph2 = pb2.build()..layout(pc2);
+      pb.addText('${tempList.elementAt(i).bot.toInt()}' + '°');
+      Paragraph paragraph2 = pb.build()..layout(pc);
       Offset offset2 = Offset(x, dots.elementAt(i).bot + margin + 5);
 
       canvas.drawParagraph(paragraph2, offset2);
     }
   }
 
-  void drawBg(
-      List<Temp> dots, double width, Size size, Canvas canvas, Paint bgPaint) {
+  void drawBg(List<Temp> dots, double distance, Size size, Canvas canvas,
+      Paint bgPaint) {
     path.moveTo(0, dots.elementAt(0).top);
     for (int i = 0; i < dots.length; i++) {
-      double x = width * i + width / 2;
+      double x = distance * i + distance / 2;
       path.lineTo(x, dots.elementAt(i).top);
     }
 
@@ -146,7 +157,7 @@ class TempLinePainter extends CustomPainter {
     path.lineTo(size.width, dots.elementAt(5).bot + margin);
 
     for (int i = 0; i < dots.length; i++) {
-      double x = width * (5 - i) + width / 2;
+      double x = distance * (5 - i) + distance / 2;
       path.lineTo(x, dots.elementAt(5 - i).bot + margin);
     }
 
