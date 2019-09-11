@@ -115,7 +115,8 @@ class _MainLayoutState extends State<WeatherDetail> {
           ),
           decoration: BoxDecoration(
               image: DecorationImage(
-            image: NetworkImage(bingImgUrl),
+                image: AssetImage('image/green.jpg'),
+//            image: NetworkImage(bingImgUrl),
             fit: BoxFit.fitHeight,
           ))),
     );
@@ -327,10 +328,9 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         tempList.add(Temp(double.parse(forecast.elementAt(i).tmp.max),
             double.parse(forecast.elementAt(i).tmp.min)));
       }
-      return Container(
-        margin: EdgeInsets.symmetric(vertical: 15),
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 5),
         child: TempLineWidget(tempList),
-        decoration: BoxDecoration(color: Colors.blue),
       );
     }
     return Text('曲线图');

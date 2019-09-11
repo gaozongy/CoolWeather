@@ -6,38 +6,47 @@ import 'dart:ui' as ui;
 
 /// 气温折线图
 class TempLineWidget extends StatelessWidget {
-  final List<Temp> dots;
+  final List<Temp> tempList;
 
-  TempLineWidget(this.dots);
+  TempLineWidget(this.tempList);
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(painter: TempLinePainter(dots));
+    return CustomPaint(size: Size(0, 140),painter: TempLinePainter(tempList));
   }
 }
 
 Paint linePaint = new Paint()
   ..style = PaintingStyle.stroke
   ..color = Colors.white60
-  ..strokeWidth = 1.0;
+  ..strokeWidth = 1.4;
 
-Paint averagePaint = new Paint()
+Paint line2Paint = new Paint()
   ..style = PaintingStyle.stroke
-  ..color = Colors.red
-  ..strokeWidth = 1.0;
-
-Paint centerPaint = new Paint()
-  ..style = PaintingStyle.stroke
-  ..color = Colors.yellow
-  ..strokeWidth = 1.0;
+  ..color = Colors.white54
+  ..strokeWidth = 1.4;
 
 Paint dotPaint = new Paint()
   ..style = PaintingStyle.fill
-  ..color = Colors.white70;
+  ..color = Colors.white;
+
+Gradient gradient = new SweepGradient(
+  startAngle: 90,
+  endAngle: 180,
+  colors: [
+    Colors.red,
+    Colors.white,
+  ],
+);
+
+Rect arcRect = Rect.fromLTRB(0, 0, 100, 300);
 
 Paint bgPaint = new Paint()
   ..style = PaintingStyle.fill
+  ..strokeCap = StrokeCap.square
+//  ..shader = gradient.createShader(arcRect)
   ..color = Colors.white12;
+
 Path path = new Path();
 
 class TempLinePainter extends CustomPainter {
@@ -49,8 +58,6 @@ class TempLinePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawLine(Offset(0, size.height / 2),
-        Offset(size.width, size.height / 2), centerPaint);
 
     canvas.translate(0, size.height / 2);
 
@@ -60,17 +67,13 @@ class TempLinePainter extends CustomPainter {
     });
     double average = total / (tempList.length * 2);
 
-    print('average :' + '$average');
-
-    canvas.drawLine(Offset(0, 0), Offset(size.width, 0), averagePaint);
-
     List<Temp> drawList = List();
 
     tempList.forEach((temp) {
       drawList.add(Temp((average - temp.top) * 5, (average - temp.bot) * 5));
     });
 
-    double distance = size.width / 6;
+    double distance = size.width / tempList.length;
 
     // 画线
     drawLine(drawList, distance, canvas, linePaint);
@@ -91,14 +94,14 @@ class TempLinePainter extends CustomPainter {
           Offset(x + distance, dots.elementAt(i + 1).top), linePaint);
 
       canvas.drawLine(Offset(x, dots.elementAt(i).bot + margin),
-          Offset(x + distance, dots.elementAt(i + 1).bot + margin), linePaint);
+          Offset(x + distance, dots.elementAt(i + 1).bot + margin), line2Paint);
 
       if (i == 0) {
         canvas.drawLine(Offset(0, dots.elementAt(i).top),
             Offset(x, dots.elementAt(i).top), linePaint);
 
         canvas.drawLine(Offset(0, dots.elementAt(i).bot + margin),
-            Offset(x, dots.elementAt(i).bot + margin), linePaint);
+            Offset(x, dots.elementAt(i).bot + margin), line2Paint);
       } else if (i == dots.length - 2) {
         canvas.drawLine(
             Offset(x + distance, dots.elementAt(i + 1).top),
@@ -109,7 +112,7 @@ class TempLinePainter extends CustomPainter {
             Offset(x + distance, dots.elementAt(i + 1).bot + margin),
             Offset(x + distance + distance / 2,
                 dots.elementAt(i + 1).bot + margin),
-            linePaint);
+            line2Paint);
       }
     }
   }
