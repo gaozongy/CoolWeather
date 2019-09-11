@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:coolweather/bean/focus_county_list_bean.dart';
 import 'package:coolweather/bean/weather_bean.dart';
 import 'package:coolweather/utils/DateUtils.dart';
+import 'package:coolweather/views/temp_line.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -233,7 +234,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   Widget _tempLayout() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(28, 320, 28, 0),
+      padding: EdgeInsets.fromLTRB(28, 390, 28, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
@@ -318,7 +319,19 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
-  Widget _tempLineLayout(){
+  Widget _tempLineLayout() {
+    List<Temp> tempList = List();
+    if (weatherMode != null) {
+      var forecast = weatherMode.HeWeather.elementAt(0).daily_forecast;
+      for (int i = 0; i < forecast.length; i++) {
+        tempList.add(Temp(double.parse(forecast.elementAt(i).tmp.max),
+            double.parse(forecast.elementAt(i).tmp.min)));
+      }
+      return Container(
+        margin: EdgeInsets.only(top: 15, bottom: 40),
+        child: TempLineWidget(tempList),
+      );
+    }
     return Text('曲线图');
   }
 
@@ -348,7 +361,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   Widget _aqiLayout() {
     return Container(
-      margin: EdgeInsets.fromLTRB(16, 20, 16, 0),
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 15),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       child: Column(
         children: <Widget>[
@@ -410,7 +423,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   Widget _suggestionLayout() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 15),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       child: Column(
         children: <Widget>[
