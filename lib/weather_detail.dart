@@ -115,7 +115,7 @@ class _MainLayoutState extends State<WeatherDetail> {
           ),
           decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('image/green.jpg'),
+            image: AssetImage('image/green.jpg'),
 //            image: NetworkImage(bingImgUrl),
             fit: BoxFit.fitHeight,
           ))),
@@ -217,20 +217,26 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   }
 
   Widget weatherDetailLayout(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: _queryWeather,
-      child: ListView(
-        children: <Widget>[
-          _tempLayout(),
-          _weatherLayout(),
-          _fromLayout(),
-          _forecastLayout(),
-          _tempLineLayout(),
-          _aqiLayout(),
-          _suggestionLayout(),
-        ],
-      ),
-    );
+    if (weatherMode != null) {
+      return RefreshIndicator(
+        onRefresh: _queryWeather,
+        child: ListView(
+          children: <Widget>[
+            _tempLayout(),
+            _weatherLayout(),
+            _fromLayout(),
+            _forecastLayout(),
+            _tempLineLayout(),
+            _aqiLayout(),
+            _suggestionLayout(),
+          ],
+        ),
+      );
+    } else {
+      return Center(
+        child: Text('empty'),
+      );
+    }
   }
 
   Widget _tempLayout() {
