@@ -29,4 +29,5 @@ flutter:
 
   assets:
     - image/green.jpg
+    - image/sunny.jpg
     - image/ic_home.png

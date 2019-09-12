@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:coolweather/bean/focus_county_list_bean.dart';
 import 'package:coolweather/bean/weather_bean.dart';
 import 'package:coolweather/utils/DateUtils.dart';
+import 'package:coolweather/views/popup_window_button.dart';
 import 'package:coolweather/views/temp_line.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,7 +37,7 @@ class _MainLayoutState extends State<WeatherDetail> {
     _initData();
 
     _pageController.addListener(() {
-      int page = _pageController.page.toInt();
+      int page = (_pageController.page + 0.5).toInt();
       print('page:' + '$page' + '  currentPage:' + '$currentPage');
       if (page != currentPage) {
         currentPage = page;
@@ -115,7 +116,9 @@ class _MainLayoutState extends State<WeatherDetail> {
           ),
           decoration: BoxDecoration(
               image: DecorationImage(
-            image: AssetImage('image/green.jpg'),
+            image: currentPage % 2 == 0
+                ? AssetImage('image/sunny.jpg')
+                : AssetImage('image/green.jpg'),
 //            image: NetworkImage(bingImgUrl),
             fit: BoxFit.fitHeight,
           ))),
@@ -169,6 +172,15 @@ class _MainLayoutState extends State<WeatherDetail> {
                 icon: Icon(Icons.more_vert),
                 color: Colors.white,
                 onPressed: () {},
+              ),
+              PopupWindowButton(
+                offset: Offset(0, 100),
+                child: Icon(Icons.more_vert),
+                window: Container(
+                  color: Colors.white,
+                  height: 100,
+                  width: 100,
+                ),
               )
             ],
           )
