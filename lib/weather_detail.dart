@@ -128,7 +128,7 @@ class _MainLayoutState extends State<WeatherDetail> {
   Widget _titleLayout() {
     return Container(
       height: 50,
-      margin: EdgeInsets.only(top: 30),
+      margin: EdgeInsets.only(top: 35),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -168,18 +168,35 @@ class _MainLayoutState extends State<WeatherDetail> {
                 color: Colors.white,
                 onPressed: _focusCountyList,
               ),
-              IconButton(
-                icon: Icon(Icons.more_vert),
-                color: Colors.white,
-                onPressed: () {},
-              ),
-              PopupWindowButton(
-                offset: Offset(0, 100),
-                child: Icon(Icons.more_vert),
-                window: Container(
-                  color: Colors.white,
-                  height: 100,
-                  width: 100,
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.only(right: 15),
+                  child: PopupWindowButton(
+                    offset: Offset(0, 100),
+                    child: Icon(
+                      Icons.more_vert,
+                      color: Colors.white,
+                    ),
+                    window: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
+                          child: Text(
+                            '分享',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Padding(
+                          child: Text(
+                            '关于',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               )
             ],
