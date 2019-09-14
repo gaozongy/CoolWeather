@@ -1,6 +1,6 @@
 # coolweather
 
-A new Flutter application.
+about weather Flutter demo.
 
 ## Getting Started
 
