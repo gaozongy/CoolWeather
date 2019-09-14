@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:coolweather/bean/focus_county_list_bean.dart';
 import 'package:coolweather/bean/weather_bean.dart';
@@ -8,6 +7,7 @@ import 'package:coolweather/views/popup_window_button.dart';
 import 'package:coolweather/views/temp_line.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:amap_location/amap_location.dart';
 
 class WeatherDetail extends StatefulWidget {
   WeatherDetail({Key key}) : super(key: key);
@@ -19,49 +19,60 @@ class WeatherDetail extends StatefulWidget {
 }
 
 class _MainLayoutState extends State<WeatherDetail> {
-  String bingImgUrl = '';
-
-  List<County> countyList;
+  List<County> countyList = new List();
 
   int currentPage = 0;
 
   County county;
 
-
   PageController _pageController = new PageController();
+
+  bool location = false;
 
   @override
   void initState() {
     super.initState();
 
-    _queryImage();
-    _initData();
+    county = County('未知', 0, 0);
+    countyList.add(county);
 
+    _initPageController();
+    _initLocation();
+    _initData();
+  }
+
+  _initPageController() {
     _pageController.addListener(() {
       int page = (_pageController.page + 0.5).toInt();
-      print('page:' + '$page' + '  currentPage:' + '$currentPage');
       if (page != currentPage) {
-        currentPage = page;
         setState(() {
+          currentPage = page;
           county = countyList.elementAt(page);
         });
       }
     });
   }
 
-  _queryImage() async {
-    String bingPicUrl = "http://guolin.tech/api/bing_pic";
-    var httpClient = new HttpClient();
-    try {
-      var request = await httpClient.getUrl(Uri.parse(bingPicUrl));
-      var response = await request.close();
-      if (response.statusCode == HttpStatus.OK) {
-        var imgUrl = await response.transform(utf8.decoder).join();
-        setState(() {
-          bingImgUrl = imgUrl;
-        });
-      }
-    } catch (ignore) {}
+  _initLocation() async {
+    bool result = await AMapLocationClient.startup(new AMapLocationOption(
+        desiredAccuracy: CLLocationAccuracy.kCLLocationAccuracyHundredMeters));
+
+    if (result) {
+      AMapLocation aMapLocation = await AMapLocationClient.getLocation(true);
+      setState(() {
+        location = true;
+        List<County> list = List();
+
+        County c = new County(aMapLocation.POIName, aMapLocation.latitude,
+            aMapLocation.longitude);
+        list.add(c);
+
+        if (currentPage == 0) {
+          county = c;
+        }
+        countyList.replaceRange(0, 1, list);
+      });
+    }
   }
 
   _initData() {
@@ -74,14 +85,11 @@ class _MainLayoutState extends State<WeatherDetail> {
         if (focusCountyListBean != null &&
             focusCountyListBean.countyList.length > 0) {
           setState(() {
-            countyList = focusCountyListBean.countyList;
-            county = countyList.elementAt(0);
+            countyList.addAll(focusCountyListBean.countyList);
           });
           return;
         }
       }
-
-      _focusCountyList();
     });
   }
 
@@ -99,7 +107,7 @@ class _MainLayoutState extends State<WeatherDetail> {
       body: Container(
           child: Stack(
             children: <Widget>[
-              countyList != null
+              location
                   ? Padding(
                       padding: EdgeInsets.only(top: 80),
                       child: PageView.builder(
@@ -111,7 +119,7 @@ class _MainLayoutState extends State<WeatherDetail> {
                         },
                       ),
                     )
-                  : Text('empty'),
+                  : Center(child: Text('获取定位 Loading 动画')),
               _titleLayout(),
             ],
           ),
@@ -120,7 +128,6 @@ class _MainLayoutState extends State<WeatherDetail> {
             image: currentPage % 2 == 0
                 ? AssetImage('image/sunny.jpg')
                 : AssetImage('image/green.jpg'),
-//            image: NetworkImage(bingImgUrl),
             fit: BoxFit.fitHeight,
           ))),
     );
@@ -133,33 +140,42 @@ class _MainLayoutState extends State<WeatherDetail> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          //new Icon(Icons.map,color: Colors.grey,size: 20),
-          Padding(
-            padding: EdgeInsets.only(left: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-               Text(
-                    county != null ? county.countyName : "未知",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      decoration: TextDecoration.none,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(left: 20),
+                child: new Icon(Icons.location_on, color: Colors.white),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      county.countyName,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        decoration: TextDecoration.none,
+                      ),
                     ),
-
-                  ),
-                Text(
-                  '10分钟之前更新',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12,
-                    decoration: TextDecoration.none,
-                  ),
-                )
-              ],
-            ),
+                    Text(
+                      '未知',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                        decoration: TextDecoration.none,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -208,6 +224,12 @@ class _MainLayoutState extends State<WeatherDetail> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    AMapLocationClient.shutdown();
+    super.dispose();
+  }
 }
 
 class _WeatherDetailWidget extends StatefulWidget {
@@ -217,30 +239,22 @@ class _WeatherDetailWidget extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _WeatherDetailState(county.countyName, county.weatherId);
+    return _WeatherDetailState(county);
   }
 }
 
 class _WeatherDetailState extends State<_WeatherDetailWidget> {
-  String countyName;
-
-  String weatherId;
+  County county;
 
   WeatherBean weatherMode;
 
-  _WeatherDetailState(this.countyName, this.weatherId);
+  _WeatherDetailState(this.county);
 
   @override
   void initState() {
     super.initState();
 
     _queryWeather();
-  }
-
-  _focusCountyList() {
-    Navigator.of(context).pushNamed("focus_county_list").then((bool) {
-      if (bool) {}
-    });
   }
 
   @override
@@ -266,7 +280,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
       );
     } else {
       return Center(
-        child: Text('empty'),
+        child: Text('天气数据获取 Loading 动画'),
       );
     }
   }
@@ -359,6 +373,76 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
+  Widget _textLayout(String content) {
+    return Text(content,
+        style: TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+            decoration: TextDecoration.none));
+  }
+
+  ImageIcon _getWeatherIcon(String weather) {
+    ImageIcon imageIcon;
+    switch (weather) {
+      case '阴':
+        {
+          imageIcon = ImageIcon(
+            AssetImage('image/cl_nosun.png'),
+            size: 25.0,
+            color: Colors.white,
+          );
+        }
+        break;
+      case '多云':
+        {
+          imageIcon = ImageIcon(
+            AssetImage('image/cw_cloud.png'),
+            size: 25.0,
+            color: Colors.white,
+          );
+        }
+        break;
+      case '晴':
+        {
+          imageIcon = ImageIcon(
+            AssetImage('image/cw_sunny.png'),
+            size: 25.0,
+            color: Colors.white,
+          );
+        }
+        break;
+
+      case '雪':
+        {
+          imageIcon = ImageIcon(
+            AssetImage('image/cw_snow.png'),
+            size: 25.0,
+            color: Colors.white,
+          );
+        }
+        break;
+      case '小雨':
+        {
+          imageIcon = ImageIcon(
+            AssetImage('image/cl_light_rain.png'),
+            size: 25.0,
+            color: Colors.white,
+          );
+        }
+        break;
+      case '大雨':
+        {
+          imageIcon = ImageIcon(
+            AssetImage('image/cl_rain.png'),
+            size: 25.0,
+            color: Colors.white,
+          );
+        }
+        break;
+    }
+    return imageIcon;
+  }
+
   Widget _tempLineLayout() {
     List<Temp> tempList = List();
     if (weatherMode != null) {
@@ -373,52 +457,6 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
       );
     }
     return Text('曲线图');
-  }
-
-  ImageIcon _getWeatherIcon(String weather) {
-    ImageIcon imageIcon;
-    switch (weather) {
-      case '阴':
-        {
-          imageIcon = ImageIcon(AssetImage('image/cl_nosun.png'),size: 25.0,color: Colors.white,);
-        }
-        break;
-      case '多云':
-        {
-          imageIcon = ImageIcon(AssetImage('image/cw_cloud.png'),size: 25.0,color: Colors.white,);
-        }
-        break;
-      case '晴':
-        {
-          imageIcon = ImageIcon(AssetImage('image/cw_sunny.png'),size: 25.0,color: Colors.white,);
-        }
-        break;
-
-      case '雪':
-        {
-          imageIcon = ImageIcon(AssetImage('image/cw_snow.png'),size: 25.0,color: Colors.white,);
-        }
-        break;
-      case '小雨':
-        {
-          imageIcon = ImageIcon(AssetImage('image/cl_light_rain.png'),size: 25.0,color: Colors.white,);
-        }
-        break;
-      case '大雨':
-        {
-          imageIcon = ImageIcon(AssetImage('image/cl_rain.png'),size: 25.0,color: Colors.white,);
-        }
-        break;
-    }
-    return imageIcon;
-  }
-
-  Widget _textLayout(String content) {
-    return Text(content,
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            decoration: TextDecoration.none));
   }
 
   //空气质量
@@ -529,22 +567,24 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
-  Future<Null> _queryWeather() async {
-    var url = 'http://guolin.tech/api/weather?cityid=' +
-        '$weatherId' +
-        '&key=bc0418b57b2d4918819d3974ac1285d9';
+  _queryWeather() {
+    return null;
 
-    var httpClient = new HttpClient();
-    try {
-      var request = await httpClient.getUrl(Uri.parse(url));
-      var response = await request.close();
-      if (response.statusCode == HttpStatus.OK) {
-        var json = await response.transform(utf8.decoder).join();
-        Map data = jsonDecode(json);
-        setState(() {
-          weatherMode = new WeatherBean.fromJson(data);
-        });
-      }
-    } catch (ignore) {}
+//    var url = 'http://guolin.tech/api/weather?cityid=' +
+//        '$weatherId' +
+//        '&key=bc0418b57b2d4918819d3974ac1285d9';
+//
+//    var httpClient = new HttpClient();
+//    try {
+//      var request = await httpClient.getUrl(Uri.parse(url));
+//      var response = await request.close();
+//      if (response.statusCode == HttpStatus.OK) {
+//        var json = await response.transform(utf8.decoder).join();
+//        Map data = jsonDecode(json);
+//        setState(() {
+//          weatherMode = new WeatherBean.fromJson(data);
+//        });
+//      }
+//    } catch (ignore) {}
   }
 }

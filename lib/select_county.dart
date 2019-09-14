@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// 提交测试
 class SelectCounty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -153,16 +152,6 @@ class _MyHomePageState extends State<MyHomePage> {
             if (focusCountyListBean == null) {
               focusCountyListBean = new FocusCountyListBean(new List<County>());
             }
-
-            for (int i = 0; i < focusCountyListBean.countyList.length; i++) {
-              if (equalsIgnoreCase(focusCountyListBean.countyList.elementAt(i).weatherId, weatherId)){
-                Navigator.pop(context, false);
-                return;
-              }
-            }
-
-            County county = new County(countyName, weatherId);
-            focusCountyListBean.countyList.add(county);
 
             focusCountyJson = jsonEncode(focusCountyListBean.toJson());
             prefs.setString('focus_county_data', focusCountyJson);
