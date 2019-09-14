@@ -186,13 +186,13 @@ class _MainLayoutState extends State<WeatherDetail> {
                         Padding(
                           padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
                           child: Text(
-                            '分享',
+                            'share',
                             style: TextStyle(fontSize: 16),
                           ),
                         ),
                         Padding(
                           child: Text(
-                            '关于',
+                            'about',
                             style: TextStyle(fontSize: 16),
                           ),
                           padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
