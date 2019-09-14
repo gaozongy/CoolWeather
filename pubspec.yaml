@@ -31,3 +31,11 @@ flutter:
     - image/green.jpg
     - image/sunny.jpg
     - image/ic_home.png
+    - image/cw_cloud.png
+    - image/cw_sunny.png
+    - image/cw_wind.png
+    - image/cw_local.png
+    - image/cw_snow.png
+    - image/cl_light_rain.png
+    - image/cl_nosun.png
+    - image/cl_rain.png

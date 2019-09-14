@@ -27,6 +27,7 @@ class _MainLayoutState extends State<WeatherDetail> {
 
   County county;
 
+
   PageController _pageController = new PageController();
 
   @override
@@ -132,6 +133,7 @@ class _MainLayoutState extends State<WeatherDetail> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
+          //new Icon(Icons.map,color: Colors.grey,size: 20),
           Padding(
             padding: EdgeInsets.only(left: 20),
             child: Column(
@@ -139,14 +141,15 @@ class _MainLayoutState extends State<WeatherDetail> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  county != null ? county.countyName : "未知",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    decoration: TextDecoration.none,
+               Text(
+                    county != null ? county.countyName : "未知",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      decoration: TextDecoration.none,
+                    ),
+
                   ),
-                ),
                 Text(
                   '10分钟之前更新',
                   style: TextStyle(
@@ -330,7 +333,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     for (int i = 0; weatherMode != null && i < length; i++) {
       Daily daily = weatherMode.HeWeather[0].daily_forecast.elementAt(i);
       DateTime dateTime = DateTime.parse(daily.date);
-      IconData iconData = _getWeatherIcon(daily.cond.txt_d);
+      ImageIcon imageIcon = _getWeatherIcon(daily.cond.txt_d);
 
       forecastRow.add(Column(
         children: <Widget>[
@@ -338,7 +341,8 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
           _textLayout('${dateTime.month}' + '月' + '${dateTime.day}' + '日'),
           Padding(
             padding: EdgeInsets.only(top: 8),
-            child: Icon(iconData, color: Colors.white),
+            //child: Icon(imageIcon, color: Colors.white),
+            child: imageIcon,
           ),
           _textLayout(daily.cond.txt_d),
         ],
@@ -371,20 +375,42 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     return Text('曲线图');
   }
 
-  IconData _getWeatherIcon(String weather) {
-    IconData iconData;
+  ImageIcon _getWeatherIcon(String weather) {
+    ImageIcon imageIcon;
     switch (weather) {
-      case '小雨':
+      case '阴':
         {
-          iconData = Icons.ac_unit;
+          imageIcon = ImageIcon(AssetImage('image/cl_nosun.png'),size: 25.0,color: Colors.white,);
         }
         break;
-      default:
+      case '多云':
         {
-          iconData = Icons.wb_sunny;
+          imageIcon = ImageIcon(AssetImage('image/cw_cloud.png'),size: 25.0,color: Colors.white,);
         }
+        break;
+      case '晴':
+        {
+          imageIcon = ImageIcon(AssetImage('image/cw_sunny.png'),size: 25.0,color: Colors.white,);
+        }
+        break;
+
+      case '雪':
+        {
+          imageIcon = ImageIcon(AssetImage('image/cw_snow.png'),size: 25.0,color: Colors.white,);
+        }
+        break;
+      case '小雨':
+        {
+          imageIcon = ImageIcon(AssetImage('image/cl_light_rain.png'),size: 25.0,color: Colors.white,);
+        }
+        break;
+      case '大雨':
+        {
+          imageIcon = ImageIcon(AssetImage('image/cl_rain.png'),size: 25.0,color: Colors.white,);
+        }
+        break;
     }
-    return iconData;
+    return imageIcon;
   }
 
   Widget _textLayout(String content) {
@@ -395,6 +421,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
             decoration: TextDecoration.none));
   }
 
+  //空气质量
   Widget _aqiLayout() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 15),
@@ -457,6 +484,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
+  //生活建议
   Widget _suggestionLayout() {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 15),
