@@ -148,7 +148,7 @@ class _MainLayoutState extends State<WeatherDetail> {
             children: <Widget>[
               currentPage == 0
                   ? Padding(
-                      padding: EdgeInsets.only(left: 20),
+                      padding: EdgeInsets.only(left: 22),
                       child: Image(
                         image: AssetImage("image/position.png"),
                         width: 25,
