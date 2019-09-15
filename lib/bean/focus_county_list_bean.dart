@@ -11,7 +11,7 @@ class FocusCountyListBean {
   factory FocusCountyListBean.fromJson(Map<String, dynamic> json) =>
       _$FocusCountyListBeanFromJson(json);
 
-  Map<String, List<County>> toJson() => _$FocusCountyListBeanToJson(this);
+  Map<String, dynamic> toJson() => _$FocusCountyListBeanToJson(this);
 }
 
 @JsonSerializable()

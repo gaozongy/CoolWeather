@@ -117,10 +117,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget getRow(String name, int code, String weather) {
-    return new InkWell(
-      child: new Container(
+    return InkWell(
+      child: Container(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
-        child: new Text(name, style: new TextStyle(fontSize: 16)),
+        child: Text(name, style: new TextStyle(fontSize: 16)),
       ),
       onTap: () {
         setState(() {
@@ -152,7 +152,7 @@ class _MyHomePageState extends State<MyHomePage> {
             if (focusCountyListBean == null) {
               focusCountyListBean = new FocusCountyListBean(new List<County>());
             }
-
+            focusCountyListBean.countyList.add(County(countyName, 0, 0));
             focusCountyJson = jsonEncode(focusCountyListBean.toJson());
             prefs.setString('focus_county_data', focusCountyJson);
             Navigator.pop(context, true);

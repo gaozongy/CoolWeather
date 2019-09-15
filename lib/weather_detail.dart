@@ -27,7 +27,8 @@ class _MainLayoutState extends State<WeatherDetail> {
 
   PageController _pageController = new PageController();
 
-  bool location = false;
+  /// 是否已取得定位
+  bool position = false;
 
   @override
   void initState() {
@@ -60,15 +61,15 @@ class _MainLayoutState extends State<WeatherDetail> {
     if (result) {
       AMapLocation aMapLocation = await AMapLocationClient.getLocation(true);
       setState(() {
-        location = true;
+        position = true;
         List<County> list = List();
 
-        County c = new County(aMapLocation.POIName, aMapLocation.latitude,
-            aMapLocation.longitude);
-        list.add(c);
+        County posCounty = new County(aMapLocation.district,
+            aMapLocation.latitude, aMapLocation.longitude);
+        list.add(posCounty);
 
         if (currentPage == 0) {
-          county = c;
+          county = posCounty;
         }
         countyList.replaceRange(0, 1, list);
       });
@@ -107,7 +108,7 @@ class _MainLayoutState extends State<WeatherDetail> {
       body: Container(
           child: Stack(
             children: <Widget>[
-              location
+              position
                   ? Padding(
                       padding: EdgeInsets.only(top: 80),
                       child: PageView.builder(
@@ -145,10 +146,16 @@ class _MainLayoutState extends State<WeatherDetail> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(left: 20),
-                child: new Icon(Icons.location_on, color: Colors.white),
-              ),
+              currentPage == 0
+                  ? Padding(
+                      padding: EdgeInsets.only(left: 20),
+                      child: Image(
+                        image: AssetImage("image/position.png"),
+                        width: 25,
+                        color: Colors.white60,
+                      ),
+                    )
+                  : Container(),
               Padding(
                 padding: EdgeInsets.only(left: 20),
                 child: Column(
