@@ -151,7 +151,7 @@ class _MainLayoutState extends State<WeatherDetail> {
                       padding: EdgeInsets.only(left: 22),
                       child: Image(
                         image: AssetImage("image/position.png"),
-                        width: 25,
+                        width: 22,
                         color: Colors.white60,
                       ),
                     )
