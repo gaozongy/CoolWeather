@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:coolweather/bean/focus_county_list_bean.dart';
 import 'package:coolweather/bean/weather_bean.dart';
+import 'package:coolweather/global.dart';
 import 'package:coolweather/utils/DateUtils.dart';
 import 'package:coolweather/views/popup_window_button.dart';
 import 'package:coolweather/views/temp_line.dart';
@@ -61,8 +63,13 @@ class _MainLayoutState extends State<WeatherDetail> {
     if (result) {
       AMapLocation aMapLocation = await AMapLocationClient.getLocation(true);
       setState(() {
-        position = true;
         List<County> list = List();
+
+        if (aMapLocation.district == null ||
+            aMapLocation.latitude == null ||
+            aMapLocation.longitude == null) {
+          return;
+        }
 
         County posCounty = new County(aMapLocation.district,
             aMapLocation.latitude, aMapLocation.longitude);
@@ -72,6 +79,8 @@ class _MainLayoutState extends State<WeatherDetail> {
           county = posCounty;
         }
         countyList.replaceRange(0, 1, list);
+
+        position = true;
       });
     }
   }
@@ -150,7 +159,7 @@ class _MainLayoutState extends State<WeatherDetail> {
                   ? Padding(
                       padding: EdgeInsets.only(left: 22),
                       child: Image(
-                        image: AssetImage("image/position.png"),
+                        image: AssetImage("image/location_ic.png"),
                         width: 22,
                         color: Colors.white60,
                       ),
@@ -164,7 +173,7 @@ class _MainLayoutState extends State<WeatherDetail> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      county.countyName,
+                      county != null ? county.countyName : '未知',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -253,7 +262,9 @@ class _WeatherDetailWidget extends StatefulWidget {
 class _WeatherDetailState extends State<_WeatherDetailWidget> {
   County county;
 
-  WeatherBean weatherMode;
+  WeatherBean weatherBean;
+
+  Result result;
 
   _WeatherDetailState(this.county);
 
@@ -261,7 +272,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   void initState() {
     super.initState();
 
-    _queryWeather();
+    _queryWeather(county.longitude, county.latitude);
   }
 
   @override
@@ -270,18 +281,18 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   }
 
   Widget weatherDetailLayout(BuildContext context) {
-    if (weatherMode != null) {
+    if (weatherBean != null) {
       return RefreshIndicator(
-        onRefresh: _queryWeather,
+        onRefresh: () => _queryWeather(county.longitude, county.latitude),
         child: ListView(
           children: <Widget>[
             _tempLayout(),
             _weatherLayout(),
             _fromLayout(),
-            _forecastLayout(),
-            _tempLineLayout(),
-            _aqiLayout(),
-            _suggestionLayout(),
+//            _forecastLayout(),
+//            _tempLineLayout(),
+//            _aqiLayout(),
+//            _suggestionLayout(),
           ],
         ),
       );
@@ -299,7 +310,9 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(
-            (weatherMode != null ? weatherMode.HeWeather[0].now.tmp : "0") +
+            (weatherBean != null
+                    ? '${(result.temperature + 0.5).toInt()}'
+                    : '0') +
                 "°",
             style: TextStyle(
               color: Colors.white,
@@ -319,7 +332,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(
-            weatherMode != null ? weatherMode.HeWeather[0].now.cond_txt : "未知",
+            weatherBean != null ? result.skycon : "未知",
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,
@@ -348,37 +361,37 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
-  Widget _forecastLayout() {
-    List<Widget> forecastRow = new List();
-    int length = weatherMode.HeWeather[0].daily_forecast.length;
-    for (int i = 0; weatherMode != null && i < length; i++) {
-      Daily daily = weatherMode.HeWeather[0].daily_forecast.elementAt(i);
-      DateTime dateTime = DateTime.parse(daily.date);
-      ImageIcon imageIcon = _getWeatherIcon(daily.cond.txt_d);
-
-      forecastRow.add(Column(
-        children: <Widget>[
-          _textLayout(DateUtils.getWeekday(dateTime.weekday)),
-          _textLayout('${dateTime.month}' + '月' + '${dateTime.day}' + '日'),
-          Padding(
-            padding: EdgeInsets.only(top: 8),
-            //child: Icon(imageIcon, color: Colors.white),
-            child: imageIcon,
-          ),
-          _textLayout(daily.cond.txt_d),
-        ],
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      ));
-    }
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: forecastRow,
-      ),
-    );
-  }
+//  Widget _forecastLayout() {
+//    List<Widget> forecastRow = new List();
+//    int length = weatherBean.HeWeather[0].daily_forecast.length;
+//    for (int i = 0; weatherBean != null && i < length; i++) {
+//      Daily daily = weatherBean.HeWeather[0].daily_forecast.elementAt(i);
+//      DateTime dateTime = DateTime.parse(daily.date);
+//      ImageIcon imageIcon = _getWeatherIcon(daily.cond.txt_d);
+//
+//      forecastRow.add(Column(
+//        children: <Widget>[
+//          _textLayout(DateUtils.getWeekday(dateTime.weekday)),
+//          _textLayout('${dateTime.month}' + '月' + '${dateTime.day}' + '日'),
+//          Padding(
+//            padding: EdgeInsets.only(top: 8),
+//            //child: Icon(imageIcon, color: Colors.white),
+//            child: imageIcon,
+//          ),
+//          _textLayout(daily.cond.txt_d),
+//        ],
+//        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//      ));
+//    }
+//
+//    return Padding(
+//      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+//      child: Row(
+//        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//        children: forecastRow,
+//      ),
+//    );
+//  }
 
   Widget _textLayout(String content) {
     return Text(content,
@@ -450,118 +463,118 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     return imageIcon;
   }
 
-  Widget _tempLineLayout() {
-    List<Temp> tempList = List();
-    if (weatherMode != null) {
-      var forecast = weatherMode.HeWeather.elementAt(0).daily_forecast;
-      for (int i = 0; i < forecast.length; i++) {
-        tempList.add(Temp(double.parse(forecast.elementAt(i).tmp.max),
-            double.parse(forecast.elementAt(i).tmp.min)));
-      }
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: 5),
-        child: TempLineWidget(tempList),
-      );
-    }
-    return Text('曲线图');
-  }
+//  Widget _tempLineLayout() {
+//    List<Temp> tempList = List();
+//    if (weatherBean != null) {
+//      var forecast = weatherBean.HeWeather.elementAt(0).daily_forecast;
+//      for (int i = 0; i < forecast.length; i++) {
+//        tempList.add(Temp(double.parse(forecast.elementAt(i).tmp.max),
+//            double.parse(forecast.elementAt(i).tmp.min)));
+//      }
+//      return Padding(
+//        padding: EdgeInsets.symmetric(vertical: 5),
+//        child: TempLineWidget(tempList),
+//      );
+//    }
+//    return Text('曲线图');
+//  }
 
   //空气质量
-  Widget _aqiLayout() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-      child: Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Text("空气质量",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      decoration: TextDecoration.none))
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 10),
-            child: Row(
-              children: <Widget>[
-                Column(children: <Widget>[
-                  Text(
-                    weatherMode != null
-                        ? weatherMode.HeWeather[0].aqi.city.aqi
-                        : "",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        decoration: TextDecoration.none),
-                  ),
-                  Text(
-                    'AQI指数',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        decoration: TextDecoration.none),
-                  )
-                ]),
-                Column(children: <Widget>[
-                  Text(
-                      weatherMode != null
-                          ? weatherMode.HeWeather[0].aqi.city.pm25
-                          : "",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 30,
-                          decoration: TextDecoration.none)),
-                  Text('PM2.5指数',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          decoration: TextDecoration.none))
-                ])
-              ],
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-            ),
-          )
-        ],
-      ),
-      decoration: BoxDecoration(color: Colors.black38),
-    );
-  }
+//  Widget _aqiLayout() {
+//    return Container(
+//      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+//      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+//      child: Column(
+//        children: <Widget>[
+//          Row(
+//            children: <Widget>[
+//              Text("空气质量",
+//                  style: TextStyle(
+//                      color: Colors.white,
+//                      fontSize: 20,
+//                      decoration: TextDecoration.none))
+//            ],
+//          ),
+//          Padding(
+//            padding: EdgeInsets.only(top: 10),
+//            child: Row(
+//              children: <Widget>[
+//                Column(children: <Widget>[
+//                  Text(
+//                    weatherBean != null
+//                        ? weatherBean.HeWeather[0].aqi.city.aqi
+//                        : "",
+//                    style: TextStyle(
+//                        color: Colors.white,
+//                        fontSize: 30,
+//                        decoration: TextDecoration.none),
+//                  ),
+//                  Text(
+//                    'AQI指数',
+//                    style: TextStyle(
+//                        color: Colors.white,
+//                        fontSize: 16,
+//                        decoration: TextDecoration.none),
+//                  )
+//                ]),
+//                Column(children: <Widget>[
+//                  Text(
+//                      weatherBean != null
+//                          ? weatherBean.HeWeather[0].aqi.city.pm25
+//                          : "",
+//                      style: TextStyle(
+//                          color: Colors.white,
+//                          fontSize: 30,
+//                          decoration: TextDecoration.none)),
+//                  Text('PM2.5指数',
+//                      style: TextStyle(
+//                          color: Colors.white,
+//                          fontSize: 16,
+//                          decoration: TextDecoration.none))
+//                ])
+//              ],
+//              mainAxisAlignment: MainAxisAlignment.spaceAround,
+//            ),
+//          )
+//        ],
+//      ),
+//      decoration: BoxDecoration(color: Colors.black38),
+//    );
+//  }
 
   //生活建议
-  Widget _suggestionLayout() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-      child: Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Text(
-                '生活建议',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    decoration: TextDecoration.none),
-              )
-            ],
-            mainAxisAlignment: MainAxisAlignment.start,
-          ),
-          _suggestContentLayout(weatherMode != null
-              ? weatherMode.HeWeather[0].suggestion.comf.txt
-              : ""),
-          _suggestContentLayout(weatherMode != null
-              ? weatherMode.HeWeather[0].suggestion.sport.txt
-              : ""),
-          _suggestContentLayout(weatherMode != null
-              ? weatherMode.HeWeather[0].suggestion.cw.txt
-              : ""),
-        ],
-      ),
-      decoration: BoxDecoration(color: Colors.black38),
-    );
-  }
+//  Widget _suggestionLayout() {
+//    return Container(
+//      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+//      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+//      child: Column(
+//        children: <Widget>[
+//          Row(
+//            children: <Widget>[
+//              Text(
+//                '生活建议',
+//                style: TextStyle(
+//                    color: Colors.white,
+//                    fontSize: 20,
+//                    decoration: TextDecoration.none),
+//              )
+//            ],
+//            mainAxisAlignment: MainAxisAlignment.start,
+//          ),
+//          _suggestContentLayout(weatherBean != null
+//              ? weatherBean.HeWeather[0].suggestion.comf.txt
+//              : ""),
+//          _suggestContentLayout(weatherBean != null
+//              ? weatherBean.HeWeather[0].suggestion.sport.txt
+//              : ""),
+//          _suggestContentLayout(weatherBean != null
+//              ? weatherBean.HeWeather[0].suggestion.cw.txt
+//              : ""),
+//        ],
+//      ),
+//      decoration: BoxDecoration(color: Colors.black38),
+//    );
+//  }
 
   Widget _suggestContentLayout(String content) {
     return Container(
@@ -574,24 +587,24 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
-  _queryWeather() {
-    return null;
+  Future<void> _queryWeather(double longitude, double latitude) async {
+    String url = 'https://api.caiyunapp.com/v2/' +
+        Global.caiYunKey +
+        '/$longitude,$latitude/' +
+        'realtime.json';
 
-//    var url = 'http://guolin.tech/api/weather?cityid=' +
-//        '$weatherId' +
-//        '&key=bc0418b57b2d4918819d3974ac1285d9';
-//
-//    var httpClient = new HttpClient();
-//    try {
-//      var request = await httpClient.getUrl(Uri.parse(url));
-//      var response = await request.close();
-//      if (response.statusCode == HttpStatus.OK) {
-//        var json = await response.transform(utf8.decoder).join();
-//        Map data = jsonDecode(json);
-//        setState(() {
-//          weatherMode = new WeatherBean.fromJson(data);
-//        });
-//      }
-//    } catch (ignore) {}
+    var httpClient = new HttpClient();
+    try {
+      var request = await httpClient.getUrl(Uri.parse(url));
+      var response = await request.close();
+      if (response.statusCode == HttpStatus.ok) {
+        var json = await response.transform(utf8.decoder).join();
+        Map data = jsonDecode(json);
+        setState(() {
+          weatherBean = WeatherBean.fromJson(data);
+          result = weatherBean.result;
+        });
+      }
+    } catch (ignore) {}
   }
 }

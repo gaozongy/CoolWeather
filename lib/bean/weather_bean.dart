@@ -5,177 +5,122 @@ part 'weather_bean.g.dart';
 @JsonSerializable()
 class WeatherBean {
 
-  List<Inf> HeWeather;
+  String status;
+  String lang;
+  String metric;
+  int server_time;
+  List<double> location;
+  String api_status;
+  int tzshift;
+  String api_version;
+  Result result;
 
-  WeatherBean(this.HeWeather);
+
+  WeatherBean(this.status, this.lang, this.metric, this.server_time,
+      this.location, this.api_status, this.tzshift, this.api_version,
+      this.result);
 
   factory WeatherBean.fromJson(Map<String, dynamic> json) => _$WeatherBeanFromJson(json);
   Map<String, dynamic> toJson() => _$WeatherBeanToJson(this);
 }
 
 @JsonSerializable()
-class Inf {
-
-  Basic basic;
-  Update update;
+class Result{
   String status;
-  Now now;
-  List<Daily> daily_forecast;
-  Aqi aqi;
-  Suggestion suggestion;
-  String msg;
+  double o3;
+  double co;
+  double temperature;
+  double pm10;
+  String skycon;
+  double cloudrate;
+  Precipitation precipitation;
+  double dswrf;
+  double visibility;
+  double humidity;
+  double so2;
+  Ultraviolet ultraviolet;
+  double pres;
+  int aqi;
+  int pm25;
+  double no2;
+  double apparent_temperature;
+  Comfort comfort;
+  Wind wind;
 
-  Inf(this.basic, this.update, this.status, this.now, this.daily_forecast,
-      this.aqi, this.suggestion, this.msg);
+  Result(this.status, this.o3, this.co, this.temperature, this.pm10,
+      this.skycon, this.cloudrate, this.precipitation, this.dswrf,
+      this.visibility, this.humidity, this.so2, this.ultraviolet, this.pres,
+      this.aqi, this.pm25, this.no2, this.apparent_temperature, this.comfort,
+      this.wind);
 
-  factory Inf.fromJson(Map<String, dynamic> json) => _$InfFromJson(json);
-  Map<String, dynamic> toJson() => _$InfToJson(this);
+  factory Result.fromJson(Map<String, dynamic> json) => _$ResultFromJson(json);
+  Map<String, dynamic> toJson() => _$ResultToJson(this);
 }
 
 @JsonSerializable()
-class Basic {
-  String cid;
-  String location;
-  String parent_city;
-  String admin_area;
-  String cnty;
-  String lat;
-  String lon;
-  String tz;
-  String city;
-  String id;
-  Update update;
+class Precipitation {
+  Nearest nearest;
+  Local local;
 
+  Precipitation(this.nearest, this.local);
 
-  Basic(this.cid, this.location, this.parent_city, this.admin_area, this.cnty,
-      this.lat, this.lon, this.tz, this.city, this.id, this.update);
-
-  factory Basic.fromJson(Map<String, dynamic> json) => _$BasicFromJson(json);
-  Map<String, dynamic> toJson() => _$BasicToJson(this);
+  factory Precipitation.fromJson(Map<String, dynamic> json) => _$PrecipitationFromJson(json);
+  Map<String, dynamic> toJson() => _$PrecipitationToJson(this);
 }
 
 @JsonSerializable()
-class Update {
-  String loc;
-  String utc;
+class Nearest {
+  String status;
+  double distance;
+  double intensity;
 
-  Update(this.loc, this.utc);
+  Nearest(this.status, this.distance, this.intensity);
 
-  factory Update.fromJson(Map<String, dynamic> json) => _$UpdateFromJson(json);
-  Map<String, dynamic> toJson() => _$UpdateToJson(this);
+  factory Nearest.fromJson(Map<String, dynamic> json) => _$NearestFromJson(json);
+  Map<String, dynamic> toJson() => _$NearestToJson(this);
 }
 
 @JsonSerializable()
-class Now {
-  String cloud;
-  String cond_code;
-  String cond_txt;
-  String fl;
-  String hum;
-  String pcpn;
-  String pres;
-  String tmp;
-  String vis;
-  String wind_deg;
-  String wind_dir;
-  String wind_sc;
-  String wind_spd;
-  Cond cond;
+class Local {
+  String status;
+  double intensity;
+  String datasource;
 
-  Now(this.cloud, this.cond_code, this.cond_txt, this.fl, this.hum, this.pcpn,
-      this.pres, this.tmp, this.vis, this.wind_deg, this.wind_dir, this.wind_sc,
-      this.wind_spd, this.cond);
+  Local(this.status, this.intensity, this.datasource);
 
-  factory Now.fromJson(Map<String, dynamic> json) => _$NowFromJson(json);
-  Map<String, dynamic> toJson() => _$NowToJson(this);
+  factory Local.fromJson(Map<String, dynamic> json) => _$LocalFromJson(json);
+  Map<String, dynamic> toJson() => _$LocalToJson(this);
 }
 
 @JsonSerializable()
-class Cond {
-  String code;
-  String txt;
+class Ultraviolet {
+  double index;
+  String desc;
 
-  Cond(this.code, this.txt);
+  Ultraviolet(this.index, this.desc);
 
-  factory Cond.fromJson(Map<String, dynamic> json) => _$CondFromJson(json);
-  Map<String, dynamic> toJson() => _$CondToJson(this);
+  factory Ultraviolet.fromJson(Map<String, dynamic> json) => _$UltravioletFromJson(json);
+  Map<String, dynamic> toJson() => _$UltravioletToJson(this);
 }
 
 @JsonSerializable()
-class Daily {
-  String date;
-  _Cond cond;
-  Tmp tmp;
+class Comfort{
+  int index;
+  String desc;
 
-  Daily(this.date, this.cond, this.tmp);
+  Comfort(this.index, this.desc);
 
-  factory Daily.fromJson(Map<String, dynamic> json) => _$DailyFromJson(json);
-  Map<String, dynamic> toJson() => _$DailyToJson(this);
+  factory Comfort.fromJson(Map<String, dynamic> json) => _$ComfortFromJson(json);
+  Map<String, dynamic> toJson() => _$ComfortToJson(this);
 }
 
 @JsonSerializable()
-class _Cond {
-  String txt_d;
+class Wind {
+  double direction;
+  double speed;
 
-  _Cond(this.txt_d);
+  Wind(this.direction, this.speed);
 
-  factory _Cond.fromJson(Map<String, dynamic> json) => _$_CondFromJson(json);
-  Map<String, dynamic> toJson() => _$_CondToJson(this);
-}
-
-@JsonSerializable()
-class Tmp {
-  String max;
-  String min;
-
-  Tmp(this.max, this.min);
-
-  factory Tmp.fromJson(Map<String, dynamic> json) => _$TmpFromJson(json);
-  Map<String, dynamic> toJson() => _$TmpToJson(this);
-}
-
-@JsonSerializable()
-class Aqi {
-  City city;
-
-  Aqi(this.city);
-
-  factory Aqi.fromJson(Map<String, dynamic> json) => _$AqiFromJson(json);
-  Map<String, dynamic> toJson() => _$AqiToJson(this);
-}
-
-@JsonSerializable()
-class City {
-  String aqi;
-  String pm25;
-  String qlty;
-
-  City(this.aqi, this.pm25, this.qlty);
-
-  factory City.fromJson(Map<String, dynamic> json) => _$CityFromJson(json);
-  Map<String, dynamic> toJson() => _$CityToJson(this);
-}
-
-@JsonSerializable()
-class Suggestion {
-  Suggest comf;
-  Suggest sport;
-  Suggest cw;
-
-  Suggestion(this.comf, this.sport, this.cw);
-
-  factory Suggestion.fromJson(Map<String, dynamic> json) => _$SuggestionFromJson(json);
-  Map<String, dynamic> toJson() => _$SuggestionToJson(this);
-}
-
-@JsonSerializable()
-class Suggest {
-  String type;
-  String brf;
-  String txt;
-
-  Suggest(this.type, this.brf, this.txt);
-
-  factory Suggest.fromJson(Map<String, dynamic> json) => _$SuggestFromJson(json);
-  Map<String, dynamic> toJson() => _$SuggestToJson(this);
+  factory Wind.fromJson(Map<String, dynamic> json) => _$WindFromJson(json);
+  Map<String, dynamic> toJson() => _$WindToJson(this);
 }
