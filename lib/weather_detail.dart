@@ -4,7 +4,8 @@ import 'dart:io';
 import 'package:coolweather/bean/focus_county_list_bean.dart';
 import 'package:coolweather/bean/weather_bean.dart';
 import 'package:coolweather/global.dart';
-import 'package:coolweather/utils/DateUtils.dart';
+import 'package:coolweather/utils/date_utils.dart';
+import 'package:coolweather/utils/translation_utils.dart';
 import 'package:coolweather/views/popup_window_button.dart';
 import 'package:coolweather/views/temp_line.dart';
 import 'package:flutter/material.dart';
@@ -310,10 +311,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(
-            (weatherBean != null
-                    ? '${(result.temperature + 0.5).toInt()}'
-                    : '0') +
-                "°",
+            '${(result.temperature + 0.5).toInt()}°',
             style: TextStyle(
               color: Colors.white,
               fontSize: 60,
@@ -332,7 +330,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(
-            weatherBean != null ? result.skycon : "未知",
+            Translation.getWeatherDesc(result.skycon),
             style: TextStyle(
                 color: Colors.white,
                 fontSize: 20,
@@ -350,7 +348,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(
-            "中国天气网",
+            "彩云天气网",
             style: TextStyle(
                 color: Colors.white70,
                 fontSize: 10,
