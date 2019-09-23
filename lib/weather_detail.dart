@@ -17,6 +17,8 @@ import 'utils/translation_utils.dart';
 import 'views/popup_window_button.dart';
 import 'views/temp_line.dart';
 
+String time = '未知';
+
 class WeatherDetail extends StatefulWidget {
   WeatherDetail({Key key}) : super(key: key);
 
@@ -187,7 +189,7 @@ class _MainLayoutState extends State<WeatherDetail> {
                       ),
                     ),
                     Text(
-                      '未知',
+                      time,
                       style: TextStyle(
                         color: Colors.white70,
                         fontSize: 12,
@@ -346,7 +348,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
             Translation.getWeatherDesc(realtime.skycon),
             style: TextStyle(
                 color: Colors.white,
-                fontSize: 20,
+                fontSize: 18,
                 decoration: TextDecoration.none),
           )
         ],
@@ -361,7 +363,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(
-            "彩云天气网",
+            result.forecast_keypoint,
             style: TextStyle(
                 color: Colors.white70,
                 fontSize: 10,
@@ -415,25 +417,8 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   ImageIcon _getWeatherIcon(String weather) {
     ImageIcon imageIcon;
     switch (weather) {
-      case '阴':
-        {
-          imageIcon = ImageIcon(
-            AssetImage('image/cl_nosun.png'),
-            size: 25.0,
-            color: Colors.white,
-          );
-        }
-        break;
-      case '多云':
-        {
-          imageIcon = ImageIcon(
-            AssetImage('image/cw_cloud.png'),
-            size: 25.0,
-            color: Colors.white,
-          );
-        }
-        break;
-      case '晴':
+      case 'CLEAR_DAY':
+      case 'CLEAR_NIGHT':
         {
           imageIcon = ImageIcon(
             AssetImage('image/cw_sunny.png'),
@@ -442,26 +427,37 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
           );
         }
         break;
-
-      case '雪':
+      case 'PARTLY_CLOUDY_DAY':
+      case 'PARTLY_CLOUDY_NIGHT':
         {
           imageIcon = ImageIcon(
-            AssetImage('image/cw_snow.png'),
+            AssetImage('image/cw_cloud.png'),
             size: 25.0,
             color: Colors.white,
           );
         }
         break;
-      case '小雨':
+      case 'CLOUDY':
         {
           imageIcon = ImageIcon(
-            AssetImage('image/cl_light_rain.png'),
+            AssetImage('image/cl_nosun.png'),
             size: 25.0,
             color: Colors.white,
           );
         }
         break;
-      case '大雨':
+      case 'WIND':
+        break;
+      case 'HAZE':
+        {
+          imageIcon = ImageIcon(
+            AssetImage('image/cw_haze.png'),
+            size: 25.0,
+            color: Colors.white,
+          );
+        }
+        break;
+      case 'RAIN':
         {
           imageIcon = ImageIcon(
             AssetImage('image/cl_rain.png'),
@@ -470,11 +466,16 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
           );
         }
         break;
-      default:
+      case 'SNOW':
         {
-          imageIcon = ImageIcon(AssetImage('image/cw_sunny.png'),
-              size: 25.0, color: Colors.white);
+          imageIcon = ImageIcon(
+            AssetImage('image/cw_snow.png'),
+            size: 25.0,
+            color: Colors.white,
+          );
         }
+        break;
+      default:
         break;
     }
     return imageIcon;
@@ -607,6 +608,8 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         '/$longitude,$latitude/' +
         'weather.json?dailysteps=6';
 
+    print(url);
+
     var httpClient = new HttpClient();
     try {
       var request = await httpClient.getUrl(Uri.parse(url));
@@ -621,6 +624,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
           minutely = result.minutely;
           hourly = result.hourly;
           daily = result.daily;
+          time = weatherBean.server_time.toString();
         });
       }
     } catch (ignore) {}
