@@ -319,12 +319,12 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   Widget _tempLayout() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(28, 390, 28, 0),
+      padding: EdgeInsets.fromLTRB(28, 370, 28, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(
-            '${realtime.temperature}°',
+            '${(realtime.temperature + 0.5).toInt()}°',
             style: TextStyle(
               color: Colors.white,
               fontSize: 60,
@@ -396,7 +396,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+      padding: EdgeInsets.fromLTRB(12, 30, 12, 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: forecastRow,
