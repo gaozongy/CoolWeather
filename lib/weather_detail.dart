@@ -17,8 +17,6 @@ import 'utils/translation_utils.dart';
 import 'views/popup_window_button.dart';
 import 'views/temp_line.dart';
 
-String time = '未知';
-
 class WeatherDetail extends StatefulWidget {
   WeatherDetail({Key key}) : super(key: key);
 
@@ -39,6 +37,8 @@ class _MainLayoutState extends State<WeatherDetail> {
 
   /// 是否已取得定位
   bool position = false;
+
+  String time = '未知';
 
   @override
   void initState() {
@@ -119,6 +119,12 @@ class _MainLayoutState extends State<WeatherDetail> {
     });
   }
 
+  setTime(String t) {
+    setState(() {
+      time = t;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,7 +139,7 @@ class _MainLayoutState extends State<WeatherDetail> {
                         itemCount: countyList.length,
                         itemBuilder: (BuildContext context, int position) {
                           return _WeatherDetailWidget(
-                              countyList.elementAt(position));
+                              countyList.elementAt(position), setTime);
                         },
                       ),
                     )
@@ -259,7 +265,9 @@ class _MainLayoutState extends State<WeatherDetail> {
 class _WeatherDetailWidget extends StatefulWidget {
   final County county;
 
-  _WeatherDetailWidget(this.county);
+  final Function setTime;
+
+  _WeatherDetailWidget(this.county, this.setTime);
 
   @override
   State<StatefulWidget> createState() {
@@ -307,7 +315,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
             _fromLayout(),
             _forecastLayout(),
             _tempLineLayout(),
-//            _aqiLayout(),
+            _aqiLayout(),
 //            _suggestionLayout(),
           ],
         ),
@@ -494,70 +502,87 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
-  //空气质量
-//  Widget _aqiLayout() {
-//    return Container(
-//      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-//      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-//      child: Column(
-//        children: <Widget>[
-//          Row(
-//            children: <Widget>[
-//              Text("空气质量",
-//                  style: TextStyle(
-//                      color: Colors.white,
-//                      fontSize: 20,
-//                      decoration: TextDecoration.none))
-//            ],
-//          ),
-//          Padding(
-//            padding: EdgeInsets.only(top: 10),
-//            child: Row(
-//              children: <Widget>[
-//                Column(children: <Widget>[
-//                  Text(
-//                    weatherBean != null
-//                        ? weatherBean.HeWeather[0].aqi.city.aqi
-//                        : "",
-//                    style: TextStyle(
-//                        color: Colors.white,
-//                        fontSize: 30,
-//                        decoration: TextDecoration.none),
-//                  ),
-//                  Text(
-//                    'AQI指数',
-//                    style: TextStyle(
-//                        color: Colors.white,
-//                        fontSize: 16,
-//                        decoration: TextDecoration.none),
-//                  )
-//                ]),
-//                Column(children: <Widget>[
-//                  Text(
-//                      weatherBean != null
-//                          ? weatherBean.HeWeather[0].aqi.city.pm25
-//                          : "",
-//                      style: TextStyle(
-//                          color: Colors.white,
-//                          fontSize: 30,
-//                          decoration: TextDecoration.none)),
-//                  Text('PM2.5指数',
-//                      style: TextStyle(
-//                          color: Colors.white,
-//                          fontSize: 16,
-//                          decoration: TextDecoration.none))
-//                ])
-//              ],
-//              mainAxisAlignment: MainAxisAlignment.spaceAround,
-//            ),
-//          )
-//        ],
-//      ),
-//      decoration: BoxDecoration(color: Colors.black38),
-//    );
-//  }
+//  空气质量
+  Widget _aqiLayout() {
+    return Column(
+      children: <Widget>[
+        Divider(
+          height: 1,
+          color: Colors.white54,
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(16, 15, 16, 15),
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(bottom: 25),
+                child: Row(
+                  children: <Widget>[
+                    getWidget('空气质量', '优'),
+                    getWidget('PM2.5', realtime.pm25.toString()),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 25),
+                child: Row(
+                  children: <Widget>[
+                    getWidget(realtime.wind.direction.toString(),
+                        realtime.wind.speed.toString()),
+                    getWidget('体感温度', realtime.temperature.toString()),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 25),
+                child: Row(
+                  children: <Widget>[
+                    getWidget('湿度', realtime.humidity.toString()),
+                    getWidget('能见度', realtime.visibility.toString()),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: 25),
+                child: Row(
+                  children: <Widget>[
+                    getWidget('紫外线', realtime.ultraviolet.desc),
+                    getWidget('气压', realtime.pres.toString()),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
 
-  //生活建议
+  Widget getWidget(String title, String value) {
+    return Expanded(
+      flex: 1,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(title,
+              style: TextStyle(
+                  color: Colors.white54,
+                  fontSize: 12,
+                  decoration: TextDecoration.none)),
+          Padding(
+            padding: EdgeInsets.only(top: 2),
+            child: Text(value,
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    decoration: TextDecoration.none)),
+          )
+        ],
+      ),
+    );
+  }
+
+  // 生活建议
 //  Widget _suggestionLayout() {
 //    return Container(
 //      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 15),
@@ -590,17 +615,17 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 //      decoration: BoxDecoration(color: Colors.black38),
 //    );
 //  }
-
-  Widget _suggestContentLayout(String content) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 10),
-      child: Text(
-        content,
-        style: TextStyle(
-            color: Colors.white, fontSize: 14, decoration: TextDecoration.none),
-      ),
-    );
-  }
+//
+//  Widget _suggestContentLayout(String content) {
+//    return Container(
+//      padding: EdgeInsets.symmetric(vertical: 10),
+//      child: Text(
+//        content,
+//        style: TextStyle(
+//            color: Colors.white, fontSize: 14, decoration: TextDecoration.none),
+//      ),
+//    );
+//  }
 
   Future<void> _queryWeather(double longitude, double latitude) async {
     String url = 'https://api.caiyunapp.com/v2/' +
@@ -624,7 +649,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
           minutely = result.minutely;
           hourly = result.hourly;
           daily = result.daily;
-          time = weatherBean.server_time.toString();
+          widget.setTime(weatherBean.server_time.toString());
         });
       }
     } catch (ignore) {}
