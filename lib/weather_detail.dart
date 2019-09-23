@@ -1,14 +1,21 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:coolweather/bean/focus_county_list_bean.dart';
-import 'package:coolweather/bean/weather_bean.dart';
-import 'package:coolweather/global.dart';
-import 'package:coolweather/utils/translation_utils.dart';
-import 'package:coolweather/views/popup_window_button.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:amap_location/amap_location.dart';
+
+import 'bean/daily.dart';
+import 'bean/focus_county_list_bean.dart';
+import 'bean/hourly.dart';
+import 'bean/minutely.dart';
+import 'bean/realtime.dart';
+import 'bean/weather_bean.dart';
+import 'global.dart';
+import 'utils/date_utils.dart';
+import 'utils/translation_utils.dart';
+import 'views/popup_window_button.dart';
+import 'views/temp_line.dart';
 
 class WeatherDetail extends StatefulWidget {
   WeatherDetail({Key key}) : super(key: key);
@@ -265,6 +272,14 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   Result result;
 
+  Realtime realtime;
+
+  Minutely minutely;
+
+  Hourly hourly;
+
+  Daily daily;
+
   _WeatherDetailState(this.county);
 
   @override
@@ -285,11 +300,11 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         onRefresh: () => _queryWeather(county.longitude, county.latitude),
         child: ListView(
           children: <Widget>[
-//            _tempLayout(),
-//            _weatherLayout(),
+            _tempLayout(),
+            _weatherLayout(),
             _fromLayout(),
-//            _forecastLayout(),
-//            _tempLineLayout(),
+            _forecastLayout(),
+            _tempLineLayout(),
 //            _aqiLayout(),
 //            _suggestionLayout(),
           ],
@@ -302,42 +317,42 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     }
   }
 
-//  Widget _tempLayout() {
-//    return Padding(
-//      padding: EdgeInsets.fromLTRB(28, 390, 28, 0),
-//      child: Row(
-//        mainAxisAlignment: MainAxisAlignment.start,
-//        children: <Widget>[
-//          Text(
-//            '${result.temperature}°',
-//            style: TextStyle(
-//              color: Colors.white,
-//              fontSize: 60,
-//              decoration: TextDecoration.none,
-//            ),
-//          )
-//        ],
-//      ),
-//    );
-//  }
+  Widget _tempLayout() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(28, 390, 28, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            '${realtime.temperature}°',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 60,
+              decoration: TextDecoration.none,
+            ),
+          )
+        ],
+      ),
+    );
+  }
 
-//  Widget _weatherLayout() {
-//    return Padding(
-//      padding: EdgeInsets.symmetric(horizontal: 28),
-//      child: Row(
-//        mainAxisAlignment: MainAxisAlignment.start,
-//        children: <Widget>[
-//          Text(
-//            Translation.getWeatherDesc(result.skycon),
-//            style: TextStyle(
-//                color: Colors.white,
-//                fontSize: 20,
-//                decoration: TextDecoration.none),
-//          )
-//        ],
-//      ),
-//    );
-//  }
+  Widget _weatherLayout() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 28),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            Translation.getWeatherDesc(realtime.skycon),
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                decoration: TextDecoration.none),
+          )
+        ],
+      ),
+    );
+  }
 
   Widget _fromLayout() {
     return Padding(
@@ -357,37 +372,37 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
-//  Widget _forecastLayout() {
-//    List<Widget> forecastRow = new List();
-//    int length = weatherBean.HeWeather[0].daily_forecast.length;
-//    for (int i = 0; weatherBean != null && i < length; i++) {
-//      Daily daily = weatherBean.HeWeather[0].daily_forecast.elementAt(i);
-//      DateTime dateTime = DateTime.parse(daily.date);
-//      ImageIcon imageIcon = _getWeatherIcon(daily.cond.txt_d);
-//
-//      forecastRow.add(Column(
-//        children: <Widget>[
-//          _textLayout(DateUtils.getWeekday(dateTime.weekday)),
-//          _textLayout('${dateTime.month}' + '月' + '${dateTime.day}' + '日'),
-//          Padding(
-//            padding: EdgeInsets.only(top: 8),
-//            //child: Icon(imageIcon, color: Colors.white),
-//            child: imageIcon,
-//          ),
-//          _textLayout(daily.cond.txt_d),
-//        ],
-//        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//      ));
-//    }
-//
-//    return Padding(
-//      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
-//      child: Row(
-//        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//        children: forecastRow,
-//      ),
-//    );
-//  }
+  Widget _forecastLayout() {
+    List<Widget> forecastRow = new List();
+    int length = daily.skycon.length;
+    for (int i = 0; i < length; i++) {
+      Skycon skycon = daily.skycon.elementAt(i);
+      DateTime dateTime = DateTime.parse(skycon.date);
+      ImageIcon imageIcon = _getWeatherIcon(skycon.value);
+
+      forecastRow.add(Column(
+        children: <Widget>[
+          _textLayout(DateUtils.getWeekday(dateTime.weekday)),
+          _textLayout('${dateTime.month}' + '月' + '${dateTime.day}' + '日'),
+          Padding(
+            padding: EdgeInsets.only(top: 8),
+            //child: Icon(imageIcon, color: Colors.white),
+            child: imageIcon,
+          ),
+          _textLayout(Translation.getWeatherDesc(skycon.value)),
+        ],
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      ));
+    }
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: forecastRow,
+      ),
+    );
+  }
 
   Widget _textLayout(String content) {
     return Text(content,
@@ -455,25 +470,28 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
           );
         }
         break;
+      default:
+        {
+          imageIcon = ImageIcon(AssetImage('image/cw_sunny.png'),
+              size: 25.0, color: Colors.white);
+        }
+        break;
     }
     return imageIcon;
   }
 
-//  Widget _tempLineLayout() {
-//    List<Temp> tempList = List();
-//    if (weatherBean != null) {
-//      var forecast = weatherBean.HeWeather.elementAt(0).daily_forecast;
-//      for (int i = 0; i < forecast.length; i++) {
-//        tempList.add(Temp(double.parse(forecast.elementAt(i).tmp.max),
-//            double.parse(forecast.elementAt(i).tmp.min)));
-//      }
-//      return Padding(
-//        padding: EdgeInsets.symmetric(vertical: 5),
-//        child: TempLineWidget(tempList),
-//      );
-//    }
-//    return Text('曲线图');
-//  }
+  Widget _tempLineLayout() {
+    List<Temp> tempList = List();
+
+    var forecast = daily.temperature;
+    for (int i = 0; i < forecast.length; i++) {
+      tempList.add(Temp(forecast.elementAt(i).max, forecast.elementAt(i).min));
+    }
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 5),
+      child: TempLineWidget(tempList),
+    );
+  }
 
   //空气质量
 //  Widget _aqiLayout() {
@@ -587,7 +605,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     String url = 'https://api.caiyunapp.com/v2/' +
         Global.caiYunKey +
         '/$longitude,$latitude/' +
-        'weather.json';
+        'weather.json?dailysteps=6';
 
     var httpClient = new HttpClient();
     try {
@@ -599,6 +617,10 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         setState(() {
           weatherBean = WeatherBean.fromJson(data);
           result = weatherBean.result;
+          realtime = result.realtime;
+          minutely = result.minutely;
+          hourly = result.hourly;
+          daily = result.daily;
         });
       }
     } catch (ignore) {}
