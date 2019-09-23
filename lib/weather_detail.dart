@@ -4,10 +4,8 @@ import 'dart:io';
 import 'package:coolweather/bean/focus_county_list_bean.dart';
 import 'package:coolweather/bean/weather_bean.dart';
 import 'package:coolweather/global.dart';
-import 'package:coolweather/utils/date_utils.dart';
 import 'package:coolweather/utils/translation_utils.dart';
 import 'package:coolweather/views/popup_window_button.dart';
-import 'package:coolweather/views/temp_line.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:amap_location/amap_location.dart';
@@ -287,8 +285,8 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         onRefresh: () => _queryWeather(county.longitude, county.latitude),
         child: ListView(
           children: <Widget>[
-            _tempLayout(),
-            _weatherLayout(),
+//            _tempLayout(),
+//            _weatherLayout(),
             _fromLayout(),
 //            _forecastLayout(),
 //            _tempLineLayout(),
@@ -304,42 +302,42 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     }
   }
 
-  Widget _tempLayout() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(28, 390, 28, 0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            '${(result.temperature + 0.5).toInt()}°',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 60,
-              decoration: TextDecoration.none,
-            ),
-          )
-        ],
-      ),
-    );
-  }
+//  Widget _tempLayout() {
+//    return Padding(
+//      padding: EdgeInsets.fromLTRB(28, 390, 28, 0),
+//      child: Row(
+//        mainAxisAlignment: MainAxisAlignment.start,
+//        children: <Widget>[
+//          Text(
+//            '${result.temperature}°',
+//            style: TextStyle(
+//              color: Colors.white,
+//              fontSize: 60,
+//              decoration: TextDecoration.none,
+//            ),
+//          )
+//        ],
+//      ),
+//    );
+//  }
 
-  Widget _weatherLayout() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 28),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            Translation.getWeatherDesc(result.skycon),
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                decoration: TextDecoration.none),
-          )
-        ],
-      ),
-    );
-  }
+//  Widget _weatherLayout() {
+//    return Padding(
+//      padding: EdgeInsets.symmetric(horizontal: 28),
+//      child: Row(
+//        mainAxisAlignment: MainAxisAlignment.start,
+//        children: <Widget>[
+//          Text(
+//            Translation.getWeatherDesc(result.skycon),
+//            style: TextStyle(
+//                color: Colors.white,
+//                fontSize: 20,
+//                decoration: TextDecoration.none),
+//          )
+//        ],
+//      ),
+//    );
+//  }
 
   Widget _fromLayout() {
     return Padding(
@@ -589,7 +587,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     String url = 'https://api.caiyunapp.com/v2/' +
         Global.caiYunKey +
         '/$longitude,$latitude/' +
-        'realtime.json';
+        'weather.json';
 
     var httpClient = new HttpClient();
     try {
