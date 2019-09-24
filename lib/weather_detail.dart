@@ -150,7 +150,7 @@ class _MainLayoutState extends State<WeatherDetail> {
           decoration: BoxDecoration(
               image: DecorationImage(
             image: currentPage % 2 == 0
-                ? AssetImage('image/sunny.jpg')
+                ? AssetImage('image/main_bg_2.png')
                 : AssetImage('image/green.jpg'),
             fit: BoxFit.fitHeight,
           ))),
@@ -312,7 +312,8 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
           children: <Widget>[
             _tempLayout(),
             _weatherLayout(),
-            _fromLayout(),
+            _tipsLayout(),
+            _rainTendencyLayout(),
             _forecastLayout(),
             _tempLineLayout(),
             _aqiLayout(),
@@ -364,7 +365,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
-  Widget _fromLayout() {
+  Widget _tipsLayout() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 28, vertical: 5),
       child: Row(
@@ -379,6 +380,28 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
           )
         ],
       ),
+    );
+  }
+
+  Widget _rainTendencyLayout() {
+    bool rain = false;
+    minutely.probability.forEach((rainfall) {
+      if (rainfall > 0) {
+        rain = true;
+      }
+    });
+
+    return Column(
+      children: <Widget>[
+        Text(
+          rain ? '未来两小时有雨' : '未来两小时无雨',
+          style: TextStyle(color: Colors.white30, fontSize: 12),
+        ),
+        Text(
+          '有雨时在此处显示雨势折线图',
+          style: TextStyle(color: Colors.white30, fontSize: 12),
+        )
+      ],
     );
   }
 
@@ -518,8 +541,8 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
                 padding: EdgeInsets.only(bottom: 25),
                 child: Row(
                   children: <Widget>[
-                    getWidget('空气质量', Translation.getAqiDesc(realtime.aqi)),
-                    getWidget('PM2.5', realtime.pm25.toString()),
+                    getWidget('空气质量', Translation.getAqiDesc(realtime.aqi), ''),
+                    getWidget('PM2.5', realtime.pm25.toString(), ''),
                   ],
                 ),
               ),
@@ -527,9 +550,10 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
                 padding: EdgeInsets.only(bottom: 25),
                 child: Row(
                   children: <Widget>[
-                    getWidget(realtime.wind.direction.toString(),
-                        realtime.wind.speed.toString()),
-                    getWidget('体感温度', realtime.temperature.toString()),
+                    getWidget(Translation.getWindDir(realtime.wind.direction),
+                        realtime.wind.speed.toString(), 'km/h'),
+                    getWidget('体感温度',
+                        realtime.temperature.toInt().toString() + '°', ''),
                   ],
                 ),
               ),
@@ -537,8 +561,8 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
                 padding: EdgeInsets.only(bottom: 25),
                 child: Row(
                   children: <Widget>[
-                    getWidget('湿度', realtime.humidity.toString()),
-                    getWidget('能见度', realtime.visibility.toString()),
+                    getWidget('湿度', (realtime.humidity * 100).toString(), '%'),
+                    getWidget('能见度', realtime.visibility.toString(), 'km'),
                   ],
                 ),
               ),
@@ -546,8 +570,8 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
                 padding: EdgeInsets.only(bottom: 25),
                 child: Row(
                   children: <Widget>[
-                    getWidget('紫外线', realtime.ultraviolet.desc),
-                    getWidget('气压', realtime.pres.toString()),
+                    getWidget('紫外线', realtime.ultraviolet.desc, ''),
+                    getWidget('气压', (realtime.pres ~/ 100).toString(), 'hPa'),
                   ],
                 ),
               ),
@@ -558,7 +582,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
-  Widget getWidget(String title, String value) {
+  Widget getWidget(String title, String value, String unit) {
     return Expanded(
       flex: 1,
       child: Column(
@@ -571,11 +595,24 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
                   decoration: TextDecoration.none)),
           Padding(
             padding: EdgeInsets.only(top: 2),
-            child: Text(value,
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    decoration: TextDecoration.none)),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Text(value,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        decoration: TextDecoration.none)),
+                Padding(
+                  padding: EdgeInsets.only(left: 2),
+                  child: Text(unit,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          decoration: TextDecoration.none)),
+                )
+              ],
+            ),
           )
         ],
       ),

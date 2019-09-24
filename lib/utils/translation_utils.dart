@@ -51,4 +51,26 @@ class Translation {
     }
     return '';
   }
+
+  static String getWindDir(double angle) {
+    if (337.5 < angle || angle < 22.5) {
+      return '北风';
+    } else if (22.5 <= angle && angle <= 67.5) {
+      return '东北风';
+    } else if (67.5 < angle && angle < 112.5) {
+      return '东风';
+    } else if (112.5 <= angle && angle <= 157.5) {
+      return '东南风';
+    } else if (157.5 < angle && angle < 202.5) {
+      return '南风';
+    } else if (202.5 <= angle && angle <= 247.5) {
+      return '西南风';
+    } else if (247.5 < angle && angle < 292.5) {
+      return '西风';
+    } else if (292.5 < angle && angle < 337.5) {
+      return '东北风';
+    }
+
+    return '';
+  }
 }
