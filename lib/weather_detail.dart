@@ -38,7 +38,7 @@ class _MainLayoutState extends State<WeatherDetail> {
   /// 是否已取得定位
   bool position = false;
 
-  String time = '未知';
+  String updateTime = '未知';
 
   @override
   void initState() {
@@ -119,9 +119,9 @@ class _MainLayoutState extends State<WeatherDetail> {
     });
   }
 
-  setTime(String t) {
+  setUpdateTime(int time) {
     setState(() {
-      time = t;
+      updateTime = DateUtils.getTimeDesc(time) + '更新';
     });
   }
 
@@ -139,7 +139,7 @@ class _MainLayoutState extends State<WeatherDetail> {
                         itemCount: countyList.length,
                         itemBuilder: (BuildContext context, int position) {
                           return _WeatherDetailWidget(
-                              countyList.elementAt(position), setTime);
+                              countyList.elementAt(position), setUpdateTime);
                         },
                       ),
                     )
@@ -195,7 +195,7 @@ class _MainLayoutState extends State<WeatherDetail> {
                       ),
                     ),
                     Text(
-                      time,
+                      updateTime,
                       style: TextStyle(
                         color: Colors.white70,
                         fontSize: 12,
@@ -265,9 +265,9 @@ class _MainLayoutState extends State<WeatherDetail> {
 class _WeatherDetailWidget extends StatefulWidget {
   final County county;
 
-  final Function setTime;
+  final Function setUpdateTime;
 
-  _WeatherDetailWidget(this.county, this.setTime);
+  _WeatherDetailWidget(this.county, this.setUpdateTime);
 
   @override
   State<StatefulWidget> createState() {
@@ -518,7 +518,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
                 padding: EdgeInsets.only(bottom: 25),
                 child: Row(
                   children: <Widget>[
-                    getWidget('空气质量', '优'),
+                    getWidget('空气质量', Translation.getAqiDesc(realtime.aqi)),
                     getWidget('PM2.5', realtime.pm25.toString()),
                   ],
                 ),
@@ -649,7 +649,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
           minutely = result.minutely;
           hourly = result.hourly;
           daily = result.daily;
-          widget.setTime(weatherBean.server_time.toString());
+          widget.setUpdateTime(weatherBean.server_time);
         });
       }
     } catch (ignore) {}
