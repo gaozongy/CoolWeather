@@ -15,6 +15,7 @@ import 'global.dart';
 import 'utils/date_utils.dart';
 import 'utils/translation_utils.dart';
 import 'views/popup_window_button.dart';
+import 'views/precipitation_line.dart';
 import 'views/temp_line.dart';
 
 class WeatherDetail extends StatefulWidget {
@@ -79,8 +80,10 @@ class _MainLayoutState extends State<WeatherDetail> {
           return;
         }
 
-        County posCounty = new County(aMapLocation.district,
-            aMapLocation.latitude, aMapLocation.longitude);
+//        County posCounty = new County(aMapLocation.district,
+//            aMapLocation.latitude, aMapLocation.longitude);
+        // todo 宣威市在下雨，暂时写死看效果
+        County posCounty = new County('宣威市', 26.21989, 104.10448);
         list.add(posCounty);
 
         if (currentPage == 0) {
@@ -316,7 +319,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
             _rainTendencyLayout(),
             _forecastLayout(),
             _tempLineLayout(),
-            _aqiLayout(),
+            _moreInfLayout(),
 //            _suggestionLayout(),
           ],
         ),
@@ -391,17 +394,9 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
       }
     });
 
-    return Column(
-      children: <Widget>[
-        Text(
-          rain ? '未来两小时有雨' : '未来两小时无雨',
-          style: TextStyle(color: Colors.white30, fontSize: 12),
-        ),
-        Text(
-          '有雨时在此处显示雨势折线图',
-          style: TextStyle(color: Colors.white30, fontSize: 12),
-        )
-      ],
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 20),
+      child: PrecipitationLineWidget(minutely.precipitation_2h),
     );
   }
 
@@ -525,8 +520,8 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
-//  空气质量
-  Widget _aqiLayout() {
+//  更多信息
+  Widget _moreInfLayout() {
     return Column(
       children: <Widget>[
         Divider(
@@ -561,7 +556,10 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
                 padding: EdgeInsets.only(bottom: 25),
                 child: Row(
                   children: <Widget>[
-                    getWidget('湿度', (realtime.humidity * 100).toString(), '%'),
+                    getWidget(
+                        '湿度',
+                        (realtime.humidity * 100 + 0.5).toInt().toString(),
+                        '%'),
                     getWidget('能见度', realtime.visibility.toString(), 'km'),
                   ],
                 ),

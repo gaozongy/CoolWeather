@@ -65,7 +65,7 @@ class TempLinePainter extends CustomPainter {
     List<Temp> drawList = List();
 
     tempList.forEach((temp) {
-      drawList.add(Temp((average - temp.max) * 5, (average - temp.min) * 5));
+      drawList.add(Temp((average - temp.max) * 8, (average - temp.min) * 8));
     });
 
     double distance = size.width / tempList.length;
@@ -129,16 +129,15 @@ class TempLinePainter extends CustomPainter {
           fontSize: 12));
       pb.pushStyle(ui.TextStyle(color: Colors.white70));
 
-      pb.addText('${tempList.elementAt(i).max.toInt()}' + '°');
+      pb.addText('${(tempList.elementAt(i).max + 0.5).toInt()}' + '°');
       ParagraphConstraints pc = ParagraphConstraints(width: 30);
       Paragraph paragraph = pb.build()..layout(pc);
       Offset offset = Offset(x, dots.elementAt(i).max - 20);
       canvas.drawParagraph(paragraph, offset);
 
-      pb.addText('${tempList.elementAt(i).min.toInt()}' + '°');
+      pb.addText('${(tempList.elementAt(i).min + 0.5).toInt()}' + '°');
       Paragraph paragraph2 = pb.build()..layout(pc);
       Offset offset2 = Offset(x, dots.elementAt(i).min + margin + 5);
-
       canvas.drawParagraph(paragraph2, offset2);
     }
   }
