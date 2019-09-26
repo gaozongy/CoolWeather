@@ -8,7 +8,7 @@ void main() => runApp(MaterialApp(
       initialRoute: "/",
       routes: {
         "/": (context) => WeatherDetail(),
-        "focus_county_list": (context) => FocusCountyList(),
+        "focus_district_list": (context) => FocusCountyList(),
         "select_county": (context) => SelectCounty()
       },
     ));

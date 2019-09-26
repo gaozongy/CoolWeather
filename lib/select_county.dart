@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:coolweather/bean/focus_county_list_bean.dart';
+import 'package:coolweather/bean/focus_district_list_bean.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:quiver/strings.dart';
@@ -142,19 +142,19 @@ class _MyHomePageState extends State<MyHomePage> {
         if (!isEmpty(weatherId) && !isEmpty(countyName)) {
           Future<SharedPreferences> future = SharedPreferences.getInstance();
           future.then((prefs) {
-            FocusCountyListBean focusCountyListBean;
-            String focusCountyJson = prefs.getString('focus_county_data');
+            FocusDistrictListBean focusCountyListBean;
+            String focusCountyJson = prefs.getString('focus_district_data');
             if (!isEmpty(focusCountyJson)) {
               focusCountyListBean =
-                  FocusCountyListBean.fromJson(json.decode(focusCountyJson));
+                  FocusDistrictListBean.fromJson(json.decode(focusCountyJson));
             }
 
             if (focusCountyListBean == null) {
-              focusCountyListBean = new FocusCountyListBean(new List<County>());
+              focusCountyListBean = new FocusDistrictListBean(new List<District>());
             }
-            focusCountyListBean.countyList.add(County(countyName, 0, 0));
+            focusCountyListBean.districtList.add(District(countyName, 0, 0));
             focusCountyJson = jsonEncode(focusCountyListBean.toJson());
-            prefs.setString('focus_county_data', focusCountyJson);
+            prefs.setString('focus_district_data', focusCountyJson);
             Navigator.pop(context, true);
           });
         }

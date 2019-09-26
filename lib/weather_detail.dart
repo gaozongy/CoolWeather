@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:amap_location/amap_location.dart';
 
 import 'bean/daily.dart';
-import 'bean/focus_county_list_bean.dart';
+import 'bean/focus_district_list_bean.dart';
 import 'bean/hourly.dart';
 import 'bean/minutely.dart';
 import 'bean/realtime.dart';
@@ -30,11 +30,11 @@ class WeatherDetail extends StatefulWidget {
 }
 
 class _MainLayoutState extends State<WeatherDetail> {
-  List<County> countyList = new List();
+  List<District> districtList = new List();
 
   int currentPage = 0;
 
-  County county;
+  District district;
 
   PageController _pageController = new PageController();
 
@@ -47,11 +47,10 @@ class _MainLayoutState extends State<WeatherDetail> {
   void initState() {
     super.initState();
 
-    county = County('未知', 0, 0);
-    countyList.add(county);
+    district = District('未知', 0, 0);
+    districtList.add(district);
 
     _initPageController();
-    _initLocation();
     _initData();
   }
 
@@ -61,51 +60,23 @@ class _MainLayoutState extends State<WeatherDetail> {
       if (page != currentPage) {
         setState(() {
           currentPage = page;
-          county = countyList.elementAt(page);
+          district = districtList.elementAt(page);
         });
       }
     });
   }
 
-  _initLocation() async {
-    bool result = await AMapLocationClient.startup(new AMapLocationOption(
-        desiredAccuracy: CLLocationAccuracy.kCLLocationAccuracyHundredMeters));
-
-    if (result) {
-      AMapLocation aMapLocation = await AMapLocationClient.getLocation(true);
-      setState(() {
-        List<County> list = List();
-
-        if (aMapLocation.district == null ||
-            aMapLocation.latitude == null ||
-            aMapLocation.longitude == null) {
-          return;
-        }
-
-        County posCounty = new County(aMapLocation.district,
-            aMapLocation.latitude, aMapLocation.longitude);
-        list.add(posCounty);
-        if (currentPage == 0) {
-          county = posCounty;
-        }
-        countyList.replaceRange(0, 1, list);
-
-        position = true;
-      });
-    }
-  }
-
   _initData() {
     Future<SharedPreferences> future = SharedPreferences.getInstance();
     future.then((prefs) {
-      String focusCountyListJson = prefs.getString('focus_county_data');
-      if (focusCountyListJson != null) {
-        FocusCountyListBean focusCountyListBean =
-            FocusCountyListBean.fromJson(json.decode(focusCountyListJson));
-        if (focusCountyListBean != null &&
-            focusCountyListBean.countyList.length > 0) {
+      String focusDistrictListJson = prefs.getString('focus_district_data');
+      if (focusDistrictListJson != null) {
+        FocusDistrictListBean focusDistrictListBean =
+            FocusDistrictListBean.fromJson(json.decode(focusDistrictListJson));
+        if (focusDistrictListBean != null &&
+            focusDistrictListBean.districtList.length > 0) {
           setState(() {
-            countyList.addAll(focusCountyListBean.countyList);
+            districtList.addAll(focusDistrictListBean.districtList);
           });
           return;
         }
@@ -113,8 +84,8 @@ class _MainLayoutState extends State<WeatherDetail> {
     });
   }
 
-  _focusCountyList() {
-    Navigator.of(context).pushNamed("focus_county_list").then((bool) {
+  _focusDistrictList() {
+    Navigator.of(context).pushNamed("focus_district_list").then((bool) {
       if (bool) {
         _initData();
       }
@@ -127,25 +98,37 @@ class _MainLayoutState extends State<WeatherDetail> {
     });
   }
 
+  setLocation(District c) {
+    List<District> list = List();
+    list.add(c);
+    districtList.replaceRange(0, 1, list);
+
+    if (currentPage == 0) {
+      setState(() {
+        district = c;
+      });
+    }
+
+    position = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
           child: Stack(
             children: <Widget>[
-              position
-                  ? Padding(
-                      padding: EdgeInsets.only(top: 80),
-                      child: PageView.builder(
-                        controller: _pageController,
-                        itemCount: countyList.length,
-                        itemBuilder: (BuildContext context, int position) {
-                          return _WeatherDetailWidget(
-                              countyList.elementAt(position), setUpdateTime);
-                        },
-                      ),
-                    )
-                  : Center(child: Text('获取定位 Loading 动画')),
+              Padding(
+                padding: EdgeInsets.only(top: 80),
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: districtList.length,
+                  itemBuilder: (BuildContext context, int position) {
+                    return _WeatherDetailWidget(districtList.elementAt(position),
+                        setUpdateTime, setLocation);
+                  },
+                ),
+              ),
               _titleLayout(),
             ],
           ),
@@ -189,7 +172,7 @@ class _MainLayoutState extends State<WeatherDetail> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      county != null ? county.countyName : '未知',
+                      district != null ? district.name : '未知',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -217,7 +200,7 @@ class _MainLayoutState extends State<WeatherDetail> {
               IconButton(
                 icon: Icon(Icons.home),
                 color: Colors.white,
-                onPressed: _focusCountyList,
+                onPressed: _focusDistrictList,
               ),
               Center(
                 child: Padding(
@@ -265,20 +248,22 @@ class _MainLayoutState extends State<WeatherDetail> {
 }
 
 class _WeatherDetailWidget extends StatefulWidget {
-  final County county;
+  final District district;
 
   final Function setUpdateTime;
 
-  _WeatherDetailWidget(this.county, this.setUpdateTime);
+  final Function setLocation;
+
+  _WeatherDetailWidget(this.district, this.setUpdateTime, this.setLocation);
 
   @override
   State<StatefulWidget> createState() {
-    return _WeatherDetailState(county);
+    return _WeatherDetailState(district);
   }
 }
 
 class _WeatherDetailState extends State<_WeatherDetailWidget> {
-  County county;
+  District district;
 
   WeatherBean weatherBean;
 
@@ -292,13 +277,37 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   Daily daily;
 
-  _WeatherDetailState(this.county);
+  _WeatherDetailState(this.district);
 
   @override
   void initState() {
     super.initState();
 
-    _queryWeather(county.longitude, county.latitude);
+    if (district.latitude == 0 && district.longitude == 0) {
+      _initLocation();
+    } else {
+      _queryWeather(district.longitude, district.latitude);
+    }
+  }
+
+  // 定位
+  _initLocation() async {
+    bool result = await AMapLocationClient.startup(new AMapLocationOption(
+        desiredAccuracy: CLLocationAccuracy.kCLLocationAccuracyHundredMeters));
+
+    if (result) {
+      AMapLocation aMapLocation = await AMapLocationClient.getLocation(true);
+      if (aMapLocation.district == null ||
+          aMapLocation.latitude == null ||
+          aMapLocation.longitude == null) {
+        return;
+      }
+
+      district = new District(
+          aMapLocation.district, aMapLocation.latitude, aMapLocation.longitude);
+      widget.setLocation(district);
+      _queryWeather(district.longitude, district.latitude);
+    }
   }
 
   @override
@@ -309,7 +318,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   Widget weatherDetailLayout(BuildContext context) {
     if (weatherBean != null) {
       return RefreshIndicator(
-        onRefresh: () => _queryWeather(county.longitude, county.latitude),
+        onRefresh: () => _queryWeather(district.longitude, district.latitude),
         child: ListView(
           children: <Widget>[
             _tempLayout(),
@@ -322,14 +331,11 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
             _sunriseSunsetLayout(),
             _dividerLayout(),
             _moreInfLayout(),
-//            _suggestionLayout(),
           ],
         ),
       );
     } else {
-      return Center(
-        child: Text('天气数据获取 Loading 动画'),
-      );
+      return Center();
     }
   }
 
@@ -621,6 +627,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
+  // 分割线
   Widget _dividerLayout() {
     return Divider(
       thickness: 1,
@@ -628,11 +635,12 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
+  // 查询天气信息
   Future<void> _queryWeather(double longitude, double latitude) async {
     Future<SharedPreferences> future = SharedPreferences.getInstance();
     future.then((prefs) async {
       String json;
-      json = prefs.getString(county.countyName);
+      json = prefs.getString(district.name);
       if (!isEmpty(json)) {
         Map map = jsonDecode(json);
         weatherBean = WeatherBean.fromJson(map);
@@ -657,7 +665,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
           if (response.statusCode == HttpStatus.ok) {
             json = await response.transform(utf8.decoder).join();
             future.then((prefs) {
-              prefs.setString(county.countyName, json);
+              prefs.setString(district.name, json);
             });
           }
         } catch (ignore) {}

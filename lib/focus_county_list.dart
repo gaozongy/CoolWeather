@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'bean/focus_county_list_bean.dart';
+import 'bean/focus_district_list_bean.dart';
 
 class FocusCountyList extends StatefulWidget {
   @override
@@ -14,7 +14,7 @@ class FocusCountyList extends StatefulWidget {
 }
 
 class _FocusCountyListState extends State<FocusCountyList> {
-  FocusCountyListBean focusCountyListBean;
+  FocusDistrictListBean focusCountyListBean;
 
   @override
   void initState() {
@@ -25,10 +25,10 @@ class _FocusCountyListState extends State<FocusCountyList> {
   _initData() {
     Future<SharedPreferences> future = SharedPreferences.getInstance();
     future.then((prefs) {
-      String focusCountyListJson = prefs.getString('focus_county_data');
+      String focusCountyListJson = prefs.getString('focus_district_data');
       if (focusCountyListJson != null) {
-        FocusCountyListBean bean =
-            FocusCountyListBean.fromJson(json.decode(focusCountyListJson));
+        FocusDistrictListBean bean =
+            FocusDistrictListBean.fromJson(json.decode(focusCountyListJson));
         setState(() {
           focusCountyListBean = bean;
         });
@@ -52,10 +52,10 @@ class _FocusCountyListState extends State<FocusCountyList> {
         ),
         body: focusCountyListBean != null
             ? ListView.builder(
-                itemCount: focusCountyListBean.countyList.length,
+                itemCount: focusCountyListBean.districtList.length,
                 itemBuilder: (BuildContext context, int position) {
-                  County county =
-                      focusCountyListBean.countyList.elementAt(position);
+                  District county =
+                      focusCountyListBean.districtList.elementAt(position);
                   return getRow(county);
                 })
             : Text('empty'),
@@ -63,19 +63,19 @@ class _FocusCountyListState extends State<FocusCountyList> {
             onPressed: _selectCounty, child: new Icon(Icons.add)));
   }
 
-  Widget getRow(County county) {
+  Widget getRow(District county) {
     return new InkWell(
       child: new Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: new Text(county.countyName, style: new TextStyle(fontSize: 16)),
+        child: new Text(county.name, style: new TextStyle(fontSize: 16)),
       ),
       onTap: () {
         setState(() {
-          focusCountyListBean.countyList.remove(county);
+          focusCountyListBean.districtList.remove(county);
           Future<SharedPreferences> future = SharedPreferences.getInstance();
           future.then((prefs) {
             prefs.setString(
-                'focus_county_data', jsonEncode(focusCountyListBean));
+                'focus_district_data', jsonEncode(focusCountyListBean));
           });
         });
       },
