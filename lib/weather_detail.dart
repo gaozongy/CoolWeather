@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:amap_location/amap_location.dart';
 
@@ -627,76 +628,51 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     );
   }
 
-  // 生活建议
-//  Widget _suggestionLayout() {
-//    return Container(
-//      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-//      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-//      child: Column(
-//        children: <Widget>[
-//          Row(
-//            children: <Widget>[
-//              Text(
-//                '生活建议',
-//                style: TextStyle(
-//                    color: Colors.white,
-//                    fontSize: 20,
-//                    decoration: TextDecoration.none),
-//              )
-//            ],
-//            mainAxisAlignment: MainAxisAlignment.start,
-//          ),
-//          _suggestContentLayout(weatherBean != null
-//              ? weatherBean.HeWeather[0].suggestion.comf.txt
-//              : ""),
-//          _suggestContentLayout(weatherBean != null
-//              ? weatherBean.HeWeather[0].suggestion.sport.txt
-//              : ""),
-//          _suggestContentLayout(weatherBean != null
-//              ? weatherBean.HeWeather[0].suggestion.cw.txt
-//              : ""),
-//        ],
-//      ),
-//      decoration: BoxDecoration(color: Colors.black38),
-//    );
-//  }
-//
-//  Widget _suggestContentLayout(String content) {
-//    return Container(
-//      padding: EdgeInsets.symmetric(vertical: 10),
-//      child: Text(
-//        content,
-//        style: TextStyle(
-//            color: Colors.white, fontSize: 14, decoration: TextDecoration.none),
-//      ),
-//    );
-//  }
-
   Future<void> _queryWeather(double longitude, double latitude) async {
-    String url = 'https://api.caiyunapp.com/v2/' +
-        Global.caiYunKey +
-        '/$longitude,$latitude/' +
-        'weather.json?dailysteps=6';
-
-    print(url);
-
-    var httpClient = new HttpClient();
-    try {
-      var request = await httpClient.getUrl(Uri.parse(url));
-      var response = await request.close();
-      if (response.statusCode == HttpStatus.ok) {
-        var json = await response.transform(utf8.decoder).join();
-        Map data = jsonDecode(json);
-        setState(() {
-          weatherBean = WeatherBean.fromJson(data);
-          result = weatherBean.result;
-          realtime = result.realtime;
-          minutely = result.minutely;
-          hourly = result.hourly;
-          daily = result.daily;
-          widget.setUpdateTime(weatherBean.server_time);
-        });
+    Future<SharedPreferences> future = SharedPreferences.getInstance();
+    future.then((prefs) async {
+      String json;
+      json = prefs.getString(county.countyName);
+      if (!isEmpty(json)) {
+        Map map = jsonDecode(json);
+        weatherBean = WeatherBean.fromJson(map);
+        if (DateUtils.currentTimeMillis() - weatherBean.server_time * 1000 >
+            1000 * 60 * 15) {
+          json = null;
+        }
       }
-    } catch (ignore) {}
+
+      if (isEmpty(json)) {
+        String url = 'https://api.caiyunapp.com/v2/' +
+            Global.caiYunKey +
+            '/$longitude,$latitude/' +
+            'weather.json?dailysteps=6';
+
+        print(url);
+
+        var httpClient = new HttpClient();
+        try {
+          var request = await httpClient.getUrl(Uri.parse(url));
+          var response = await request.close();
+          if (response.statusCode == HttpStatus.ok) {
+            json = await response.transform(utf8.decoder).join();
+            future.then((prefs) {
+              prefs.setString(county.countyName, json);
+            });
+          }
+        } catch (ignore) {}
+      }
+
+      Map map = jsonDecode(json);
+      setState(() {
+        weatherBean = WeatherBean.fromJson(map);
+        result = weatherBean.result;
+        realtime = result.realtime;
+        minutely = result.minutely;
+        hourly = result.hourly;
+        daily = result.daily;
+        widget.setUpdateTime(weatherBean.server_time);
+      });
+    });
   }
 }
