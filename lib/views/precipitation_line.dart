@@ -47,33 +47,47 @@ class PrecipitationLinePainter extends CustomPainter {
 
     precipitation2h = getData();
 
-    canvas.translate(0, size.height);
+    canvas.translate(0, height);
 
-    double distance = size.width / precipitation2h.length;
+    double distance = width / precipitation2h.length;
     drawLine(precipitation2h, distance, canvas);
 
-    canvas.drawLine(Offset(0, 0), Offset(size.width, 0), bottomLinePaint);
+    canvas.drawLine(Offset(0, 0), Offset(width, 0), bottomLinePaint);
 
-    canvas.drawLine(Offset(0, -height / 3 * 1),
-        Offset(size.width, -height / 3 * 1), auxiliaryLinePaint);
+    canvas.drawLine(Offset(0, -height / 3 * 1), Offset(width, -height / 3 * 1),
+        auxiliaryLinePaint);
 
-    canvas.drawLine(Offset(0, -height / 3 * 2),
-        Offset(size.width, -height / 3 * 2), auxiliaryLinePaint);
+    canvas.drawLine(Offset(0, -height / 3 * 2), Offset(width, -height / 3 * 2),
+        auxiliaryLinePaint);
 
-    canvas.drawLine(Offset(0, -height / 3 * 3),
-        Offset(size.width, -height / 3 * 3), auxiliaryLinePaint);
+    canvas.drawLine(Offset(0, -height / 3 * 3), Offset(width, -height / 3 * 3),
+        auxiliaryLinePaint);
 
-    drawText(canvas, '现在', Offset(0, 0));
-    drawText(canvas, '1小时', Offset(size.width / 2 - 20, 0));
-    drawText(canvas, '2小时', Offset(size.width - 40, 0));
+    TextPainter tpCurrent = getTextPainter('现在');
+    tpCurrent.paint(canvas, Offset(0, 0));
 
-    canvas.drawCircle(Offset(width / 2, 0), 2, trendLinePaint);
+    TextPainter tpOneHour = getTextPainter('1小时');
+    tpOneHour.paint(canvas, Offset((width - tpOneHour.width) / 2, 0));
 
-    canvas.drawLine(Offset(width / 2 - 20, 0),
-        Offset(width / 2 + 20, 0), trendLinePaint);
+    TextPainter tpTwoHour = getTextPainter('2小时');
+    tpTwoHour.paint(canvas, Offset(width - tpTwoHour.width, 0));
   }
 
   // 画文字
+  TextPainter getTextPainter(String text) {
+    return TextPainter(
+      textDirection: TextDirection.ltr,
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          color: Colors.white70,
+          fontSize: 10,
+        ),
+      ),
+    )..layout();
+  }
+
+  // 画文字,无法计算绘制文字的实际宽高，暂时未使用，有时间研究下
   void drawText(Canvas canvas, String text, Offset offset) {
     ParagraphBuilder pb = ParagraphBuilder(ParagraphStyle(
         textAlign: TextAlign.left,
