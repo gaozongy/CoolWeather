@@ -6,14 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bean/focus_district_list_bean.dart';
 
-class FocusCountyList extends StatefulWidget {
+class FocusDistrictList extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _FocusCountyListState();
+    return _FocusDistrictListState();
   }
 }
 
-class _FocusCountyListState extends State<FocusCountyList> {
+class _FocusDistrictListState extends State<FocusDistrictList> {
   FocusDistrictListBean focusCountyListBean;
 
   @override
@@ -36,8 +36,8 @@ class _FocusCountyListState extends State<FocusCountyList> {
     });
   }
 
-  void _selectCounty() {
-    Navigator.of(context).pushNamed("select_county").then((bool) {
+  void _selectDistrict() {
+    Navigator.of(context).pushNamed("select_district").then((bool) {
       if (bool) {
         _initData();
       }
@@ -60,7 +60,7 @@ class _FocusCountyListState extends State<FocusCountyList> {
                 })
             : Text('empty'),
         floatingActionButton: FloatingActionButton(
-            onPressed: _selectCounty, child: new Icon(Icons.add)));
+            onPressed: _selectDistrict, child: new Icon(Icons.add)));
   }
 
   Widget getRow(District county) {

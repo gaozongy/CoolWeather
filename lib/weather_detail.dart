@@ -124,8 +124,10 @@ class _MainLayoutState extends State<WeatherDetail> {
                   controller: _pageController,
                   itemCount: districtList.length,
                   itemBuilder: (BuildContext context, int position) {
-                    return _WeatherDetailWidget(districtList.elementAt(position),
-                        setUpdateTime, setLocation);
+                    return _WeatherDetailWidget(
+                        districtList.elementAt(position),
+                        setUpdateTime,
+                        setLocation);
                   },
                 ),
               ),
@@ -134,9 +136,7 @@ class _MainLayoutState extends State<WeatherDetail> {
           ),
           decoration: BoxDecoration(
               image: DecorationImage(
-            image: currentPage % 2 == 0
-                ? AssetImage('image/main_bg_2.png')
-                : AssetImage('image/green.jpg'),
+            image: AssetImage('image/main_bg_2.png'),
             fit: BoxFit.fitHeight,
           ))),
     );

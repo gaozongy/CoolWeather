@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SelectCounty extends StatelessWidget {
+class SelectDistrict extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MyHomePage();
@@ -142,18 +142,20 @@ class _MyHomePageState extends State<MyHomePage> {
         if (!isEmpty(weatherId) && !isEmpty(countyName)) {
           Future<SharedPreferences> future = SharedPreferences.getInstance();
           future.then((prefs) {
-            FocusDistrictListBean focusCountyListBean;
+            FocusDistrictListBean focusDistrictListBean;
             String focusCountyJson = prefs.getString('focus_district_data');
             if (!isEmpty(focusCountyJson)) {
-              focusCountyListBean =
+              focusDistrictListBean =
                   FocusDistrictListBean.fromJson(json.decode(focusCountyJson));
             }
 
-            if (focusCountyListBean == null) {
-              focusCountyListBean = new FocusDistrictListBean(new List<District>());
+            if (focusDistrictListBean == null) {
+              focusDistrictListBean =
+                  new FocusDistrictListBean(new List<District>());
             }
-            focusCountyListBean.districtList.add(District(countyName, 0, 0));
-            focusCountyJson = jsonEncode(focusCountyListBean.toJson());
+            focusDistrictListBean.districtList
+                .add(District(countyName, 39.8760194196, 116.4111328125)); // 北京坐标
+            focusCountyJson = jsonEncode(focusDistrictListBean.toJson());
             prefs.setString('focus_district_data', focusCountyJson);
             Navigator.pop(context, true);
           });
