@@ -19,12 +19,12 @@ class TempLineWidget extends StatelessWidget {
 Paint maxLinePaint = new Paint()
   ..style = PaintingStyle.stroke
   ..color = Colors.white70
-  ..strokeWidth = 1.4;
+  ..strokeWidth = 1;
 
 Paint minLinePaint = new Paint()
   ..style = PaintingStyle.stroke
-  ..color = Colors.white54
-  ..strokeWidth = 1.4;
+  ..color = Colors.white38
+  ..strokeWidth = 1;
 
 Paint dotPaint = new Paint()
   ..style = PaintingStyle.fill

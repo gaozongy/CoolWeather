@@ -16,6 +16,7 @@ import 'utils/date_utils.dart';
 import 'utils/translation_utils.dart';
 import 'views/popup_window_button.dart';
 import 'views/precipitation_line.dart';
+import 'views/sunrise_sunset_widget.dart';
 import 'views/temp_line.dart';
 
 class WeatherDetail extends StatefulWidget {
@@ -80,12 +81,9 @@ class _MainLayoutState extends State<WeatherDetail> {
           return;
         }
 
-//        County posCounty = new County(aMapLocation.district,
-//            aMapLocation.latitude, aMapLocation.longitude);
-        // todo 宣威市在下雨，暂时写死看效果
-        County posCounty = new County('宣威市', 26.21989, 104.10448);
+        County posCounty = new County(aMapLocation.district,
+            aMapLocation.latitude, aMapLocation.longitude);
         list.add(posCounty);
-
         if (currentPage == 0) {
           county = posCounty;
         }
@@ -319,6 +317,9 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
             _rainTendencyLayout(),
             _forecastLayout(),
             _tempLineLayout(),
+            _dividerLayout(),
+            _sunriseSunsetLayout(),
+            _dividerLayout(),
             _moreInfLayout(),
 //            _suggestionLayout(),
           ],
@@ -507,6 +508,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     return imageIcon;
   }
 
+  // 气温折线图
   Widget _tempLineLayout() {
     List<Temp> tempList = List();
 
@@ -515,19 +517,20 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
       tempList.add(Temp(forecast.elementAt(i).max, forecast.elementAt(i).min));
     }
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 5),
+      padding: EdgeInsets.only(top: 5, bottom: 20),
       child: TempLineWidget(tempList),
     );
   }
 
-//  更多信息
+  // 日出日落
+  Widget _sunriseSunsetLayout() {
+    return SunriseSunsetWidget();
+  }
+
+  //  更多信息
   Widget _moreInfLayout() {
     return Column(
       children: <Widget>[
-        Divider(
-          height: 1,
-          color: Colors.white54,
-        ),
         Padding(
           padding: EdgeInsets.fromLTRB(16, 15, 16, 15),
           child: Column(
@@ -614,6 +617,13 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
           )
         ],
       ),
+    );
+  }
+
+  Widget _dividerLayout() {
+    return Divider(
+      thickness: 1,
+      color: Colors.white12,
     );
   }
 
