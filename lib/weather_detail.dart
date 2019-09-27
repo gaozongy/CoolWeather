@@ -123,6 +123,8 @@ class _MainLayoutState extends State<WeatherDetail> {
     screenHeight = ScreenUtils.getScreenHeight(context);
     statsHeight = ScreenUtils.getSysStatsHeight(context);
 
+    print('screenHeight：$screenHeight');
+
     print('statsHeight: $statsHeight');
 
     return Scaffold(
@@ -131,7 +133,7 @@ class _MainLayoutState extends State<WeatherDetail> {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.only(
-                    top: titleHeight + statsHeight),
+                    top: statsHeight + paddingTop + titleHeight),
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: districtList.length,
@@ -141,7 +143,10 @@ class _MainLayoutState extends State<WeatherDetail> {
                         setUpdateTime,
                         setLocation,
                         screenHeight -
-                            (statsHeight + titleHeight + paddingTop));
+                            /// ListView 内部自动加了一个 paddingTop，此 paddingTop 的值为 statsHeight
+                            statsHeight * 2 -
+                            paddingTop -
+                            titleHeight);
                   },
                 ),
               ),
@@ -172,13 +177,13 @@ class _MainLayoutState extends State<WeatherDetail> {
               children: <Widget>[
                 currentPage == 0
                     ? Padding(
-                  padding: EdgeInsets.only(left: 22),
-                  child: Image(
-                    image: AssetImage("image/location_ic.png"),
-                    width: 22,
-                    color: Colors.white60,
-                  ),
-                )
+                        padding: EdgeInsets.only(left: 22),
+                        child: Image(
+                          image: AssetImage("image/location_ic.png"),
+                          width: 22,
+                          color: Colors.white60,
+                        ),
+                      )
                     : Container(),
                 Padding(
                   padding: EdgeInsets.only(left: 20),
@@ -335,7 +340,6 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   }
 
   Widget weatherDetailLayout(BuildContext context) {
-    print('屏幕高度：${ScreenUtils.getScreenHeight(context)}');
     // 一加5 1080 / 731.4285714285714 = 1.4765625
     // 红米note2 1080 / 640.0 = 1.6875
     if (weatherBean != null) {

@@ -35,7 +35,7 @@ class DateUtils {
         break;
       case 7:
         {
-          desc += '七';
+          desc += '日';
         }
         break;
       default:
