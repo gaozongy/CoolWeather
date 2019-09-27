@@ -44,7 +44,10 @@ class _MainLayoutState extends State<WeatherDetail> {
 
   String updateTime = '未知';
 
+  double screenHeight;
   double statsHeight;
+  double titleHeight = 50;
+  double paddingTop = 10;
 
   @override
   void initState() {
@@ -117,6 +120,7 @@ class _MainLayoutState extends State<WeatherDetail> {
 
   @override
   Widget build(BuildContext context) {
+    screenHeight = ScreenUtils.getScreenHeight(context);
     statsHeight = ScreenUtils.getSysStatsHeight(context);
 
     print('statsHeight: $statsHeight');
@@ -126,7 +130,8 @@ class _MainLayoutState extends State<WeatherDetail> {
           child: Stack(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(top: 50 + statsHeight + 10),
+                padding: EdgeInsets.only(
+                    top: titleHeight + statsHeight),
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: districtList.length,
@@ -134,7 +139,9 @@ class _MainLayoutState extends State<WeatherDetail> {
                     return _WeatherDetailWidget(
                         districtList.elementAt(position),
                         setUpdateTime,
-                        setLocation);
+                        setLocation,
+                        screenHeight -
+                            (statsHeight + titleHeight + paddingTop));
                   },
                 ),
               ),
@@ -151,9 +158,9 @@ class _MainLayoutState extends State<WeatherDetail> {
 
   Widget _titleLayout() {
     return Padding(
-      padding: EdgeInsets.only(top: statsHeight + 10),
+      padding: EdgeInsets.only(top: statsHeight + paddingTop),
       child: SizedBox(
-        height: 50,
+        height: titleHeight,
         width: double.infinity,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -165,13 +172,13 @@ class _MainLayoutState extends State<WeatherDetail> {
               children: <Widget>[
                 currentPage == 0
                     ? Padding(
-                        padding: EdgeInsets.only(left: 22),
-                        child: Image(
-                          image: AssetImage("image/location_ic.png"),
-                          width: 22,
-                          color: Colors.white60,
-                        ),
-                      )
+                  padding: EdgeInsets.only(left: 22),
+                  child: Image(
+                    image: AssetImage("image/location_ic.png"),
+                    width: 22,
+                    color: Colors.white60,
+                  ),
+                )
                     : Container(),
                 Padding(
                   padding: EdgeInsets.only(left: 20),
@@ -204,7 +211,6 @@ class _MainLayoutState extends State<WeatherDetail> {
             Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 IconButton(
                   icon: Icon(Icons.home),
@@ -264,7 +270,10 @@ class _WeatherDetailWidget extends StatefulWidget {
 
   final Function setLocation;
 
-  _WeatherDetailWidget(this.district, this.setUpdateTime, this.setLocation);
+  final double height;
+
+  _WeatherDetailWidget(
+      this.district, this.setUpdateTime, this.setLocation, this.height);
 
   @override
   State<StatefulWidget> createState() {
@@ -334,11 +343,20 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         onRefresh: () => _queryWeather(district.longitude, district.latitude),
         child: ListView(
           children: <Widget>[
-            _tempLayout(),
-            _weatherLayout(),
-            _tipsLayout(),
-            _rainTendencyLayout(),
-            _forecastLayout(),
+            SizedBox(
+              height: widget.height,
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  _tempLayout(),
+                  _weatherLayout(),
+                  _tipsLayout(),
+                  _rainTendencyLayout(),
+                  _forecastLayout(),
+                ],
+              ),
+            ),
             _tempLineLayout(),
             _dividerLayout(),
             _sunriseSunsetLayout(),
@@ -354,7 +372,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   Widget _tempLayout() {
     return Padding(
-      padding: EdgeInsets.only(left: 28, top: 370),
+      padding: EdgeInsets.only(left: 28),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
