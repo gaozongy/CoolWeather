@@ -44,6 +44,8 @@ class _MainLayoutState extends State<WeatherDetail> {
 
   String updateTime = '未知';
 
+  double statsHeight;
+
   @override
   void initState() {
     super.initState();
@@ -115,12 +117,16 @@ class _MainLayoutState extends State<WeatherDetail> {
 
   @override
   Widget build(BuildContext context) {
+    statsHeight = ScreenUtils.getSysStatsHeight(context);
+
+    print('statsHeight: $statsHeight');
+
     return Scaffold(
       body: Container(
           child: Stack(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(top: 80),
+                padding: EdgeInsets.only(top: 50 + statsHeight + 10),
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: districtList.length,
@@ -144,99 +150,102 @@ class _MainLayoutState extends State<WeatherDetail> {
   }
 
   Widget _titleLayout() {
-    return Container(
-      height: 50,
-      margin: EdgeInsets.only(top: 35),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              currentPage == 0
-                  ? Padding(
-                      padding: EdgeInsets.only(left: 22),
-                      child: Image(
-                        image: AssetImage("image/location_ic.png"),
-                        width: 22,
-                        color: Colors.white60,
-                      ),
-                    )
-                  : Container(),
-              Padding(
-                padding: EdgeInsets.only(left: 20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      district != null ? district.name : '未知',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                    Text(
-                      updateTime,
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                        decoration: TextDecoration.none,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.home),
-                color: Colors.white,
-                onPressed: _focusDistrictList,
-              ),
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.only(right: 15),
-                  child: PopupWindowButton(
-                    offset: Offset(0, 100),
-                    child: Icon(
-                      Icons.more_vert,
-                      color: Colors.white,
-                    ),
-                    window: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
-                          child: Text(
-                            'share',
-                            style: TextStyle(fontSize: 16),
-                          ),
+    return Padding(
+      padding: EdgeInsets.only(top: statsHeight + 10),
+      child: SizedBox(
+        height: 50,
+        width: double.infinity,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                currentPage == 0
+                    ? Padding(
+                        padding: EdgeInsets.only(left: 22),
+                        child: Image(
+                          image: AssetImage("image/location_ic.png"),
+                          width: 22,
+                          color: Colors.white60,
                         ),
-                        Padding(
-                          child: Text(
-                            'about',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
-                        )
-                      ],
-                    ),
+                      )
+                    : Container(),
+                Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        district != null ? district.name : '未知',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                      Text(
+                        updateTime,
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                          decoration: TextDecoration.none,
+                        ),
+                      )
+                    ],
                   ),
                 ),
-              )
-            ],
-          )
-        ],
+              ],
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.home),
+                  color: Colors.white,
+                  onPressed: _focusDistrictList,
+                ),
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 15),
+                    child: PopupWindowButton(
+                      offset: Offset(0, 100),
+                      child: Icon(
+                        Icons.more_vert,
+                        color: Colors.white,
+                      ),
+                      window: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
+                            child: Text(
+                              'share',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                          Padding(
+                            child: Text(
+                              'about',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -318,7 +327,8 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   Widget weatherDetailLayout(BuildContext context) {
     print('屏幕高度：${ScreenUtils.getScreenHeight(context)}');
-
+    // 一加5 1080 / 731.4285714285714 = 1.4765625
+    // 红米note2 1080 / 640.0 = 1.6875
     if (weatherBean != null) {
       return RefreshIndicator(
         onRefresh: () => _queryWeather(district.longitude, district.latitude),
@@ -344,7 +354,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   Widget _tempLayout() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(28, 370, 28, 0),
+      padding: EdgeInsets.only(left: 28, top: 370),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
