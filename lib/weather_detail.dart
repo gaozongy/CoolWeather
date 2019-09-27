@@ -19,6 +19,7 @@ import 'views/popup_window_button.dart';
 import 'views/precipitation_line.dart';
 import 'views/sunrise_sunset_widget.dart';
 import 'views/temp_line.dart';
+import 'utils/screen_utils.dart';
 
 class WeatherDetail extends StatefulWidget {
   WeatherDetail({Key key}) : super(key: key);
@@ -316,6 +317,8 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   }
 
   Widget weatherDetailLayout(BuildContext context) {
+    print('屏幕高度：${ScreenUtils.getScreenHeight(context)}');
+
     if (weatherBean != null) {
       return RefreshIndicator(
         onRefresh: () => _queryWeather(district.longitude, district.latitude),
@@ -402,10 +405,12 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
       }
     });
 
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 20),
-      child: PrecipitationLineWidget(minutely.precipitation_2h),
-    );
+    return rain
+        ? Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: PrecipitationLineWidget(minutely.precipitation_2h),
+          )
+        : Center();
   }
 
   Widget _forecastLayout() {
@@ -639,18 +644,18 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   Future<void> _queryWeather(double longitude, double latitude) async {
     Future<SharedPreferences> future = SharedPreferences.getInstance();
     future.then((prefs) async {
-      String json;
-      json = prefs.getString(district.name);
+      String json = prefs.getString(district.name);
+      WeatherBean bean;
       if (!isEmpty(json)) {
         Map map = jsonDecode(json);
-        weatherBean = WeatherBean.fromJson(map);
-        if (DateUtils.currentTimeMillis() - weatherBean.server_time * 1000 >
+        bean = WeatherBean.fromJson(map);
+        if (DateUtils.currentTimeMillis() - bean.server_time * 1000 >
             1000 * 60 * 15) {
-          json = null;
+          bean = null;
         }
       }
 
-      if (isEmpty(json)) {
+      if (bean == null) {
         String url = 'https://api.caiyunapp.com/v2/' +
             Global.caiYunKey +
             '/$longitude,$latitude/' +
@@ -664,6 +669,9 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
           var response = await request.close();
           if (response.statusCode == HttpStatus.ok) {
             json = await response.transform(utf8.decoder).join();
+            Map map = jsonDecode(json);
+            bean = WeatherBean.fromJson(map);
+
             future.then((prefs) {
               prefs.setString(district.name, json);
             });
@@ -671,9 +679,8 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         } catch (ignore) {}
       }
 
-      Map map = jsonDecode(json);
       setState(() {
-        weatherBean = WeatherBean.fromJson(map);
+        weatherBean = bean;
         result = weatherBean.result;
         realtime = result.realtime;
         minutely = result.minutely;
