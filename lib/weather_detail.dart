@@ -143,6 +143,7 @@ class _MainLayoutState extends State<WeatherDetail> {
                         setUpdateTime,
                         setLocation,
                         screenHeight -
+
                             /// ListView 内部自动加了一个 paddingTop，此 paddingTop 的值为 statsHeight
                             statsHeight * 2 -
                             paddingTop -
@@ -362,7 +363,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
               ),
             ),
             _tempLineLayout(),
-            _dividerLayout(),
+            _dividerLayout(edgeInsets: EdgeInsets.only(top: 30)),
             _sunriseSunsetLayout(),
             _dividerLayout(),
             _moreInfLayout(),
@@ -568,7 +569,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   // 日出日落
   Widget _sunriseSunsetLayout() {
-    return SunriseSunsetWidget();
+    return SunriseSunsetWidget(daily.astro.elementAt(0));
   }
 
   //  更多信息
@@ -665,10 +666,13 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   }
 
   // 分割线
-  Widget _dividerLayout() {
-    return Divider(
-      thickness: 1,
-      color: Colors.white12,
+  Widget _dividerLayout({EdgeInsets edgeInsets}) {
+    return Padding(
+      padding: edgeInsets != null ? edgeInsets : EdgeInsets.all(0),
+      child: Divider(
+        thickness: 1,
+        color: Colors.white12,
+      ),
     );
   }
 
