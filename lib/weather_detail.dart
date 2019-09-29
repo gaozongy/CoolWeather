@@ -53,8 +53,8 @@ class _MainLayoutState extends State<WeatherDetail> {
   void initState() {
     super.initState();
 
-    district = District('未知', 0, 0);
-    districtList.add(district);
+    district = Global.locationDistrict;
+    districtList.add(Global.locationDistrict);
 
     _initPageController();
     _initData();
@@ -194,7 +194,7 @@ class _MainLayoutState extends State<WeatherDetail> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        district != null ? district.name : '未知',
+                        district.name,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -308,7 +308,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   void initState() {
     super.initState();
 
-    if (district.latitude == 0 && district.longitude == 0) {
+    if (district.latitude == -1 && district.longitude == -1) {
       _initLocation();
     } else {
       _queryWeather(district.longitude, district.latitude);
@@ -330,6 +330,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
       district = new District(
           aMapLocation.district, aMapLocation.latitude, aMapLocation.longitude);
+      Global.locationDistrict = district;
       widget.setLocation(district);
       _queryWeather(district.longitude, district.latitude);
     }

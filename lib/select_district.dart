@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
     try {
       var request = await httpClient.getUrl(Uri.parse(url));
       var response = await request.close();
-      if (response.statusCode == HttpStatus.OK) {
+      if (response.statusCode == HttpStatus.ok) {
         var json = await response.transform(utf8.decoder).join();
         var data = jsonDecode(json);
         setState(() {
@@ -95,6 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: Scaffold(
           appBar: AppBar(
             title: Text(title),
+            elevation: 1,
           ),
           body: isLoading
               ? Center(
@@ -153,8 +154,8 @@ class _MyHomePageState extends State<MyHomePage> {
               focusDistrictListBean =
                   new FocusDistrictListBean(new List<District>());
             }
-            focusDistrictListBean.districtList
-                .add(District(countyName, 39.8760194196, 116.4111328125)); // 北京坐标
+            focusDistrictListBean.districtList.add(
+                District(countyName, 39.8760194196, 116.4111328125)); // 北京坐标
             focusCountyJson = jsonEncode(focusDistrictListBean.toJson());
             prefs.setString('focus_district_data', focusCountyJson);
             Navigator.pop(context, true);
