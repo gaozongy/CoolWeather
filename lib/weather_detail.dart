@@ -344,30 +344,38 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     // 一加5 1080 / 731.4285714285714 = 1.4765625
     // 红米note2 1080 / 640.0 = 1.6875
     if (weatherBean != null) {
-      return RefreshIndicator(
-        onRefresh: () => _queryWeather(district.longitude, district.latitude),
-        child: ListView(
-          children: <Widget>[
-            SizedBox(
-              height: widget.height,
-              width: double.infinity,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  _tempLayout(),
-                  _weatherLayout(),
-                  _tipsLayout(),
-                  _rainTendencyLayout(),
-                  _forecastLayout(),
-                ],
-              ),
+      return Theme(
+        data: Theme.of(context)
+            .copyWith(accentColor: Color.fromARGB(255, 51, 181, 229)),
+        child: RefreshIndicator(
+          onRefresh: () =>
+              _queryWeather(district.longitude, district.latitude, force: true),
+          child: Theme(
+            data: Theme.of(context).copyWith(accentColor: Colors.white),
+            child: ListView(
+              children: <Widget>[
+                SizedBox(
+                  height: widget.height,
+                  width: double.infinity,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      _tempLayout(),
+                      _weatherLayout(),
+                      _tipsLayout(),
+                      _rainTendencyLayout(),
+                      _forecastLayout(),
+                    ],
+                  ),
+                ),
+                _tempLineLayout(),
+                _dividerLayout(edgeInsets: EdgeInsets.only(top: 30)),
+                _sunriseSunsetLayout(),
+                _dividerLayout(),
+                _moreInfLayout(),
+              ],
             ),
-            _tempLineLayout(),
-            _dividerLayout(edgeInsets: EdgeInsets.only(top: 30)),
-            _sunriseSunsetLayout(),
-            _dividerLayout(),
-            _moreInfLayout(),
-          ],
+          ),
         ),
       );
     } else {
@@ -677,12 +685,13 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   }
 
   // 查询天气信息
-  Future<void> _queryWeather(double longitude, double latitude) async {
+  Future<void> _queryWeather(double longitude, double latitude,
+      {bool force}) async {
     Future<SharedPreferences> future = SharedPreferences.getInstance();
-    future.then((prefs) async {
+    await future.then((prefs) async {
       String json = prefs.getString(district.name);
       WeatherBean bean;
-      if (!isEmpty(json)) {
+      if (!isEmpty(json) && (force == null || !force)) {
         Map map = jsonDecode(json);
         bean = WeatherBean.fromJson(map);
         if (DateUtils.currentTimeMillis() - bean.server_time * 1000 >
