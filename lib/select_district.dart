@@ -175,6 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<List<double>> getLatLon(String address) async {
+
     String parameter =
         'address=' + address + '&key=38366adde7d7ec1e94d652f9e90f78ce';
 
@@ -192,6 +193,9 @@ class _MyHomePageState extends State<MyHomePage> {
         Map map = jsonDecode(json);
         List list = map['geocodes'];
         String location = list.elementAt(0)['location'];
+
+        print('address:' + address + ' location:' + location);
+
         List<String> strList = location.split(',');
         List<double> latLon = [
           double.parse(strList[1]),
