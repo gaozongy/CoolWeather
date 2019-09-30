@@ -31,6 +31,9 @@ class _MyHomePageState extends State<MyHomePage> {
   int cityId = 0;
   int countyId = 0;
 
+  String province;
+  String city;
+
   // 天气 id
   String weatherId;
   String countyName;
@@ -132,9 +135,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
         if (provinceId == 0) {
           provinceId = code;
+          province = name;
           _queryCities();
         } else if (cityId == 0) {
           cityId = code;
+          city = name;
           _queryCounties();
         } else if (countyId == 0) {
           countyId = code;
@@ -156,9 +161,9 @@ class _MyHomePageState extends State<MyHomePage> {
               focusDistrictListBean =
                   new FocusDistrictListBean(new List<District>());
             }
-            getLatLon(countyName).then((list) {
-              focusDistrictListBean.districtList.add(
-                  District(countyName, list.elementAt(0), list.elementAt(1))); // 北京坐标
+            getLatLon(province + '省' + city + '市' + countyName).then((list) {
+              focusDistrictListBean.districtList.add(District(
+                  countyName, list.elementAt(0), list.elementAt(1))); // 北京坐标
               focusCountyJson = jsonEncode(focusDistrictListBean.toJson());
               prefs.setString('focus_district_data', focusCountyJson);
               Navigator.pop(context, true);
