@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bean/focus_district_list_bean.dart';
+import 'bean/weather_bean.dart';
 import 'global.dart';
+import 'utils/translation_utils.dart';
 
 class FocusDistrictList extends StatefulWidget {
   @override
@@ -15,8 +18,7 @@ class FocusDistrictList extends StatefulWidget {
 }
 
 class _FocusDistrictListState extends State<FocusDistrictList> {
-  FocusDistrictListBean focusCountyListBean =
-      FocusDistrictListBean(List<District>());
+  List<DistrictWeather> districtList = List();
 
   @override
   void initState() {
@@ -24,20 +26,35 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
     _initData();
   }
 
-  _initData() {
-    focusCountyListBean.districtList.clear();
-    focusCountyListBean.districtList.add(Global.locationDistrict);
+  _initData() async {
+    districtList.clear();
 
-    Future<SharedPreferences> future = SharedPreferences.getInstance();
-    future.then((prefs) {
-      String focusCountyListJson = prefs.getString('focus_district_data');
-      if (focusCountyListJson != null) {
-        FocusDistrictListBean bean =
-            FocusDistrictListBean.fromJson(json.decode(focusCountyListJson));
-        setState(() {
-          focusCountyListBean.districtList.addAll(bean.districtList);
-        });
+    List<District> dataList = List();
+    dataList.add(Global.locationDistrict);
+
+    List<DistrictWeather> resultList = List();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String focusDistrictListJson = prefs.getString('focus_district_data');
+    if (focusDistrictListJson != null) {
+      FocusDistrictListBean bean =
+          FocusDistrictListBean.fromJson(json.decode(focusDistrictListJson));
+      dataList.addAll(bean.districtList);
+    }
+
+    dataList.forEach((district) {
+      String json = prefs.getString(district.name);
+      if (!isEmpty(json)) {
+        Map map = jsonDecode(json);
+        WeatherBean bean = WeatherBean.fromJson(map);
+        resultList.add(DistrictWeather(district, bean.result.realtime));
+      } else {
+        resultList.add(DistrictWeather(district, null));
       }
+    });
+
+    setState(() {
+      districtList.addAll(resultList);
     });
   }
 
@@ -60,18 +77,15 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
         body: Stack(
           alignment: AlignmentDirectional.bottomCenter,
           children: <Widget>[
-            focusCountyListBean != null
-                ? Padding(
-                    padding: EdgeInsets.only(bottom: 40),
-                    child: ListView.builder(
-                        itemCount: focusCountyListBean.districtList.length,
-                        itemBuilder: (BuildContext context, int position) {
-                          District county = focusCountyListBean.districtList
-                              .elementAt(position);
-                          return getRow(county, position);
-                        }),
-                  )
-                : Center(),
+            Padding(
+              padding: EdgeInsets.only(bottom: 40),
+              child: ListView.builder(
+                  itemCount: districtList.length,
+                  itemBuilder: (BuildContext context, int position) {
+                    DistrictWeather district = districtList.elementAt(position);
+                    return districtItem(district, position);
+                  }),
+            ),
             SizedBox(
               width: double.infinity,
               height: 40,
@@ -92,10 +106,10 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
             onPressed: _selectDistrict, child: new Icon(Icons.add)));
   }
 
-  Widget getRow(District county, int position) {
+  Widget districtItem(DistrictWeather districtWeather, int position) {
     return Card(
-      margin: EdgeInsets.fromLTRB(15, 15, 15,
-          position == focusCountyListBean.districtList.length - 1 ? 15 : 0),
+      margin: EdgeInsets.fromLTRB(
+          15, 15, 15, position == districtList.length - 1 ? 15 : 0),
       clipBehavior: Clip.antiAlias,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),
@@ -122,14 +136,17 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
                                   ),
                                 )
                               : Center(),
-                          Text(county.name,
+                          Text(districtWeather.district.name,
                               style: new TextStyle(
                                   color: Colors.white,
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600)),
                         ],
                       ),
-                      Text('22°晴',
+                      Text(
+                          districtWeather.realtime != null
+                              ? '${(districtWeather.realtime.temperature + 0.5).toInt()}°${Translation.getWeatherDesc(districtWeather.realtime.skycon)}'
+                              : '',
                           style:
                               new TextStyle(color: Colors.white, fontSize: 16)),
                     ],
@@ -138,13 +155,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
               ),
               onTap: () {
                 setState(() {
-//              focusCountyListBean.districtList.remove(county);
-//              Future<SharedPreferences> future = SharedPreferences
-//                  .getInstance();
-//              future.then((prefs) {
-//                prefs.setString(
-//                    'focus_district_data', jsonEncode(focusCountyListBean));
-//              });
+                  districtList.removeAt(position);
                 });
               }),
           decoration: BoxDecoration(

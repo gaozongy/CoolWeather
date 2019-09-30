@@ -14,14 +14,14 @@ class WeatherBean{
   String lang;
   int server_time;
   String api_status;
-  int tzshirt;
+  int tzshift;
   String api_version;
   String unit;
   Result result;
   List<double> location;
 
   WeatherBean(this.status, this.lang, this.server_time, this.api_status,
-      this.tzshirt, this.api_version, this.unit, this.result, this.location);
+      this.tzshift, this.api_version, this.unit, this.result, this.location);
 
   factory WeatherBean.fromJson(Map<String, dynamic> json) => _$WeatherBeanFromJson(json);
   Map<String, dynamic> toJson() => _$WeatherBeanToJson(this);
