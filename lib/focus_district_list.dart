@@ -103,13 +103,13 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-            onPressed: _selectDistrict, child: new Icon(Icons.add)));
+            onPressed: _selectDistrict, child: Icon(Icons.add)));
   }
 
   Widget districtItem(DistrictWeather districtWeather, int position) {
     return Card(
       margin: EdgeInsets.fromLTRB(
-          15, 15, 15, position == districtList.length - 1 ? 15 : 0),
+          18, 15, 18, position == districtList.length - 1 ? 15 : 0),
       clipBehavior: Clip.antiAlias,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),
@@ -137,7 +137,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
                                 )
                               : Center(),
                           Text(districtWeather.district.name,
-                              style: new TextStyle(
+                              style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600)),
@@ -147,8 +147,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
                           districtWeather.realtime != null
                               ? '${(districtWeather.realtime.temperature + 0.5).toInt()}°${Translation.getWeatherDesc(districtWeather.realtime.skycon)}'
                               : '',
-                          style:
-                              new TextStyle(color: Colors.white, fontSize: 16)),
+                          style: TextStyle(color: Colors.white, fontSize: 16)),
                     ],
                   ),
                 ),

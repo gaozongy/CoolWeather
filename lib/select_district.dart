@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:convert/convert.dart';
+import 'package:crypto/crypto.dart';
 
 class SelectDistrict extends StatelessWidget {
   @override
@@ -154,14 +156,54 @@ class _MyHomePageState extends State<MyHomePage> {
               focusDistrictListBean =
                   new FocusDistrictListBean(new List<District>());
             }
-            focusDistrictListBean.districtList.add(
-                District(countyName, 39.8760194196, 116.4111328125)); // 北京坐标
-            focusCountyJson = jsonEncode(focusDistrictListBean.toJson());
-            prefs.setString('focus_district_data', focusCountyJson);
-            Navigator.pop(context, true);
+            getLatLon(countyName).then((list) {
+              focusDistrictListBean.districtList.add(
+                  District(countyName, list.elementAt(0), list.elementAt(1))); // 北京坐标
+              focusCountyJson = jsonEncode(focusDistrictListBean.toJson());
+              prefs.setString('focus_district_data', focusCountyJson);
+              Navigator.pop(context, true);
+            });
           });
         }
       },
     );
+  }
+
+  Future<List<double>> getLatLon(String address) async {
+    String parameter =
+        'address=' + address + '&key=38366adde7d7ec1e94d652f9e90f78ce';
+
+    String url = 'https://restapi.amap.com/v3/geocode/geo?' +
+        parameter +
+        '&sig=' +
+        generateMd5(parameter);
+
+    HttpClient httpClient = new HttpClient();
+    try {
+      HttpClientRequest request = await httpClient.getUrl(Uri.parse(url));
+      HttpClientResponse response = await request.close();
+      if (response.statusCode == HttpStatus.ok) {
+        String json = await response.transform(utf8.decoder).join();
+        Map map = jsonDecode(json);
+        List list = map['geocodes'];
+        String location = list.elementAt(0)['location'];
+        List<String> strList = location.split(',');
+        List<double> latLon = [
+          double.parse(strList[1]),
+          double.parse(strList[0])
+        ];
+        return latLon;
+      }
+    } catch (ignore) {}
+
+    return null;
+  }
+
+  // md5 加密
+  String generateMd5(String data) {
+    var content = new Utf8Encoder().convert(data);
+    var digest = md5.convert(content);
+    // 这里其实就是 digest.toString()
+    return hex.encode(digest.bytes);
   }
 }
