@@ -18,7 +18,13 @@ class FocusDistrictList extends StatefulWidget {
 }
 
 class _FocusDistrictListState extends State<FocusDistrictList> {
+  List<District> dataList = List();
+
   List<DistrictWeather> districtList = List();
+
+  bool isEditMode = false;
+
+  List<int> selectedPos = List();
 
   @override
   void initState() {
@@ -27,9 +33,9 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
   }
 
   _initData() async {
+    dataList.clear();
     districtList.clear();
 
-    List<District> dataList = List();
     dataList.add(Global.locationDistrict);
 
     List<DistrictWeather> resultList = List();
@@ -72,7 +78,18 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           elevation: 1,
-          title: Text('选择城市'),
+          title: Text(isEditMode ? selectedPos.length.toString() : '选择城市'),
+          leading: IconButton(
+            icon: Icon(isEditMode ? Icons.close : Icons.arrow_back),
+            onPressed: () {
+              if (isEditMode) {
+                setState(() {
+                  isEditMode = false;
+                  selectedPos.clear();
+                });
+              } else {}
+            },
+          ),
         ),
         body: Stack(
           alignment: AlignmentDirectional.bottomCenter,
@@ -111,52 +128,70 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
       margin: EdgeInsets.fromLTRB(
           18, 15, 18, position == districtList.length - 1 ? 15 : 0),
       clipBehavior: Clip.antiAlias,
-      shape: const RoundedRectangleBorder(
+      shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),
       child: Container(
           child: InkWell(
-              child: SizedBox(
-                height: 140,
-                width: double.infinity,
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          position == 0
-                              ? Padding(
-                                  padding: EdgeInsets.only(right: 8),
-                                  child: Image(
-                                    image: AssetImage("images/location_ic.png"),
-                                    width: 22,
-                                    color: Colors.white60,
-                                  ),
-                                )
-                              : Center(),
-                          Text(districtWeather.district.name,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600)),
-                        ],
-                      ),
-                      Text(
-                          districtWeather.realtime != null
-                              ? '${(districtWeather.realtime.temperature + 0.5).toInt()}°${Translation.getWeatherDesc(districtWeather.realtime.skycon)}'
-                              : '',
-                          style: TextStyle(color: Colors.white, fontSize: 16)),
-                    ],
-                  ),
+            child: SizedBox(
+              height: 140,
+              width: double.infinity,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        position == 0
+                            ? Padding(
+                                padding: EdgeInsets.only(right: 8),
+                                child: Image(
+                                  image: AssetImage("images/location_ic.png"),
+                                  width: 22,
+                                  color: Colors.white60,
+                                ),
+                              )
+                            : Center(),
+                        Text(districtWeather.district.name,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                    Text(
+                        districtWeather.realtime != null
+                            ? '${(districtWeather.realtime.temperature + 0.5).toInt()}°${Translation.getWeatherDesc(districtWeather.realtime.skycon)}'
+                            : '',
+                        style: TextStyle(color: Colors.white, fontSize: 16)),
+                  ],
                 ),
               ),
-              onTap: () {
+            ),
+            onTap: () {
+              if (isEditMode) {
                 setState(() {
-                  districtList.removeAt(position);
+                  if (!selectedPos.contains(position)) {
+                    selectedPos.add(position);
+                  } else {
+                    selectedPos.remove(position);
+                    if (selectedPos.length == 0) {
+                      isEditMode = false;
+                    }
+                  }
                 });
-              }),
+              }
+            },
+            onLongPress: () {
+              if (!isEditMode) {
+                selectedPos.add(position);
+                setState(() {
+                  isEditMode = true;
+                });
+              }
+            },
+          ),
           decoration: BoxDecoration(
               image: DecorationImage(
             image: AssetImage('images/sunny.jpg'),
