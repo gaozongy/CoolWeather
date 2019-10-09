@@ -156,7 +156,7 @@ class _MainLayoutState extends State<WeatherDetail> {
           ),
           decoration: BoxDecoration(
               image: DecorationImage(
-            image: AssetImage('image/main_bg_2.png'),
+            image: AssetImage('images/main_bg_2.png'),
             fit: BoxFit.fitHeight,
           ))),
     );
@@ -180,7 +180,7 @@ class _MainLayoutState extends State<WeatherDetail> {
                     ? Padding(
                         padding: EdgeInsets.only(left: 22),
                         child: Image(
-                          image: AssetImage("image/location_ic.png"),
+                          image: AssetImage("images/location_ic.png"),
                           width: 22,
                           color: Colors.white60,
                         ),
@@ -219,8 +219,11 @@ class _MainLayoutState extends State<WeatherDetail> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.home),
-                  color: Colors.white,
+                  icon: Image(
+                    image: AssetImage("images/building_ic.png"),
+                    width: 20,
+                    height: 20,
+                  ),
                   onPressed: _focusDistrictList,
                 ),
                 Center(
@@ -231,6 +234,7 @@ class _MainLayoutState extends State<WeatherDetail> {
                       child: Icon(
                         Icons.more_vert,
                         color: Colors.white,
+                        size: 25,
                       ),
                       window: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -395,7 +399,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
             style: TextStyle(
               color: Colors.white,
               fontSize: 60,
-              decoration: TextDecoration.none,
+              fontWeight: FontWeight.w300,
             ),
           )
         ],
@@ -411,10 +415,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         children: <Widget>[
           Text(
             Translation.getWeatherDesc(realtime.skycon),
-            style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                decoration: TextDecoration.none),
+            style: TextStyle(color: Colors.white, fontSize: 18),
           )
         ],
       ),
@@ -461,16 +462,16 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     for (int i = 0; i < length; i++) {
       Skycon skycon = daily.skycon.elementAt(i);
       DateTime dateTime = DateTime.parse(skycon.date);
-      ImageIcon imageIcon = _getWeatherIcon(skycon.value);
+      ImageIcon weatherIcon = _getWeatherIcon(skycon.value);
 
       forecastRow.add(Column(
         children: <Widget>[
           _textLayout(DateUtils.getWeekday(dateTime.weekday)),
           _textLayout('${dateTime.month}' + '月' + '${dateTime.day}' + '日'),
           Padding(
-            padding: EdgeInsets.only(top: 8),
+            padding: EdgeInsets.only(top: 8, bottom: 4),
             //child: Icon(imageIcon, color: Colors.white),
-            child: imageIcon,
+            child: weatherIcon,
           ),
           _textLayout(Translation.getWeatherDesc(skycon.value)),
         ],
@@ -496,70 +497,54 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   }
 
   ImageIcon _getWeatherIcon(String weather) {
-    ImageIcon imageIcon;
+    String assetUrl;
     switch (weather) {
       case 'CLEAR_DAY':
       case 'CLEAR_NIGHT':
         {
-          imageIcon = ImageIcon(
-            AssetImage('image/cw_sunny.png'),
-            size: 25.0,
-            color: Colors.white,
-          );
+          assetUrl = 'images/weather/sunny_ic.png';
         }
         break;
       case 'PARTLY_CLOUDY_DAY':
       case 'PARTLY_CLOUDY_NIGHT':
         {
-          imageIcon = ImageIcon(
-            AssetImage('image/cw_cloud.png'),
-            size: 25.0,
-            color: Colors.white,
-          );
+          assetUrl = 'images/weather/cloud_ic.png';
         }
         break;
       case 'CLOUDY':
         {
-          imageIcon = ImageIcon(
-            AssetImage('image/cl_nosun.png'),
-            size: 25.0,
-            color: Colors.white,
-          );
+          assetUrl = 'images/weather/nosun_ic.png';
         }
         break;
       case 'WIND':
+        {
+          assetUrl = 'images/weather/wind_ic.png';
+        }
         break;
       case 'HAZE':
         {
-          imageIcon = ImageIcon(
-            AssetImage('image/cw_haze.png'),
-            size: 25.0,
-            color: Colors.white,
-          );
+          assetUrl = 'images/weather/haze_ic.png';
         }
         break;
       case 'RAIN':
         {
-          imageIcon = ImageIcon(
-            AssetImage('image/cl_rain.png'),
-            size: 25.0,
-            color: Colors.white,
-          );
+          assetUrl = 'images/weather/rain_ic.png';
         }
         break;
       case 'SNOW':
         {
-          imageIcon = ImageIcon(
-            AssetImage('image/cw_snow.png'),
-            size: 25.0,
-            color: Colors.white,
-          );
+          assetUrl = 'images/weather/snow_ic.png';
         }
         break;
       default:
         break;
     }
-    return imageIcon;
+
+    return ImageIcon(
+      AssetImage(assetUrl),
+      size: 22,
+      color: Colors.white,
+    );
   }
 
   // 气温折线图
