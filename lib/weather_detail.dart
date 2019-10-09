@@ -378,6 +378,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
                 _sunriseSunsetLayout(),
                 _dividerLayout(),
                 _moreInfLayout(),
+                _dataFromLayout(),
               ],
             ),
           ),
@@ -469,7 +470,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
           _textLayout(DateUtils.getWeekday(dateTime.weekday)),
           _textLayout('${dateTime.month}' + '月' + '${dateTime.day}' + '日'),
           Padding(
-            padding: EdgeInsets.only(top: 8, bottom: 4),
+            padding: EdgeInsets.only(top: 8, bottom: 2),
             //child: Icon(imageIcon, color: Colors.white),
             child: weatherIcon,
           ),
@@ -571,11 +572,11 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     return Column(
       children: <Widget>[
         Padding(
-          padding: EdgeInsets.fromLTRB(16, 15, 16, 15),
+          padding: EdgeInsets.symmetric(horizontal: 16),
           child: Column(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(bottom: 25),
+                padding: EdgeInsets.only(top: 15),
                 child: Row(
                   children: <Widget>[
                     getWidget('空气质量', Translation.getAqiDesc(realtime.aqi), ''),
@@ -584,7 +585,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: 25),
+                padding: EdgeInsets.only(top: 25),
                 child: Row(
                   children: <Widget>[
                     getWidget(Translation.getWindDir(realtime.wind.direction),
@@ -595,7 +596,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: 25),
+                padding: EdgeInsets.only(top: 25),
                 child: Row(
                   children: <Widget>[
                     getWidget(
@@ -607,7 +608,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: 25),
+                padding: EdgeInsets.only(top: 25),
                 child: Row(
                   children: <Widget>[
                     getWidget('紫外线', realtime.ultraviolet.desc, ''),
@@ -630,9 +631,9 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
         children: <Widget>[
           Text(title,
               style: TextStyle(
-                  color: Colors.white54,
-                  fontSize: 12,
-                  decoration: TextDecoration.none)),
+                color: Colors.white54,
+                fontSize: 12,
+              )),
           Padding(
             padding: EdgeInsets.only(top: 2),
             child: Row(
@@ -640,21 +641,42 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
               children: <Widget>[
                 Text(value,
                     style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        decoration: TextDecoration.none)),
+                      color: Colors.white,
+                      fontSize: 16,
+                    )),
                 Padding(
                   padding: EdgeInsets.only(left: 2),
                   child: Text(unit,
                       style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          decoration: TextDecoration.none)),
+                        color: Colors.white,
+                        fontSize: 14,
+                      )),
                 )
               ],
             ),
           )
         ],
+      ),
+    );
+  }
+
+  // 数据来源
+  Widget _dataFromLayout() {
+    return Padding(
+      padding: EdgeInsets.only(top: 10),
+      child: SizedBox(
+        width: double.infinity,
+        height: 40,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              '天气数据来源于彩云天气网',
+              style: TextStyle(color: Colors.white24, fontSize: 10),
+            )
+          ],
+        ),
       ),
     );
   }
