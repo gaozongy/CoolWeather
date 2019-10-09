@@ -130,7 +130,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
                               ? Padding(
                                   padding: EdgeInsets.only(right: 8),
                                   child: Image(
-                                    image: AssetImage("image/location_ic.png"),
+                                    image: AssetImage("images/location_ic.png"),
                                     width: 22,
                                     color: Colors.white60,
                                   ),
@@ -159,7 +159,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
               }),
           decoration: BoxDecoration(
               image: DecorationImage(
-            image: AssetImage('image/sunny.jpg'),
+            image: AssetImage('images/sunny.jpg'),
             fit: BoxFit.fitWidth,
           ))),
     );
