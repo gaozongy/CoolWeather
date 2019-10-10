@@ -18,6 +18,8 @@ class FocusDistrictList extends StatefulWidget {
 }
 
 class _FocusDistrictListState extends State<FocusDistrictList> {
+  bool hasChanged = false;
+
   List<District> dataList = List();
 
   List<DistrictWeather> districtList = List();
@@ -68,6 +70,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
     Navigator.of(context).pushNamed("select_district").then((bool) {
       if (bool) {
         _initData();
+        hasChanged = true;
       }
     });
   }
@@ -88,6 +91,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
     prefs.setString('focus_district_data', focusCountyJson);
     closeEditMode();
     _initData();
+    hasChanged = true;
   }
 
   @override
@@ -111,7 +115,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
                   if (isEditMode) {
                     closeEditMode();
                   } else {
-                    Navigator.pop(context);
+                    Navigator.pop(context, hasChanged);
                   }
                 },
               ),
@@ -153,7 +157,8 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
             closeEditMode();
             return false;
           } else {
-            return true;
+            Navigator.pop(context, hasChanged);
+            return false;
           }
         });
   }
@@ -170,7 +175,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
 
     return Card(
       margin: EdgeInsets.fromLTRB(
-          18, 15, 18, position == districtList.length - 1 ? 15 : 0),
+          18, 16, 18, position == districtList.length - 1 ? 15 : 0),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),

@@ -82,6 +82,7 @@ class _MainLayoutState extends State<WeatherDetail> {
         if (focusDistrictListBean != null &&
             focusDistrictListBean.districtList.length > 0) {
           setState(() {
+            districtList.removeRange(1, districtList.length);
             districtList.addAll(focusDistrictListBean.districtList);
           });
           return;
