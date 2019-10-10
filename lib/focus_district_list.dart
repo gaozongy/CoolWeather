@@ -82,7 +82,8 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
       prefs.remove(district.name);
       temp.removeAt(pos);
     });
-    FocusDistrictListBean focusDistrictListBean = FocusDistrictListBean(temp.sublist(1));
+    FocusDistrictListBean focusDistrictListBean =
+        FocusDistrictListBean(temp.sublist(1));
     String focusCountyJson = jsonEncode(focusDistrictListBean.toJson());
     prefs.setString('focus_district_data', focusCountyJson);
     closeEditMode();
@@ -174,81 +175,83 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),
       child: Container(
-          child: InkWell(
-            child: SizedBox(
-              height: 140,
-              width: double.infinity,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        position == 0
-                            ? Padding(
-                                padding: EdgeInsets.only(right: 8),
-                                child: Image(
-                                  image: AssetImage("images/location_ic.png"),
-                                  width: 22,
-                                  color: Colors.white60,
-                                ),
-                              )
-                            : Center(),
-                        Text(districtWeather.district.name,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600)),
-                      ],
-                    ),
-                    Text(
-                        districtWeather.realtime != null
-                            ? '${(districtWeather.realtime.temperature + 0.5).toInt()}°${Translation.getWeatherDesc(districtWeather.realtime.skycon)}'
-                            : '',
-                        style: TextStyle(color: Colors.white, fontSize: 16)),
-                  ],
-                ),
+        child: InkWell(
+          child: SizedBox(
+            height: 130,
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      position == 0
+                          ? Padding(
+                              padding: EdgeInsets.only(right: 8),
+                              child: Image(
+                                image: AssetImage("images/location_ic.png"),
+                                width: 22,
+                                color: Colors.white60,
+                              ),
+                            )
+                          : Center(),
+                      Text(districtWeather.district.name,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600)),
+                    ],
+                  ),
+                  Text(
+                      districtWeather.realtime != null
+                          ? '${(districtWeather.realtime.temperature + 0.5).toInt()}°${Translation.getWeatherDesc(districtWeather.realtime.skycon)}'
+                          : '',
+                      style: TextStyle(color: Colors.white, fontSize: 16)),
+                ],
               ),
             ),
-            onTap: () {
-              if (position == 0) {
-                return;
-              }
-              if (isEditMode) {
-                setState(() {
-                  if (!selectedPos.contains(position)) {
-                    selectedPos.add(position);
-                  } else {
-                    selectedPos.remove(position);
-                    if (selectedPos.length == 0) {
-                      isEditMode = false;
-                    }
-                  }
-                });
-              }
-            },
-            onLongPress: () {
-              if (position == 0) {
-                return;
-              }
-              if (!isEditMode) {
-                selectedPos.add(position);
-                setState(() {
-                  isEditMode = true;
-                });
-              }
-            },
           ),
-          decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage('images/sunny.jpg'),
-                  fit: BoxFit.fitWidth,
-                  colorFilter: selected
-                      ? ColorFilter.mode(Colors.white38, BlendMode.hardLight)
-                      : ColorFilter.mode(
-                          Colors.transparent, BlendMode.color)))),
+          onTap: () {
+            if (position == 0) {
+              return;
+            }
+            if (isEditMode) {
+              setState(() {
+                if (!selectedPos.contains(position)) {
+                  selectedPos.add(position);
+                } else {
+                  selectedPos.remove(position);
+                  if (selectedPos.length == 0) {
+                    isEditMode = false;
+                  }
+                }
+              });
+            }
+          },
+          onLongPress: () {
+            if (position == 0) {
+              return;
+            }
+            if (!isEditMode) {
+              selectedPos.add(position);
+              setState(() {
+                isEditMode = true;
+              });
+            }
+          },
+        ),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(8)),
+            border: Border.all(
+                color: selected ? Colors.blue : Colors.transparent, width: 2),
+            image: DecorationImage(
+                image: AssetImage('images/sunny.jpg'),
+                fit: BoxFit.fitWidth,
+                colorFilter: selected
+                    ? ColorFilter.mode(Colors.white54, BlendMode.hardLight)
+                    : ColorFilter.mode(Colors.transparent, BlendMode.color))),
+      ),
     );
   }
 }
