@@ -246,7 +246,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
                   image: AssetImage('images/sunny.jpg'),
                   fit: BoxFit.fitWidth,
                   colorFilter: selected
-                      ? ColorFilter.mode(Colors.white, BlendMode.color)
+                      ? ColorFilter.mode(Colors.white38, BlendMode.hardLight)
                       : ColorFilter.mode(
                           Colors.transparent, BlendMode.color)))),
     );
