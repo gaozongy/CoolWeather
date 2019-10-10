@@ -442,7 +442,7 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   Widget _rainTendencyLayout() {
     bool rain = false;
-    minutely.probability.forEach((rainfall) {
+    minutely.precipitation_2h.forEach((rainfall) {
       if (rainfall > 0) {
         rain = true;
       }
