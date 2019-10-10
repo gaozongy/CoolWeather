@@ -72,58 +72,101 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
     });
   }
 
+  void _deleteDistrict() async {
+    List<District> temp = dataList;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // 从大到小排序，便于对List执行删除操作
+    selectedPos.sort((a, b) => a < b ? 1 : -1);
+    selectedPos.forEach((pos) {
+      District district = temp.elementAt(pos);
+      prefs.remove(district.name);
+      temp.removeAt(pos);
+    });
+    FocusDistrictListBean focusDistrictListBean = FocusDistrictListBean(temp.sublist(1));
+    String focusCountyJson = jsonEncode(focusDistrictListBean.toJson());
+    prefs.setString('focus_district_data', focusCountyJson);
+    closeEditMode();
+    _initData();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          elevation: 1,
-          title: Text(isEditMode ? selectedPos.length.toString() : '选择城市'),
-          leading: IconButton(
-            icon: Icon(isEditMode ? Icons.close : Icons.arrow_back),
-            onPressed: () {
-              if (isEditMode) {
-                setState(() {
-                  isEditMode = false;
-                  selectedPos.clear();
-                });
-              } else {}
-            },
-          ),
-        ),
-        body: Stack(
-          alignment: AlignmentDirectional.bottomCenter,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(bottom: 40),
-              child: ListView.builder(
-                  itemCount: districtList.length,
-                  itemBuilder: (BuildContext context, int position) {
-                    DistrictWeather district = districtList.elementAt(position);
-                    return districtItem(district, position);
-                  }),
-            ),
-            SizedBox(
-              width: double.infinity,
-              height: 40,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    '天气数据来源于彩云天气网',
-                    style: TextStyle(color: Colors.grey[400], fontSize: 10),
-                  )
-                ],
+    List<Widget> actionButtons = isEditMode
+        ? [
+            IconButton(
+                icon: Icon(Icons.delete_outline), onPressed: _deleteDistrict)
+          ]
+        : List();
+
+    return WillPopScope(
+        child: Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              elevation: 1,
+              title: Text(isEditMode ? selectedPos.length.toString() : '选择城市'),
+              leading: IconButton(
+                icon: Icon(isEditMode ? Icons.close : Icons.arrow_back),
+                onPressed: () {
+                  if (isEditMode) {
+                    closeEditMode();
+                  } else {
+                    Navigator.pop(context);
+                  }
+                },
               ),
-            )
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-            onPressed: _selectDistrict, child: Icon(Icons.add)));
+              actions: actionButtons,
+            ),
+            body: Stack(
+              alignment: AlignmentDirectional.bottomCenter,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(bottom: 40),
+                  child: ListView.builder(
+                      itemCount: districtList.length,
+                      itemBuilder: (BuildContext context, int position) {
+                        DistrictWeather district =
+                            districtList.elementAt(position);
+                        return districtItem(district, position);
+                      }),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: 40,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        '天气数据来源于彩云天气网',
+                        style: TextStyle(color: Colors.grey[400], fontSize: 10),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+            floatingActionButton: FloatingActionButton(
+                onPressed: _selectDistrict, child: Icon(Icons.add))),
+        onWillPop: () async {
+          if (isEditMode) {
+            closeEditMode();
+            return false;
+          } else {
+            return true;
+          }
+        });
+  }
+
+  void closeEditMode() {
+    setState(() {
+      isEditMode = false;
+      selectedPos.clear();
+    });
   }
 
   Widget districtItem(DistrictWeather districtWeather, int position) {
+    bool selected = isEditMode ? selectedPos.contains(position) : false;
+
     return Card(
       margin: EdgeInsets.fromLTRB(
           18, 15, 18, position == districtList.length - 1 ? 15 : 0),
@@ -170,6 +213,9 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
               ),
             ),
             onTap: () {
+              if (position == 0) {
+                return;
+              }
               if (isEditMode) {
                 setState(() {
                   if (!selectedPos.contains(position)) {
@@ -184,6 +230,9 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
               }
             },
             onLongPress: () {
+              if (position == 0) {
+                return;
+              }
               if (!isEditMode) {
                 selectedPos.add(position);
                 setState(() {
@@ -194,9 +243,12 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
           ),
           decoration: BoxDecoration(
               image: DecorationImage(
-            image: AssetImage('images/sunny.jpg'),
-            fit: BoxFit.fitWidth,
-          ))),
+                  image: AssetImage('images/sunny.jpg'),
+                  fit: BoxFit.fitWidth,
+                  colorFilter: selected
+                      ? ColorFilter.mode(Colors.white, BlendMode.color)
+                      : ColorFilter.mode(
+                          Colors.transparent, BlendMode.color)))),
     );
   }
 }
