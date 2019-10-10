@@ -79,14 +79,12 @@ class _MainLayoutState extends State<WeatherDetail> {
       if (focusDistrictListJson != null) {
         FocusDistrictListBean focusDistrictListBean =
             FocusDistrictListBean.fromJson(json.decode(focusDistrictListJson));
-        if (focusDistrictListBean != null &&
-            focusDistrictListBean.districtList.length > 0) {
-          setState(() {
-            districtList.removeRange(1, districtList.length);
+        setState(() {
+          districtList.removeRange(1, districtList.length);
+          if (focusDistrictListBean != null) {
             districtList.addAll(focusDistrictListBean.districtList);
-          });
-          return;
-        }
+          }
+        });
       }
     });
   }

@@ -18,6 +18,7 @@ class FocusDistrictList extends StatefulWidget {
 }
 
 class _FocusDistrictListState extends State<FocusDistrictList> {
+  /// 关注的城市列表是否有更改
   bool hasChanged = false;
 
   List<District> dataList = List();
