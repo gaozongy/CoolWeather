@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:amap_location/amap_location.dart';
@@ -325,9 +326,24 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
     super.initState();
 
     if (district.latitude == -1 && district.longitude == -1) {
-      _initLocation();
+      _checkPermission();
     } else {
       _queryWeather(district.longitude, district.latitude);
+    }
+  }
+
+  void _checkPermission() async {
+    await PermissionHandler().requestPermissions([PermissionGroup.location]);
+    PermissionStatus status = await PermissionHandler()
+        .checkPermissionStatus(PermissionGroup.location);
+    if (status == PermissionStatus.granted) {
+      _initLocation();
+    } else {
+      Fluttertoast.showToast(
+        toastLength: Toast.LENGTH_LONG,
+        msg: "为了更好的为您提供本地天气服务，请在设置中给予定位权限，然后再次打开APP",
+      );
+      await PermissionHandler().openAppSettings();
     }
   }
 
