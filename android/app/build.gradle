@@ -24,6 +24,10 @@ if (flutterVersionName == null) {
 apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
+def keystorePropertiesFile = rootProject.file("key_store.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     compileSdkVersion 28
 
@@ -40,14 +44,24 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // 高德地图key
         manifestPlaceholders = [
-                AMAP_KEY : "2711cbe26c75b312eb9bc3921cb5ffd0",
+                // release key
+//                AMAP_KEY: "2711cbe26c75b312eb9bc3921cb5ffd0",
+                // debug key
+                AMAP_KEY: "b425161a159af2847faf3dd89aafff36",
         ]
     }
 
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
     buildTypes {
         release {
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
 }
