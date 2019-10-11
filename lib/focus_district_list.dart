@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -220,6 +221,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
           ),
           onTap: () {
             if (position == 0) {
+              deleteInhibitToast();
               return;
             }
             if (isEditMode) {
@@ -237,6 +239,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
           },
           onLongPress: () {
             if (position == 0) {
+              deleteInhibitToast();
               return;
             }
             if (!isEditMode) {
@@ -258,6 +261,12 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
                     ? ColorFilter.mode(Colors.white54, BlendMode.hardLight)
                     : ColorFilter.mode(Colors.transparent, BlendMode.color))),
       ),
+    );
+  }
+
+  void deleteInhibitToast() {
+    Fluttertoast.showToast(
+      msg: "当前定位不可删除哦～",
     );
   }
 }

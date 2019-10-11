@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:amap_location/amap_location.dart';
@@ -238,20 +239,26 @@ class _MainLayoutState extends State<WeatherDetail> {
                       window: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
-                            child: Text(
-                              'share',
-                              style: TextStyle(fontSize: 16),
+                          InkWell(
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
+                              child: Text(
+                                'share',
+                                style: TextStyle(fontSize: 16),
+                              ),
                             ),
+                            onTap: testToast,
                           ),
-                          Padding(
-                            child: Text(
-                              'about',
-                              style: TextStyle(fontSize: 16),
+                          InkWell(
+                            child: Padding(
+                              child: Text(
+                                'about',
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
                             ),
-                            padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
-                          )
+                            onTap: testToast,
+                          ),
                         ],
                       ),
                     ),
@@ -262,6 +269,12 @@ class _MainLayoutState extends State<WeatherDetail> {
           ],
         ),
       ),
+    );
+  }
+
+  void testToast() {
+    Fluttertoast.showToast(
+      msg: "立马加班开发",
     );
   }
 
