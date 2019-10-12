@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:amap_location/amap_location.dart';
@@ -15,6 +16,7 @@ import 'bean/minutely.dart';
 import 'bean/realtime.dart';
 import 'bean/weather_bean.dart';
 import 'global.dart';
+import 'unit_model.dart';
 import 'utils/date_utils.dart';
 import 'utils/translation_utils.dart';
 import 'views/popup_window_button.dart';
@@ -426,20 +428,22 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   }
 
   Widget _tempLayout() {
-    return Padding(
-      padding: EdgeInsets.only(left: 28),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            '${(realtime.temperature + 0.5).toInt()}°',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 60,
-              fontWeight: FontWeight.w300,
-            ),
-          )
-        ],
+    return Consumer<UnitModel>(
+      builder: (context, unitModel, _) => Padding(
+        padding: EdgeInsets.only(left: 28),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              '${(realtime.temperature + 0.5).toInt()}${unitModel.temperature}',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 60,
+                fontWeight: FontWeight.w300,
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -605,57 +609,65 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   //  更多信息
   Widget _moreInfLayout() {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: 15),
-                child: Row(
-                  children: <Widget>[
-                    getWidget('空气质量', Translation.getAqiDesc(realtime.aqi), ''),
-                    getWidget('PM2.5', realtime.pm25.toString(), ''),
-                  ],
+    return Consumer<UnitModel>(
+      builder: (context, unitModel, _) => Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top: 15),
+                  child: Row(
+                    children: <Widget>[
+                      getWidget(
+                          '空气质量', Translation.getAqiDesc(realtime.aqi), ''),
+                      getWidget('PM2.5', realtime.pm25.toString(), ''),
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 25),
-                child: Row(
-                  children: <Widget>[
-                    getWidget(Translation.getWindDir(realtime.wind.direction),
-                        realtime.wind.speed.toString(), 'km/h'),
-                    getWidget('体感温度',
-                        realtime.temperature.toInt().toString() + '°', ''),
-                  ],
+                Padding(
+                  padding: EdgeInsets.only(top: 25),
+                  child: Row(
+                    children: <Widget>[
+                      getWidget(Translation.getWindDir(realtime.wind.direction),
+                          realtime.wind.speed.toString(), unitModel.wind.toString()),
+                      getWidget(
+                          '体感温度',
+                          realtime.temperature.toInt().toString() +
+                              unitModel.temperature.toString(),
+                          ''),
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 25),
-                child: Row(
-                  children: <Widget>[
-                    getWidget(
-                        '湿度',
-                        (realtime.humidity * 100 + 0.5).toInt().toString(),
-                        '%'),
-                    getWidget('能见度', realtime.visibility.toString(), 'km'),
-                  ],
+                Padding(
+                  padding: EdgeInsets.only(top: 25),
+                  child: Row(
+                    children: <Widget>[
+                      getWidget(
+                          '湿度',
+                          (realtime.humidity * 100 + 0.5).toInt().toString(),
+                          '%'),
+                      getWidget('能见度', realtime.visibility.toString(),
+                          unitModel.visibility.toString()),
+                    ],
+                  ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 25),
-                child: Row(
-                  children: <Widget>[
-                    getWidget('紫外线', realtime.ultraviolet.desc, ''),
-                    getWidget('气压', (realtime.pres ~/ 100).toString(), 'hPa'),
-                  ],
+                Padding(
+                  padding: EdgeInsets.only(top: 25),
+                  child: Row(
+                    children: <Widget>[
+                      getWidget('紫外线', realtime.ultraviolet.desc, ''),
+                      getWidget('气压', realtime.pres.toString(),
+                          unitModel.airPressure.toString()),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        )
-      ],
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 

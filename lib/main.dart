@@ -4,29 +4,38 @@ import 'package:coolweather/setting.dart';
 import 'package:coolweather/weather_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+
+import 'unit_model.dart';
 
 void main() {
+  /// 单位model
+  final unitModel = UnitModel();
+
   SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle.light.copyWith(statusBarColor: Colors.transparent));
 
-  runApp(MaterialApp(
-    theme: ThemeData(
-      brightness: Brightness.light,
-      primaryColor: Colors.white,
-      accentColor: Colors.white,
-      fontFamily: 'Montserrat',
-      textTheme: TextTheme(
-        headline: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-        title: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
-        body1: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+  runApp(ChangeNotifierProvider<UnitModel>.value(
+    value: unitModel,
+    child: MaterialApp(
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primaryColor: Colors.white,
+        accentColor: Colors.white,
+        fontFamily: 'Montserrat',
+        textTheme: TextTheme(
+          headline: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+          title: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
+          body1: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+        ),
       ),
+      initialRoute: "/",
+      routes: {
+        "/": (context) => WeatherDetail(),
+        "focus_district_list": (context) => FocusDistrictList(),
+        "select_district": (context) => SelectDistrict(),
+        "setting": (context) => Setting(),
+      },
     ),
-    initialRoute: "/",
-    routes: {
-      "/": (context) => WeatherDetail(),
-      "focus_district_list": (context) => FocusDistrictList(),
-      "select_district": (context) => SelectDistrict(),
-      "setting": (context) => Setting(),
-    },
   ));
 }
