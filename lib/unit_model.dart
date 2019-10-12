@@ -7,8 +7,8 @@ class UnitModel with ChangeNotifier {
   VisibilityUnit visibility = VisibilityUnit.km;
   AirPressureUnit airPressure = AirPressureUnit.hPa;
 
-  void setTemperatureUnit(TemperatureUnit unit) {
-    temperature = unit;
+  void setTemperatureUnit(int index) {
+    temperature = TemperatureUnit.values[index];
     notifyListeners();
   }
 }

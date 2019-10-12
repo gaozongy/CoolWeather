@@ -52,15 +52,17 @@ class _SettingLayoutState extends State<Setting> {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(top: 10),
-              child: _unitRowWidget(
-                  '温度单位', unitModel.temperature.toString(), unitModel, 0),
+              child: _unitRowWidget(unitModel.setTemperatureUnit, '温度单位',
+                  unitModel.temperature.toString(), unitModel, 0),
             ),
-            _unitRowWidget('风力单位', unitModel.wind.toString(), unitModel, 1),
-            _unitRowWidget('降水量', unitModel.rainfall.toString(), unitModel, 2),
-            _unitRowWidget(
-                '能见度', unitModel.visibility.toString(), unitModel, 3),
-            _unitRowWidget(
-                '气压', unitModel.airPressure.toString(), unitModel, 4),
+            _unitRowWidget(unitModel.setTemperatureUnit, '风力单位',
+                unitModel.wind.toString(), unitModel, 1),
+            _unitRowWidget(unitModel.setTemperatureUnit, '降水量',
+                unitModel.rainfall.toString(), unitModel, 2),
+            _unitRowWidget(unitModel.setTemperatureUnit, '能见度',
+                unitModel.visibility.toString(), unitModel, 3),
+            _unitRowWidget(unitModel.setTemperatureUnit, '气压',
+                unitModel.airPressure.toString(), unitModel, 4),
             _warnRowWidget(),
             _dividerLayout(),
             _aboutRowWidget(),
@@ -71,8 +73,8 @@ class _SettingLayoutState extends State<Setting> {
     );
   }
 
-  Widget _unitRowWidget(
-      String key, String value, UnitModel unitModel, int type) {
+  Widget _unitRowWidget(Function setUnit, String key, String value,
+      UnitModel unitModel, int type) {
     return InkWell(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,7 +97,7 @@ class _SettingLayoutState extends State<Setting> {
         ],
       ),
       onTap: () {
-        changeUnit(unitModel, type);
+        changeUnit(setUnit, unitModel, type);
       },
     );
   }
@@ -156,7 +158,8 @@ class _SettingLayoutState extends State<Setting> {
     );
   }
 
-  Future<void> changeUnit(UnitModel unitModel, int type) async {
+  Future<void> changeUnit(
+      Function setUnit, UnitModel unitModel, int type) async {
     int position = await showDialog<int>(
         context: context,
         builder: (BuildContext context) {
@@ -166,9 +169,7 @@ class _SettingLayoutState extends State<Setting> {
           );
         });
 
-    if (type == 0) {
-      unitModel.setTemperatureUnit(TemperatureUnit.values[position]);
-    }
+    setUnit(position);
   }
 
   List<Widget> getDialogOptionList(int type) {
