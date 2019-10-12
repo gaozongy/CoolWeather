@@ -18,7 +18,8 @@ dependencies:
   amap_location:
   fluttertoast: ^3.1.3
   permission_handler: ^3.2.0
-  
+  provider: ^3.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -27,24 +28,11 @@ dev_dependencies:
   json_serializable: ^2.0.0
 
 flutter:
-
   uses-material-design: true
 
   assets:
-    - images/green.jpg
     - images/sunny.jpg
-    - images/ic_home.png
-    - images/cw_cloud.png
-    - images/cw_sunny.png
-    - images/cw_wind.png
-    - images/cw_local.png
-    - images/cw_snow.png
-    - images/cl_light_rain.png
-    - images/cl_nosun.png
-    - images/cl_rain.png
     - images/location_ic.png
-    - images/cw_haze.png
-    - images/main_bg_1.jpg
     - images/main_bg_2.png
     - images/building_ic.png
     - images/weather/cloud_ic.png

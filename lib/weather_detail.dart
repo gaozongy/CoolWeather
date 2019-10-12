@@ -99,6 +99,14 @@ class _MainLayoutState extends State<WeatherDetail> {
     });
   }
 
+  _setting() {
+    Navigator.of(context).pushNamed("setting").then((bool) {
+      if (bool) {
+        _initData();
+      }
+    });
+  }
+
   setUpdateTime(int time) {
     setState(() {
       updateTime = DateUtils.getTimeDesc(time) + '更新';
@@ -244,7 +252,7 @@ class _MainLayoutState extends State<WeatherDetail> {
                             child: Padding(
                               padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
                               child: Text(
-                                'share',
+                                '分享',
                                 style: TextStyle(fontSize: 16),
                               ),
                             ),
@@ -253,12 +261,12 @@ class _MainLayoutState extends State<WeatherDetail> {
                           InkWell(
                             child: Padding(
                               child: Text(
-                                'about',
+                                '设置',
                                 style: TextStyle(fontSize: 16),
                               ),
                               padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
                             ),
-                            onTap: testToast,
+                            onTap: _setting,
                           ),
                         ],
                       ),
