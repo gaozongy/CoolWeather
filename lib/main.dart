@@ -11,6 +11,7 @@ import 'unit_model.dart';
 void main() {
   /// 单位model
   final unitModel = UnitModel();
+  unitModel.initUnit();
 
   SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle.light.copyWith(statusBarColor: Colors.transparent));

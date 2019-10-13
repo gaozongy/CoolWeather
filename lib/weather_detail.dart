@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:coolweather/utils/unit_convert_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -429,22 +430,28 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
 
   Widget _tempLayout() {
     return Consumer<UnitModel>(
-      builder: (context, unitModel, _) => Padding(
-        padding: EdgeInsets.only(left: 28),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              '${(realtime.temperature + 0.5).toInt()}${unitModel.temperature}',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 60,
-                fontWeight: FontWeight.w300,
-              ),
-            )
-          ],
-        ),
-      ),
+      builder: (context, unitModel, _) {
+        double temperature = realtime.temperature;
+        if (unitModel.temperature == TemperatureUnit.fahrenheit) {
+          temperature = UnitConvertUtils.celsiusToFahrenheit(temperature);
+        }
+        return Padding(
+          padding: EdgeInsets.only(left: 28),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                '${temperature.toStringAsFixed(0)}${temperatureUnitList.elementAt(unitModel.temperature.index).unitShow}',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 60,
+                  fontWeight: FontWeight.w300,
+                ),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -610,64 +617,110 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
   //  更多信息
   Widget _moreInfLayout() {
     return Consumer<UnitModel>(
-      builder: (context, unitModel, _) => Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(top: 15),
-                  child: Row(
-                    children: <Widget>[
-                      getWidget(
-                          '空气质量', Translation.getAqiDesc(realtime.aqi), ''),
-                      getWidget('PM2.5', realtime.pm25.toString(), ''),
-                    ],
+      builder: (context, unitModel, _) {
+        double temperature = realtime.temperature;
+        if (unitModel.temperature == TemperatureUnit.fahrenheit) {
+          temperature = UnitConvertUtils.celsiusToFahrenheit(temperature);
+        }
+
+        double windSpeed = realtime.wind.speed;
+        if (unitModel.wind == WindUnit.m_s) {
+          windSpeed = UnitConvertUtils.kmhToMs(windSpeed);
+        } else if (unitModel.wind == WindUnit.ft_s) {
+          windSpeed = UnitConvertUtils.kmhToFts(windSpeed);
+        } else if (unitModel.wind == WindUnit.mph) {
+          windSpeed = UnitConvertUtils.kmhToMph(windSpeed);
+        } else if (unitModel.wind == WindUnit.kts) {
+          windSpeed = UnitConvertUtils.kmhToKts(windSpeed);
+        }
+
+        double visibility = realtime.visibility;
+        if (unitModel.visibility == VisibilityUnit.mi) {
+          visibility = UnitConvertUtils.kmToMi(visibility);
+        }
+
+        double pres = realtime.pres;
+        if (unitModel.airPressure == AirPressureUnit.hPa) {
+          pres = UnitConvertUtils.paToHpa(pres);
+        } else if (unitModel.airPressure == AirPressureUnit.mmHg) {
+          pres = UnitConvertUtils.paToMmHg(pres);
+        } else if (unitModel.airPressure == AirPressureUnit.inHg) {
+          pres = UnitConvertUtils.paToInHg(pres);
+        }
+
+        return Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(top: 15),
+                    child: Row(
+                      children: <Widget>[
+                        getWidget(
+                            '空气质量', Translation.getAqiDesc(realtime.aqi), ''),
+                        getWidget('PM2.5', realtime.pm25.toString(), ''),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 25),
-                  child: Row(
-                    children: <Widget>[
-                      getWidget(Translation.getWindDir(realtime.wind.direction),
-                          realtime.wind.speed.toString(), unitModel.wind.toString()),
-                      getWidget(
-                          '体感温度',
-                          realtime.temperature.toInt().toString() +
-                              unitModel.temperature.toString(),
-                          ''),
-                    ],
+                  Padding(
+                    padding: EdgeInsets.only(top: 25),
+                    child: Row(
+                      children: <Widget>[
+                        getWidget(
+                            Translation.getWindDir(realtime.wind.direction),
+                            windSpeed.toStringAsFixed(1),
+                            windUnitList
+                                .elementAt(unitModel.wind.index)
+                                .unitEN),
+                        getWidget(
+                            '体感温度',
+                            temperature.toStringAsFixed(0) +
+                                temperatureUnitList
+                                    .elementAt(unitModel.temperature.index)
+                                    .unitShow,
+                            ''),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 25),
-                  child: Row(
-                    children: <Widget>[
-                      getWidget(
-                          '湿度',
-                          (realtime.humidity * 100 + 0.5).toInt().toString(),
-                          '%'),
-                      getWidget('能见度', realtime.visibility.toString(),
-                          unitModel.visibility.toString()),
-                    ],
+                  Padding(
+                    padding: EdgeInsets.only(top: 25),
+                    child: Row(
+                      children: <Widget>[
+                        getWidget(
+                            '湿度',
+                            (realtime.humidity * 100 + 0.5).toInt().toString(),
+                            '%'),
+                        getWidget(
+                            '能见度',
+                            visibility.toStringAsFixed(1),
+                            visibilityUnitList
+                                .elementAt(unitModel.visibility.index)
+                                .unitEN),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 25),
-                  child: Row(
-                    children: <Widget>[
-                      getWidget('紫外线', realtime.ultraviolet.desc, ''),
-                      getWidget('气压', realtime.pres.toString(),
-                          unitModel.airPressure.toString()),
-                    ],
+                  Padding(
+                    padding: EdgeInsets.only(top: 25),
+                    child: Row(
+                      children: <Widget>[
+                        getWidget('紫外线', realtime.ultraviolet.desc, ''),
+                        getWidget(
+                            '气压',
+                            pres.toStringAsFixed(0),
+                            airPressureUnitList
+                                .elementAt(unitModel.airPressure.index)
+                                .unitEN),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
+                ],
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 

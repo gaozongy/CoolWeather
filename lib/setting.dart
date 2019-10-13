@@ -1,6 +1,7 @@
 import 'package:coolweather/unit_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class Setting extends StatefulWidget {
@@ -12,32 +13,6 @@ class Setting extends StatefulWidget {
 
 class _SettingLayoutState extends State<Setting> {
   bool isNotifyOpen = true;
-
-  List<Unit> temperatureUnitList = [Unit('℃ - 摄氏度'), Unit('℉ - 华氏度')];
-
-  List<Unit> windUnitList = [
-    Unit('m/s - 米/秒'),
-    Unit('km/h - 千米/小时'),
-    Unit('ft/s - 英尺/秒'),
-    Unit('mph - 英里/小时'),
-    Unit('kts - 海里/小时')
-  ];
-
-  List<Unit> rainfallUnitList = [
-    Unit('mm - 毫米'),
-    Unit('in - 英寸'),
-  ];
-
-  List<Unit> visibilityUnitList = [
-    Unit('km - 千米'),
-    Unit('mi - 英里'),
-  ];
-
-  List<Unit> airPressureUnitList = [
-    Unit('hPa - 百帕'),
-    Unit('mmHg - 毫米汞柱'),
-    Unit('inHg - 英寸汞柱'),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -52,17 +27,31 @@ class _SettingLayoutState extends State<Setting> {
           children: <Widget>[
             Padding(
               padding: EdgeInsets.only(top: 10),
-              child: _unitRowWidget(unitModel.setTemperatureUnit, '温度单位',
-                  unitModel.temperature.toString(), unitModel, 0),
+              child: _unitRowWidget(
+                  '温度单位',
+                  temperatureUnitList.elementAt(unitModel.temperature.index),
+                  temperatureUnitList,
+                  unitModel.setTemperatureUnit),
             ),
-            _unitRowWidget(unitModel.setTemperatureUnit, '风力单位',
-                unitModel.wind.toString(), unitModel, 1),
-            _unitRowWidget(unitModel.setTemperatureUnit, '降水量',
-                unitModel.rainfall.toString(), unitModel, 2),
-            _unitRowWidget(unitModel.setTemperatureUnit, '能见度',
-                unitModel.visibility.toString(), unitModel, 3),
-            _unitRowWidget(unitModel.setTemperatureUnit, '气压',
-                unitModel.airPressure.toString(), unitModel, 4),
+            _unitRowWidget('风力单位', windUnitList.elementAt(unitModel.wind.index),
+                windUnitList, unitModel.setWindUnit),
+            _unitRowWidget(
+                '降水量',
+                rainfallUnitList.elementAt(unitModel.rainfall.index),
+                rainfallUnitList,
+                unitModel.setRainfallUnit),
+            _unitRowWidget(
+              '能见度',
+              visibilityUnitList.elementAt(unitModel.visibility.index),
+              visibilityUnitList,
+              unitModel.setVisibilityUnit,
+            ),
+            _unitRowWidget(
+              '气压',
+              airPressureUnitList.elementAt(unitModel.airPressure.index),
+              airPressureUnitList,
+              unitModel.setAirPressureUnit,
+            ),
             _warnRowWidget(),
             _dividerLayout(),
             _aboutRowWidget(),
@@ -73,8 +62,12 @@ class _SettingLayoutState extends State<Setting> {
     );
   }
 
-  Widget _unitRowWidget(Function setUnit, String key, String value,
-      UnitModel unitModel, int type) {
+  Widget _unitRowWidget(
+    String content,
+    Unit unit,
+    List<Unit> unitList,
+    Function setUnit,
+  ) {
     return InkWell(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,10 +78,10 @@ class _SettingLayoutState extends State<Setting> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  key,
+                  content,
                   style: TextStyle(fontSize: 17),
                 ),
-                Text(value,
+                Text(unit.toString(),
                     style: TextStyle(fontSize: 12.5, color: Colors.grey)),
               ],
             ),
@@ -97,7 +90,7 @@ class _SettingLayoutState extends State<Setting> {
         ],
       ),
       onTap: () {
-        changeUnit(setUnit, unitModel, type);
+        selectUnit(content, unitList, setUnit);
       },
     );
   }
@@ -145,7 +138,11 @@ class _SettingLayoutState extends State<Setting> {
           style: TextStyle(fontSize: 17),
         ),
       ),
-      onTap: () {},
+      onTap: () {
+        Fluttertoast.showToast(
+          msg: "立马加班开发",
+        );
+      },
     );
   }
 
@@ -158,34 +155,41 @@ class _SettingLayoutState extends State<Setting> {
     );
   }
 
-  Future<void> changeUnit(
-      Function setUnit, UnitModel unitModel, int type) async {
+  Future<void> selectUnit(
+      String title, List<Unit> unitList, Function setUnit) async {
     int position = await showDialog<int>(
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
-            title: Text(type.toString()),
-            children: getDialogOptionList(type),
+            title: Text(
+              title,
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  fontStyle: FontStyle.normal),
+            ),
+            children: getDialogOptionList(unitList),
           );
         });
 
     setUnit(position);
   }
 
-  List<Widget> getDialogOptionList(int type) {
+  List<Widget> getDialogOptionList(List<Unit> unitList) {
     List<Widget> widgetList = List();
-    if (type == 0) {
-      for (int i = 0; i < temperatureUnitList.length; i++) {
-        widgetList.add(SimpleDialogOption(
-          onPressed: () {
-            Navigator.pop(context, i);
-          },
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 6),
-            child: Text(temperatureUnitList.elementAt(i).unit),
+    for (int i = 0; i < unitList.length; i++) {
+      widgetList.add(SimpleDialogOption(
+        onPressed: () {
+          Navigator.pop(context, i);
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 6),
+          child: Text(
+            unitList.elementAt(i).toString(),
+            style: TextStyle(fontSize: 16),
           ),
-        ));
-      }
+        ),
+      ));
     }
 
     return widgetList;
