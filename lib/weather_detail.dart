@@ -103,11 +103,7 @@ class _MainLayoutState extends State<WeatherDetail> {
   }
 
   _setting() {
-    Navigator.of(context).pushNamed("setting").then((bool) {
-      if (bool) {
-        _initData();
-      }
-    });
+    Navigator.of(context).pushNamed("setting");
   }
 
   setUpdateTime(int time) {

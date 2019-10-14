@@ -19,6 +19,7 @@ dependencies:
   fluttertoast: ^3.1.3
   permission_handler: ^3.2.0
   provider: ^3.1.0
+  package_info: ^0.4.0+6
 
 dev_dependencies:
   flutter_test:
@@ -35,6 +36,7 @@ flutter:
     - images/location_ic.png
     - images/main_bg_2.png
     - images/building_ic.png
+    - images/ic_launcher.png
     - images/weather/cloud_ic.png
     - images/weather/haze_ic.png
     - images/weather/nosun_ic.png
@@ -42,7 +44,6 @@ flutter:
     - images/weather/snow_ic.png
     - images/weather/sunny_ic.png
     - images/weather/wind_ic.png
-
 
   fonts:
     - family: Oxygen-Regular

@@ -1,12 +1,13 @@
-import 'package:coolweather/focus_district_list.dart';
-import 'package:coolweather/select_district.dart';
-import 'package:coolweather/setting.dart';
-import 'package:coolweather/weather_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import 'about.dart';
+import 'focus_district_list.dart';
+import 'select_district.dart';
+import 'setting.dart';
 import 'unit_model.dart';
+import 'weather_detail.dart';
 
 void main() {
   /// 单位model
@@ -36,6 +37,7 @@ void main() {
         "focus_district_list": (context) => FocusDistrictList(),
         "select_district": (context) => SelectDistrict(),
         "setting": (context) => Setting(),
+        "about": (context) => About(),
       },
     ),
   ));

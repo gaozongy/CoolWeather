@@ -1,7 +1,6 @@
 import 'package:coolweather/unit_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class Setting extends StatefulWidget {
@@ -101,7 +100,7 @@ class _SettingLayoutState extends State<Setting> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -132,16 +131,14 @@ class _SettingLayoutState extends State<Setting> {
   Widget _aboutRowWidget() {
     return InkWell(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 22),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: Text(
           '关于',
           style: TextStyle(fontSize: 17),
         ),
       ),
       onTap: () {
-        Fluttertoast.showToast(
-          msg: "立马加班开发",
-        );
+        Navigator.of(context).pushNamed("about");
       },
     );
   }
