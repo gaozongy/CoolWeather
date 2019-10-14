@@ -79,7 +79,7 @@ class AboutState extends State<About> {
                       child: Row(
                         children: <Widget>[
                           Text(
-                            '1.支持未来两小时雨势准确预测，轻松掌握天气\n2.支持设置单位，多个单位数值自由切换\n3.添加关于页面,了解版本信息，更新介绍',
+                            '1.支持未来两小时雨势准确预测，轻松掌握天气\n2.支持设置单位，多个单位数值自由切换\n3.添加关于页面，了解版本信息，更新介绍',
                             style: TextStyle(fontSize: 13),
                           )
                         ],
