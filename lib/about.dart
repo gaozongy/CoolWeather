@@ -39,23 +39,71 @@ class AboutState extends State<About> {
       ),
       body: ConstrainedBox(
         constraints: BoxConstraints.expand(),
-        child: Stack(
-          alignment: Alignment.center,
+        child: Column(
           children: <Widget>[
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Image.asset(
-                  "images/ic_launcher.png",
-                  width: 100,
-                ),
-                Text(appName + ' V'+ version)
-              ],
+            Expanded(
+              flex: 3,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Image.asset(
+                    "images/ic_launcher.png",
+                    width: 100,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Text(
+                      appName + ' V' + version,
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
             ),
-            Positioned(
-              bottom: 10,
-              child: Text("bottom"),
-            )
+            Expanded(
+              flex: 4,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 36, vertical: 50),
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Text(
+                          '更新日志：',
+                          style: TextStyle(fontSize: 16),
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            '1.支持未来两小时雨势准确预测，轻松掌握天气\n2.支持设置单位，多个单位数值自由切换\n3.添加关于页面,了解版本信息，更新介绍',
+                            style: TextStyle(fontSize: 13),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 6),
+                    child: Text(
+                      '项目地址，https://github.com/GoodLuck-GL',
+                      style: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                    ),
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),
