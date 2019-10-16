@@ -38,21 +38,11 @@
         <receiver android:name=".widget.AppWidget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.widget.STATUS_CHANGED"/>
             </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/app_widget_info" />
-        </receiver>
-
-        <receiver
-            android:name=".widget.WidgetReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.example.widget.CTRL" />
-            </intent-filter>
         </receiver>
     </application>
 </manifest>

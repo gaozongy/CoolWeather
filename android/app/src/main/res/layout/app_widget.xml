@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
-    android:background="@drawable/launch_background"
+    android:background="@drawable/shape_widget_bg"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="10dp">
@@ -14,41 +14,17 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="电台桌面小部件"
+        android:text="标题"
         android:textColor="#0997f0"
         android:textSize="22sp" />
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/widget_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2">
-
-        <ImageView
-            android:id="@+id/widget_last"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="80dp"
-            android:layout_toLeftOf="@+id/widget_pause"
-            android:background="@mipmap/ic_launcher" />
-
-        <ImageView
-            android:id="@+id/widget_pause"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@mipmap/ic_launcher" />
-
-        <ImageView
-            android:id="@+id/widget_next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="80dp"
-            android:layout_toRightOf="@id/widget_pause"
-            android:background="@mipmap/ic_launcher" />
-
-    </RelativeLayout>
-
-
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="time"
+        android:textColor="#0997f0"
+        android:textSize="10sp" />
 </LinearLayout>
