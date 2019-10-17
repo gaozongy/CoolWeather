@@ -1,30 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="center"
+    android:layout_height="wrap_content"
+    android:id="@+id/widget_rl"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/shape_widget_bg"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="8dp">
+
+    <LinearLayout
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/widget_district_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="南京" />
+
+        <TextView
+            android:id="@+id/widget_weather_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#AFFFFFFF"
+            android:textSize="14sp"
+            tools:text="晴" />
+
+        <TextView
+            android:layout_marginTop="5dp"
+            android:textColor="@android:color/white"
+            android:id="@+id/widget_temperature_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="38sp"
+            tools:text="16" />
+
+        <TextView
+            android:textColor="@android:color/white"
+            android:id="@+id/widget_max_min_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            tools:text="19 / 13°" />
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/widget_title"
-        android:layout_width="match_parent"
+        android:textSize="11sp"
+        android:layout_marginEnd="22dp"
+        android:layout_toStartOf="@id/widget_update_iv"
+        android:id="@+id/widget_update_time_tv"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="标题"
-        android:textColor="#0997f0"
-        android:textSize="22sp" />
+        android:layout_alignParentEnd="true"
+        android:textColor="#AFFFFFFF"
+        tools:text="10:35更新" />
 
-    <TextView
-        android:id="@+id/widget_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="time"
-        android:textColor="#0997f0"
-        android:textSize="10sp" />
-</LinearLayout>
+    <ImageView
+        android:layout_alignParentEnd="true"
+        android:id="@+id/widget_update_iv"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:src="@mipmap/ic_widget_update" />
+
+    <LinearLayout
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/widget_forecast_day_1_tv"
+                android:textColor="#AFFFFFFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                tools:text="明天" />
+
+            <ImageView
+                android:id="@+id/widget_forecast_icon_1_iv"
+                android:layout_marginTop="6dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/widget_forecast_temperature_1_iv"
+                android:textColor="#AFFFFFFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                tools:text="22 / 14 °" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginStart="12dp"
+            android:gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/widget_forecast_day_2_tv"
+                android:textColor="#AFFFFFFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                tools:text="明天" />
+
+            <ImageView
+                android:id="@+id/widget_forecast_icon_2_iv"
+                android:layout_marginTop="6dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/widget_forecast_temperature_2_iv"
+                android:textColor="#AFFFFFFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                tools:text="22 / 14 °" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginStart="12dp"
+            android:gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/widget_forecast_day_3_tv"
+                android:textColor="#AFFFFFFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                tools:text="明天" />
+
+            <ImageView
+                android:id="@+id/widget_forecast_icon_3_iv"
+                android:layout_marginTop="6dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/widget_forecast_temperature_3_iv"
+                android:textColor="#AFFFFFFF"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                tools:text="22 / 14 °" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
