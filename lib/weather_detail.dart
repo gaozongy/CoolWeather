@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:amap_location/amap_location.dart';
 import 'package:coolweather/utils/unit_convert_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -8,7 +9,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:amap_location/amap_location.dart';
 
 import 'bean/daily.dart';
 import 'bean/focus_district_list_bean.dart';
@@ -19,12 +19,12 @@ import 'bean/weather_bean.dart';
 import 'global.dart';
 import 'unit_model.dart';
 import 'utils/date_utils.dart';
+import 'utils/screen_utils.dart';
 import 'utils/translation_utils.dart';
 import 'views/popup_window_button.dart';
 import 'views/precipitation_line.dart';
 import 'views/sunrise_sunset_widget.dart';
 import 'views/temp_line.dart';
-import 'utils/screen_utils.dart';
 
 class WeatherDetail extends StatefulWidget {
   WeatherDetail({Key key}) : super(key: key);
@@ -372,6 +372,10 @@ class _WeatherDetailState extends State<_WeatherDetailWidget> {
       Global.locationDistrict = district;
       widget.setLocation(district);
       _queryWeather(district.longitude, district.latitude);
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String locationDistrictJson = jsonEncode(district.toJson());
+      prefs.setString('location_district', locationDistrictJson);
     }
   }
 
