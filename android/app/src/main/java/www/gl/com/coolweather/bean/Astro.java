@@ -1,7 +1,7 @@
 package www.gl.com.coolweather.bean;
 
-class Astro {
-    String date;
-    Sunset sunset;
-    Sunrise sunrise;
+public class Astro {
+    public String date;
+    public Sunset sunset;
+    public Sunrise sunrise;
 }

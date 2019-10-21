@@ -1,5 +1,5 @@
 package www.gl.com.coolweather.bean;
 
-class Sunset {
-    String time;
+public class Sunset {
+    public String time;
 }

@@ -14,11 +14,8 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,6 +32,7 @@ import www.gl.com.coolweather.bean.Temperature;
 import www.gl.com.coolweather.bean.WeatherBean;
 import www.gl.com.coolweather.net.ApiService;
 import www.gl.com.coolweather.utils.DateUtils;
+import www.gl.com.coolweather.utils.ImageUtils;
 import www.gl.com.coolweather.utils.TranslationUtils;
 
 
@@ -49,40 +47,6 @@ public class AppWidget extends AppWidgetProvider {
     private final int UPDATE_SUCCESS = 0x03;
 
     private final int UPDATE_FAIL = 0x04;
-
-    public static int getWeatherIcon(String weather) {
-        int iconId;
-        switch (weather) {
-            case "CLEAR_DAY":
-            case "CLEAR_NIGHT": {
-                iconId = R.drawable.sunny_ic;
-            }
-            break;
-            case "PARTLY_CLOUDY_DAY":
-            case "PARTLY_CLOUDY_NIGHT":
-                iconId = R.drawable.cloud_ic;
-                break;
-            case "CLOUDY":
-                iconId = R.drawable.nosun_ic;
-                break;
-            case "WIND":
-                iconId = R.drawable.wind_ic;
-                break;
-            case "HAZE":
-                iconId = R.drawable.haze_ic;
-                break;
-            case "RAIN":
-                iconId = R.drawable.rain_ic;
-                break;
-            case "SNOW":
-                iconId = R.drawable.snow_ic;
-                break;
-            default:
-                iconId = R.drawable.sunny_ic;
-                break;
-        }
-        return iconId;
-    }
 
     @Override
     public void onReceive(final Context context, Intent intent) {
@@ -174,14 +138,11 @@ public class AppWidget extends AppWidgetProvider {
         remoteViews.setTextViewText(R.id.widget_weather_tv, TranslationUtils.getWeatherDesc(realtime.skycon));
         remoteViews.setTextViewText(R.id.widget_temperature_tv, toInt(realtime.temperature) + "°");
 
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.CHINA);
-        String updateDate = sdf.format(new Date(weatherBean.server_time * 1000));
+        String updateDate = DateUtils.getFormatDate(weatherBean.server_time * 1000, DateUtils.HHmm);
         remoteViews.setTextViewText(R.id.widget_update_time_tv, updateDate + " 更新");
 
         remoteViews.setTextViewText(R.id.widget_max_min_tv, toInt(daily.temperature.get(0).max)
                 + " / " + toInt(daily.temperature.get(0).min) + "°");
-
-        sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
 
         Skycon skycon1 = daily.skycon.get(1);
         Skycon skycon2 = daily.skycon.get(2);
@@ -191,39 +152,38 @@ public class AppWidget extends AppWidgetProvider {
         Temperature temperature2 = daily.temperature.get(2);
         Temperature temperature3 = daily.temperature.get(3);
 
-        try {
-            Date date2 = sdf.parse(skycon2.date);
-            Date date3 = sdf.parse(skycon3.date);
-            Calendar calendar = Calendar.getInstance();
-            if (date2 != null && date3 != null) {
-                remoteViews.setTextViewText(R.id.widget_forecast_day_1_tv, "明天");
-                remoteViews.setImageViewResource(R.id.widget_forecast_icon_1_iv, getWeatherIcon(skycon1.value));
-                remoteViews.setTextViewText(R.id.widget_forecast_temperature_1_iv, toInt(temperature1.max)
-                        + " / " + toInt(temperature1.min) + "°");
+        Date date2 = DateUtils.getDate(skycon2.date, DateUtils.yyyyMMdd);
+        Date date3 = DateUtils.getDate(skycon3.date, DateUtils.yyyyMMdd);
+        Calendar calendar = Calendar.getInstance();
+        if (date2 != null && date3 != null) {
+            remoteViews.setTextViewText(R.id.widget_forecast_day_1_tv, "明天");
+            remoteViews.setImageViewResource(R.id.widget_forecast_icon_1_iv, ImageUtils.getWeatherIcon(skycon1.value));
+            remoteViews.setTextViewText(R.id.widget_forecast_temperature_1_iv, toInt(temperature1.max)
+                    + " / " + toInt(temperature1.min) + "°");
 
-                calendar.setTime(date2);
-                remoteViews.setTextViewText(R.id.widget_forecast_day_2_tv, DateUtils.getWeekday(
-                        calendar.get(Calendar.DAY_OF_WEEK) - 1));
-                remoteViews.setImageViewResource(R.id.widget_forecast_icon_2_iv, getWeatherIcon(skycon2.value));
-                remoteViews.setTextViewText(R.id.widget_forecast_temperature_2_iv, toInt(temperature2.max)
-                        + " / " + toInt(temperature2.min) + "°");
+            calendar.setTime(date2);
+            remoteViews.setTextViewText(R.id.widget_forecast_day_2_tv, DateUtils.getWeekday(
+                    calendar.get(Calendar.DAY_OF_WEEK) - 1));
+            remoteViews.setImageViewResource(R.id.widget_forecast_icon_2_iv, ImageUtils.getWeatherIcon(skycon2.value));
+            remoteViews.setTextViewText(R.id.widget_forecast_temperature_2_iv, toInt(temperature2.max)
+                    + " / " + toInt(temperature2.min) + "°");
 
-                calendar.setTime(date3);
-                remoteViews.setTextViewText(R.id.widget_forecast_day_3_tv, DateUtils.getWeekday(calendar.get(
-                        Calendar.DAY_OF_WEEK) - 1));
-                remoteViews.setImageViewResource(R.id.widget_forecast_icon_3_iv, getWeatherIcon(skycon3.value));
-                remoteViews.setTextViewText(R.id.widget_forecast_temperature_3_iv, toInt(temperature3.max)
-                        + " / " + toInt(temperature3.min) + "°");
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
+            calendar.setTime(date3);
+            remoteViews.setTextViewText(R.id.widget_forecast_day_3_tv, DateUtils.getWeekday(calendar.get(
+                    Calendar.DAY_OF_WEEK) - 1));
+            remoteViews.setImageViewResource(R.id.widget_forecast_icon_3_iv, ImageUtils.getWeatherIcon(skycon3.value));
+            remoteViews.setTextViewText(R.id.widget_forecast_temperature_3_iv, toInt(temperature3.max)
+                    + " / " + toInt(temperature3.min) + "°");
         }
 
+        remoteViews.setInt(R.id.widget_fl, "setBackgroundResource", ImageUtils.getBgResourceId(weatherBean));
         remoteViews.setViewVisibility(R.id.widget_update_mask_ll, View.GONE);
     }
+
 
     int toInt(double value) {
         return (int) (value + 0.5);
     }
+
 }
 
