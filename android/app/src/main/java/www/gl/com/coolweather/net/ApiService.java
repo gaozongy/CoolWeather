@@ -1,10 +1,10 @@
 package www.gl.com.coolweather.net;
 
-import com.gzy.www.myapplication.bean.WeatherBean;
-
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+
+import www.gl.com.coolweather.bean.WeatherBean;
 
 public interface ApiService {
 
