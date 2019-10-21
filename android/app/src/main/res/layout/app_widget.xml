@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/widget_fl"
     android:layout_width="match_parent"
-    android:layout_height="128dp"
-    android:background="@drawable/shape_widget_bg"
+    android:layout_height="126dp"
+    android:background="@drawable/bkg_sunny"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -204,6 +204,7 @@
         android:visibility="gone">
 
         <TextView
+            android:id="@+id/widget_update_mask_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="正在更新"
