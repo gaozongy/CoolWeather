@@ -1,0 +1,1 @@
+-keep class www.gl.com.coolweather.bean.** { *; }

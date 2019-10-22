@@ -67,7 +67,6 @@ public class AppWidget extends AppWidgetProvider {
         String locationDistrictBean = sharedPreferences.getString("flutter.location_district", "");
         final District district = new Gson().fromJson(locationDistrictBean, District.class);
         if (district == null) {
-            // 显示没有定位遮罩
             updateAppWidget(NO_LOCATION, context, "", null);
             return;
         }
