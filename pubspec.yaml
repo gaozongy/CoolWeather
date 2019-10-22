@@ -32,29 +32,28 @@ flutter:
   uses-material-design: true
 
   assets:
-    - images/sunny.jpg
-    - images/location_ic.png
-    - images/main_bg_2.png
-    - images/building_ic.png
+    - images/bg_main.png
+    - images/ic_location.png
+    - images/ic_building.png
     - images/ic_launcher.png
-    - images/weather/cloud_ic.png
-    - images/weather/haze_ic.png
-    - images/weather/nosun_ic.png
-    - images/weather/rain_ic.png
-    - images/weather/snow_ic.png
-    - images/weather/sunny_ic.png
-    - images/weather/wind_ic.png
-    - images/bg_weather/bkg_sunny.png
-    - images/bg_weather/bkg_sunny_night.png
-    - images/bg_weather/bkg_cloudy.png
-    - images/bg_weather/bkg_cloudy_night.png
-    - images/bg_weather/bkg_overcast.png
-    - images/bg_weather/bkg_overcast_night.png
-    - images/bg_weather/bkg_sunny.png
-    - images/bg_weather/bkg_sunny_night.png
-    - images/bg_weather/bkg_haze.png
-    - images/bg_weather/bkg_haze_night.png
-    - images/bg_weather/bkg_downpour.png
-    - images/bg_weather/bkg_downpour_night.png
-    - images/bg_weather/bkg_snow.png
-    - images/bg_weather/bkg_snow_night.png
+    - images/ic_weather/ic_cloud.png
+    - images/ic_weather/ic_haze.png
+    - images/ic_weather/ic_nosun.png
+    - images/ic_weather/ic_rain.png
+    - images/ic_weather/ic_snow.png
+    - images/ic_weather/ic_sunny.png
+    - images/ic_weather/ic_wind.png
+    - images/bg_weather/bg_sunny.png
+    - images/bg_weather/bg_sunny_night.png
+    - images/bg_weather/bg_cloudy.png
+    - images/bg_weather/bg_cloudy_night.png
+    - images/bg_weather/bg_overcast.png
+    - images/bg_weather/bg_overcast_night.png
+    - images/bg_weather/bg_sunny.png
+    - images/bg_weather/bg_sunny_night.png
+    - images/bg_weather/bg_haze.png
+    - images/bg_weather/bg_haze_night.png
+    - images/bg_weather/bg_downpour.png
+    - images/bg_weather/bg_downpour_night.png
+    - images/bg_weather/bg_snow.png
+    - images/bg_weather/bg_snow_night.png

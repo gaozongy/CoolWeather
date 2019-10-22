@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
 /// 气温折线图
-class TempLineWidget extends StatelessWidget {
+class TemperatureLine extends StatelessWidget {
   final List<Temp> tempList;
 
-  TempLineWidget(this.tempList);
+  TemperatureLine(this.tempList);
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(size: Size(0, 140), painter: TempLinePainter(tempList));
+    return CustomPaint(size: Size(0, 140), painter: TemperatureLinePainter(tempList));
   }
 }
 
@@ -45,10 +45,10 @@ Paint bgPaint = new Paint()
   ..style = PaintingStyle.fill
   ..shader = gradient.createShader(arcRect);
 
-class TempLinePainter extends CustomPainter {
+class TemperatureLinePainter extends CustomPainter {
   List<Temp> tempList;
 
-  TempLinePainter(this.tempList);
+  TemperatureLinePainter(this.tempList);
 
   int margin = 0;
 

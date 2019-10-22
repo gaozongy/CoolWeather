@@ -4,17 +4,17 @@ import 'package:coolweather/utils/screen_utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
-class PrecipitationLineWidget extends StatelessWidget {
+class RainfallLine extends StatelessWidget {
   final List<double> precipitation2h;
 
-  PrecipitationLineWidget(this.precipitation2h);
+  RainfallLine(this.precipitation2h);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: CustomPaint(
           size: Size(ScreenUtils.getScreenWidth(context), 100),
-          painter: PrecipitationLinePainter(precipitation2h)),
+          painter: RainfallLinePainter(precipitation2h)),
       decoration: BoxDecoration(color: Colors.transparent),
     );
   }
@@ -35,10 +35,10 @@ Paint trendLinePaint = new Paint()
   ..color = Colors.white60
   ..strokeWidth = 1.2;
 
-class PrecipitationLinePainter extends CustomPainter {
+class RainfallLinePainter extends CustomPainter {
   List<double> precipitation2h;
 
-  PrecipitationLinePainter(this.precipitation2h);
+  RainfallLinePainter(this.precipitation2h);
 
   @override
   void paint(Canvas canvas, Size size) {

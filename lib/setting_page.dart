@@ -1,16 +1,16 @@
-import 'package:coolweather/unit_model.dart';
+import 'package:coolweather/data/unit_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
-class Setting extends StatefulWidget {
+class SettingPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _SettingLayoutState();
+    return SettingPageState();
   }
 }
 
-class _SettingLayoutState extends State<Setting> {
+class SettingPageState extends State<SettingPage> {
   bool isNotifyOpen = true;
 
   @override

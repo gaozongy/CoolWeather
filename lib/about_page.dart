@@ -2,14 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 
-class About extends StatefulWidget {
+class AboutPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return AboutState();
+    return AboutPageState();
   }
 }
 
-class AboutState extends State<About> {
+class AboutPageState extends State<AboutPage> {
   String appName = '';
   String version = '';
 

@@ -8,17 +8,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bean/focus_district_list_bean.dart';
 import 'bean/weather_bean.dart';
-import 'global.dart';
+import 'data/global.dart';
 import 'utils/translation_utils.dart';
 
-class FocusDistrictList extends StatefulWidget {
+class FocusDistrictListPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _FocusDistrictListState();
+    return FocusDistrictListPageState();
   }
 }
 
-class _FocusDistrictListState extends State<FocusDistrictList> {
+class FocusDistrictListPageState extends State<FocusDistrictListPage> {
   /// 关注的城市列表是否有更改
   bool hasChanged = false;
 
@@ -198,7 +198,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
                           ? Padding(
                               padding: EdgeInsets.only(right: 8),
                               child: Image(
-                                image: AssetImage("images/location_ic.png"),
+                                image: AssetImage("images/ic_location.png"),
                                 width: 22,
                                 color: Colors.white60,
                               ),
@@ -272,7 +272,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
   }
 
   AssetImage _getWeatherBg(WeatherBean weatherBean) {
-    String bgResource = 'images/bg_weather/bkg_sunny.png';
+    String bgResource = 'images/bg_weather/bg_sunny.png';
     if(weatherBean == null){
       return AssetImage(bgResource);
     }
@@ -297,44 +297,44 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
 
     switch (weather) {
       case "CLEAR_DAY":
-        bgResource = 'images/bg_weather/bkg_sunny.png';
+        bgResource = 'images/bg_weather/bg_sunny.png';
         break;
       case "CLEAR_NIGHT":
-        bgResource = 'images/bg_weather/bkg_sunny_night.png';
+        bgResource = 'images/bg_weather/bg_sunny_night.png';
         break;
       case "PARTLY_CLOUDY_DAY":
-        bgResource = 'images/bg_weather/bkg_cloudy.png';
+        bgResource = 'images/bg_weather/bg_cloudy.png';
         break;
       case "PARTLY_CLOUDY_NIGHT":
-        bgResource = 'images/bg_weather/bkg_cloudy_night.png';
+        bgResource = 'images/bg_weather/bg_cloudy_night.png';
         break;
       case "CLOUDY":
         bgResource = isDay
-            ? 'images/bg_weather/bkg_overcast.png'
-            : 'images/bg_weather/bkg_overcast_night.png';
+            ? 'images/bg_weather/bg_overcast.png'
+            : 'images/bg_weather/bg_overcast_night.png';
         break;
       case "WIND":
         bgResource = isDay
-            ? 'images/bg_weather/bkg_sunny.png'
-            : 'images/bg_weather/bkg_sunny_night.png';
+            ? 'images/bg_weather/bg_sunny.png'
+            : 'images/bg_weather/bg_sunny_night.png';
         break;
       case "HAZE":
         bgResource = isDay
-            ? 'images/bg_weather/bkg_haze.png'
-            : 'images/bg_weather/bkg_haze_night.png';
+            ? 'images/bg_weather/bg_haze.png'
+            : 'images/bg_weather/bg_haze_night.png';
         break;
       case "RAIN":
         bgResource = isDay
-            ? 'images/bg_weather/bkg_downpour.png'
-            : 'images/bg_weather/bkg_downpour_night.png';
+            ? 'images/bg_weather/bg_downpour.png'
+            : 'images/bg_weather/bg_downpour_night.png';
         break;
       case "SNOW":
         bgResource = isDay
-            ? 'images/bg_weather/bkg_snow.png'
-            : 'images/bg_weather/bkg_snow_night.png';
+            ? 'images/bg_weather/bg_snow.png'
+            : 'images/bg_weather/bg_snow_night.png';
         break;
       default:
-        bgResource = 'images/bg_weather/bkg_sunny.png';
+        bgResource = 'images/bg_weather/bg_sunny.png';
         break;
     }
     return AssetImage(bgResource);

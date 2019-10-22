@@ -7,21 +7,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
 
-class SelectDistrict extends StatelessWidget {
+class SelectDistrictPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MyHomePage();
+    return SelectDistrictPageState();
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key}) : super(key: key);
+class SelectDistrictPageState extends StatefulWidget {
+  SelectDistrictPageState({Key key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _SelectDistrictPageStateState createState() => _SelectDistrictPageStateState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _SelectDistrictPageStateState extends State<SelectDistrictPageState> {
   String title = "中国";
 
   List arrayData = [];

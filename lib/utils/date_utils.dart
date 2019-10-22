@@ -1,49 +1,10 @@
 /// 时间工具类
 class DateUtils {
   static String getWeekday(int weekday) {
-    String desc = '';
-    switch (weekday) {
-      case 1:
-        {
-          desc = '周一';
-        }
-        break;
-      case 2:
-        {
-          desc = '周二';
-        }
-        break;
-      case 3:
-        {
-          desc = '周三';
-        }
-        break;
-      case 4:
-        {
-          desc = '周四';
-        }
-        break;
-      case 5:
-        {
-          desc = '周五';
-        }
-        break;
-      case 6:
-        {
-          desc += '周六';
-        }
-        break;
-      case 7:
-        {
-          desc = '周日';
-        }
-        break;
-      default:
-        {}
-    }
-
+    List<String> week = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+    String desc = week.elementAt(weekday - 1);
     DateTime dateTime = DateTime.now();
-    if (dateTime.weekday == weekday) {
+    if (dateTime.weekday== weekday) {
       desc = '今天';
     }
     return desc;

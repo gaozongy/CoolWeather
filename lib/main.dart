@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import 'about.dart';
-import 'focus_district_list.dart';
-import 'select_district.dart';
-import 'setting.dart';
-import 'unit_model.dart';
-import 'weather_detail.dart';
+import 'about_page.dart';
+import 'focus_district_list_page.dart';
+import 'select_district_page.dart';
+import 'setting_page.dart';
+import 'data/unit_model.dart';
+import 'weather_detail_page.dart';
 
 void main() {
   /// 单位model
@@ -33,11 +33,11 @@ void main() {
       ),
       initialRoute: "/",
       routes: {
-        "/": (context) => WeatherDetail(),
-        "focus_district_list": (context) => FocusDistrictList(),
-        "select_district": (context) => SelectDistrict(),
-        "setting": (context) => Setting(),
-        "about": (context) => About(),
+        "/": (context) => WeatherDetailPage(),
+        "focus_district_list": (context) => FocusDistrictListPage(),
+        "select_district": (context) => SelectDistrictPage(),
+        "setting": (context) => SettingPage(),
+        "about": (context) => AboutPage(),
       },
     ),
   ));

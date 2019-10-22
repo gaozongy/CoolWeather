@@ -1,4 +1,4 @@
-import 'bean/focus_district_list_bean.dart';
+import '../bean/focus_district_list_bean.dart';
 
 class Global {
   static String caiYunKey = 'TwsDo9aQUYewFhV8';

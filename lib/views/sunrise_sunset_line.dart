@@ -2,10 +2,10 @@ import 'package:coolweather/bean/daily.dart';
 import 'package:flutter/material.dart';
 
 /// 日出日落
-class SunriseSunsetWidget extends StatelessWidget {
+class SunriseSunsetLine extends StatelessWidget {
   final Astro astro;
 
-  SunriseSunsetWidget(this.astro);
+  SunriseSunsetLine(this.astro);
 
   @override
   Widget build(BuildContext context) {
