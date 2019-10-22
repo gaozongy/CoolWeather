@@ -1,5 +1,6 @@
-import 'package:coolweather/bean/realtime.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import 'weather_bean.dart';
 
 part 'focus_district_list_bean.g.dart';
 
@@ -31,7 +32,7 @@ class District {
 /// 区域信息 + 天气信息
 class DistrictWeather {
   District district;
-  Realtime realtime;
+  WeatherBean weatherBean;
 
-  DistrictWeather(this.district, this.realtime);
+  DistrictWeather(this.district, this.weatherBean);
 }

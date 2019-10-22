@@ -47,7 +47,7 @@ public class ImageUtils {
         Date sunriseDate = DateUtils.getDate(currentDate + result.daily.astro.get(0).sunrise.time, DateUtils.yyyyMMddHHmm);
         Date sunsetDate = DateUtils.getDate(currentDate + result.daily.astro.get(0).sunset.time, DateUtils.yyyyMMddHHmm);
         Date date = new Date();
-        boolean isDay = date.compareTo(sunriseDate) > 0 && date.compareTo(sunsetDate) < 0;
+        boolean isDay = date.compareTo(sunriseDate) >= 0 && date.compareTo(sunsetDate) < 0;
         String weather = weatherBean.result.realtime.skycon;
         switch (weather) {
             case "CLEAR_DAY":

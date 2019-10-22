@@ -57,7 +57,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
       if (!isEmpty(json)) {
         Map map = jsonDecode(json);
         WeatherBean bean = WeatherBean.fromJson(map);
-        resultList.add(DistrictWeather(district, bean.result.realtime));
+        resultList.add(DistrictWeather(district, bean));
       } else {
         resultList.add(DistrictWeather(district, null));
       }
@@ -174,6 +174,7 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
 
   Widget districtItem(DistrictWeather districtWeather, int position) {
     bool selected = isEditMode ? selectedPos.contains(position) : false;
+    WeatherBean weatherBean = districtWeather.weatherBean;
 
     return Card(
       margin: EdgeInsets.fromLTRB(
@@ -211,8 +212,8 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
                     ],
                   ),
                   Text(
-                      districtWeather.realtime != null
-                          ? '${(districtWeather.realtime.temperature + 0.5).toInt()}°${Translation.getWeatherDesc(districtWeather.realtime.skycon)}'
+                      weatherBean != null
+                          ? '${(weatherBean.result.realtime.temperature + 0.5).toInt()}°${Translation.getWeatherDesc(weatherBean.result.realtime.skycon)}'
                           : '',
                       style: TextStyle(color: Colors.white, fontSize: 16)),
                 ],
@@ -255,8 +256,8 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
             border: Border.all(
                 color: selected ? Colors.blue : Colors.transparent, width: 2),
             image: DecorationImage(
-                image: AssetImage('images/sunny.jpg'),
-                fit: BoxFit.fitWidth,
+                image: _getWeatherBg(weatherBean),
+                fit: BoxFit.fill,
                 colorFilter: selected
                     ? ColorFilter.mode(Colors.white54, BlendMode.hardLight)
                     : ColorFilter.mode(Colors.transparent, BlendMode.color))),
@@ -268,5 +269,74 @@ class _FocusDistrictListState extends State<FocusDistrictList> {
     Fluttertoast.showToast(
       msg: "当前定位不可删除哦～",
     );
+  }
+
+  AssetImage _getWeatherBg(WeatherBean weatherBean) {
+    String bgResource = 'images/bg_weather/bkg_sunny.png';
+    if(weatherBean == null){
+      return AssetImage(bgResource);
+    }
+
+    Result result = weatherBean.result;
+    DateTime date = DateTime.now();
+    String currentDate =
+        "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ";
+
+    print("currentDate:" +
+        currentDate +
+        result.daily.astro.elementAt(0).sunrise.time);
+
+    DateTime sunriseDate = DateTime.parse(
+        currentDate + result.daily.astro.elementAt(0).sunrise.time);
+    DateTime sunsetDate = DateTime.parse(
+        currentDate + result.daily.astro.elementAt(0).sunset.time);
+
+    bool isDay =
+        date.compareTo(sunriseDate) >= 0 && date.compareTo(sunsetDate) < 0;
+    String weather = weatherBean.result.realtime.skycon;
+
+    switch (weather) {
+      case "CLEAR_DAY":
+        bgResource = 'images/bg_weather/bkg_sunny.png';
+        break;
+      case "CLEAR_NIGHT":
+        bgResource = 'images/bg_weather/bkg_sunny_night.png';
+        break;
+      case "PARTLY_CLOUDY_DAY":
+        bgResource = 'images/bg_weather/bkg_cloudy.png';
+        break;
+      case "PARTLY_CLOUDY_NIGHT":
+        bgResource = 'images/bg_weather/bkg_cloudy_night.png';
+        break;
+      case "CLOUDY":
+        bgResource = isDay
+            ? 'images/bg_weather/bkg_overcast.png'
+            : 'images/bg_weather/bkg_overcast_night.png';
+        break;
+      case "WIND":
+        bgResource = isDay
+            ? 'images/bg_weather/bkg_sunny.png'
+            : 'images/bg_weather/bkg_sunny_night.png';
+        break;
+      case "HAZE":
+        bgResource = isDay
+            ? 'images/bg_weather/bkg_haze.png'
+            : 'images/bg_weather/bkg_haze_night.png';
+        break;
+      case "RAIN":
+        bgResource = isDay
+            ? 'images/bg_weather/bkg_downpour.png'
+            : 'images/bg_weather/bkg_downpour_night.png';
+        break;
+      case "SNOW":
+        bgResource = isDay
+            ? 'images/bg_weather/bkg_snow.png'
+            : 'images/bg_weather/bkg_snow_night.png';
+        break;
+      default:
+        bgResource = 'images/bg_weather/bkg_sunny.png';
+        break;
+    }
+    return AssetImage(bgResource);
   }
 }

@@ -44,3 +44,17 @@ flutter:
     - images/weather/snow_ic.png
     - images/weather/sunny_ic.png
     - images/weather/wind_ic.png
+    - images/bg_weather/bkg_sunny.png
+    - images/bg_weather/bkg_sunny_night.png
+    - images/bg_weather/bkg_cloudy.png
+    - images/bg_weather/bkg_cloudy_night.png
+    - images/bg_weather/bkg_overcast.png
+    - images/bg_weather/bkg_overcast_night.png
+    - images/bg_weather/bkg_sunny.png
+    - images/bg_weather/bkg_sunny_night.png
+    - images/bg_weather/bkg_haze.png
+    - images/bg_weather/bkg_haze_night.png
+    - images/bg_weather/bkg_downpour.png
+    - images/bg_weather/bkg_downpour_night.png
+    - images/bg_weather/bkg_snow.png
+    - images/bg_weather/bkg_snow_night.png
