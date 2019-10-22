@@ -45,9 +45,9 @@ android {
         // 高德地图key
         manifestPlaceholders = [
                 // release key
-                AMAP_KEY: "2711cbe26c75b312eb9bc3921cb5ffd0",
+//                AMAP_KEY: "2711cbe26c75b312eb9bc3921cb5ffd0",
                 // debug key
-//                AMAP_KEY: "b425161a159af2847faf3dd89aafff36",
+                AMAP_KEY: "b425161a159af2847faf3dd89aafff36",
         ]
     }
 

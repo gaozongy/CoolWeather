@@ -1,0 +1,8 @@
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget_update_iv"
+    android:layout_width="16dp"
+    android:layout_height="16dp"
+    android:layout_gravity="end"
+    android:src="@mipmap/ic_widget_update"
+    tools:ignore="ContentDescription" />

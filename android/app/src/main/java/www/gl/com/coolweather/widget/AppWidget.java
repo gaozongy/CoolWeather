@@ -7,7 +7,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.view.View;
 import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
@@ -69,7 +68,7 @@ public class AppWidget extends AppWidgetProvider {
         final District district = new Gson().fromJson(locationDistrictBean, District.class);
         if (district == null) {
             // 显示没有定位遮罩
-            updateAppWidget(NO_LOCATION, context, "未知", null);
+            updateAppWidget(NO_LOCATION, context, "", null);
             return;
         }
 
@@ -105,27 +104,39 @@ public class AppWidget extends AppWidgetProvider {
         PendingIntent launchPendingIntent = PendingIntent.getActivity(context, 0, launchIntent,
                 PendingIntent.FLAG_CANCEL_CURRENT);
 
-        // 点击刷新的Intent
+        // 刷新的Intent
         Intent updateIntent = new Intent(ACTION_UPDATE);
         updateIntent.setClass(context, AppWidget.class);
         PendingIntent updatePendingIntent = PendingIntent.getBroadcast(context, 0, updateIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         if (status == NO_LOCATION) {
-            remoteViews.setTextViewText(R.id.widget_update_mask_tv, "请点击打开APP开启定位");
-            remoteViews.setTextViewText(R.id.widget_district_tv, district);
-            remoteViews.setViewVisibility(R.id.widget_update_mask_ll, View.VISIBLE);
-            remoteViews.setOnClickPendingIntent(R.id.widget_update_mask_ll, launchPendingIntent);
+            remoteViews.setTextViewText(R.id.widget_district_tv, "未知");
+            remoteViews.setTextViewText(R.id.widget_update_time_tv, "无定位");
+
+            RemoteViews animViewDefault = new RemoteViews(context.getPackageName(), R.layout.app_widget_anim_view_default);
+            remoteViews.removeAllViews(R.id.widget_update_anim_fl);
+            remoteViews.addView(R.id.widget_update_anim_fl, animViewDefault);
         } else if (status == UPDATING) {
-//            remoteViews.setTextViewText(R.id.widget_update_mask_tv, "正在更新");
-            remoteViews.setViewVisibility(R.id.widget_update_mask_ll, View.VISIBLE);
+            remoteViews.setTextViewText(R.id.widget_update_time_tv, "正在更新");
+
+            RemoteViews animView = new RemoteViews(context.getPackageName(), R.layout.app_widget_anim_view);
+            remoteViews.removeAllViews(R.id.widget_update_anim_fl);
+            remoteViews.addView(R.id.widget_update_anim_fl, animView);
         } else if (status == UPDATE_SUCCESS) {
             showAppWidgetData(remoteViews, district, weatherBean);
-            remoteViews.setOnClickPendingIntent(R.id.widget_fl, launchPendingIntent);
+            remoteViews.setOnClickPendingIntent(R.id.widget_rl, launchPendingIntent);
             remoteViews.setOnClickPendingIntent(R.id.widget_update_fl, updatePendingIntent);
+
+            RemoteViews animViewDefault = new RemoteViews(context.getPackageName(), R.layout.app_widget_anim_view_default);
+            remoteViews.removeAllViews(R.id.widget_update_anim_fl);
+            remoteViews.addView(R.id.widget_update_anim_fl, animViewDefault);
         } else if (status == UPDATE_FAIL) {
-            remoteViews.setViewVisibility(R.id.widget_update_mask_ll, View.GONE);
             remoteViews.setTextViewText(R.id.widget_update_time_tv, "更新失败");
             remoteViews.setOnClickPendingIntent(R.id.widget_update_fl, updatePendingIntent);
+
+            RemoteViews animViewDefault = new RemoteViews(context.getPackageName(), R.layout.app_widget_anim_view_default);
+            remoteViews.removeAllViews(R.id.widget_update_anim_fl);
+            remoteViews.addView(R.id.widget_update_anim_fl, animViewDefault);
         }
         AppWidgetManager.getInstance(context).updateAppWidget(componentName, remoteViews);
     }
@@ -144,30 +155,34 @@ public class AppWidget extends AppWidgetProvider {
         remoteViews.setTextViewText(R.id.widget_max_min_tv, toInt(daily.temperature.get(0).max)
                 + " / " + toInt(daily.temperature.get(0).min) + "°");
 
+        // 明天预报
         Skycon skycon1 = daily.skycon.get(1);
-        Skycon skycon2 = daily.skycon.get(2);
-        Skycon skycon3 = daily.skycon.get(3);
-
         Temperature temperature1 = daily.temperature.get(1);
-        Temperature temperature2 = daily.temperature.get(2);
-        Temperature temperature3 = daily.temperature.get(3);
+        remoteViews.setTextViewText(R.id.widget_forecast_day_1_tv, "明天");
+        remoteViews.setImageViewResource(R.id.widget_forecast_icon_1_iv, ImageUtils.getWeatherIcon(skycon1.value));
+        remoteViews.setTextViewText(R.id.widget_forecast_temperature_1_iv, toInt(temperature1.max)
+                + " / " + toInt(temperature1.min) + "°");
 
-        Date date2 = DateUtils.getDate(skycon2.date, DateUtils.yyyyMMdd);
-        Date date3 = DateUtils.getDate(skycon3.date, DateUtils.yyyyMMdd);
         Calendar calendar = Calendar.getInstance();
-        if (date2 != null && date3 != null) {
-            remoteViews.setTextViewText(R.id.widget_forecast_day_1_tv, "明天");
-            remoteViews.setImageViewResource(R.id.widget_forecast_icon_1_iv, ImageUtils.getWeatherIcon(skycon1.value));
-            remoteViews.setTextViewText(R.id.widget_forecast_temperature_1_iv, toInt(temperature1.max)
-                    + " / " + toInt(temperature1.min) + "°");
 
+        // 后天预报
+        Skycon skycon2 = daily.skycon.get(2);
+        Date date2 = DateUtils.getDate(skycon2.date, DateUtils.yyyyMMdd);
+        Temperature temperature2 = daily.temperature.get(2);
+        if (date2 != null) {
             calendar.setTime(date2);
             remoteViews.setTextViewText(R.id.widget_forecast_day_2_tv, DateUtils.getWeekday(
                     calendar.get(Calendar.DAY_OF_WEEK) - 1));
             remoteViews.setImageViewResource(R.id.widget_forecast_icon_2_iv, ImageUtils.getWeatherIcon(skycon2.value));
             remoteViews.setTextViewText(R.id.widget_forecast_temperature_2_iv, toInt(temperature2.max)
                     + " / " + toInt(temperature2.min) + "°");
+        }
 
+        // 大后天预报
+        Skycon skycon3 = daily.skycon.get(3);
+        Date date3 = DateUtils.getDate(skycon3.date, DateUtils.yyyyMMdd);
+        Temperature temperature3 = daily.temperature.get(3);
+        if (date3 != null) {
             calendar.setTime(date3);
             remoteViews.setTextViewText(R.id.widget_forecast_day_3_tv, DateUtils.getWeekday(calendar.get(
                     Calendar.DAY_OF_WEEK) - 1));
@@ -176,14 +191,12 @@ public class AppWidget extends AppWidgetProvider {
                     + " / " + toInt(temperature3.min) + "°");
         }
 
-        remoteViews.setInt(R.id.widget_fl, "setBackgroundResource", ImageUtils.getBgResourceId(weatherBean));
-        remoteViews.setViewVisibility(R.id.widget_update_mask_ll, View.GONE);
+        // 设置背景
+        remoteViews.setInt(R.id.widget_rl, "setBackgroundResource", ImageUtils.getBgResourceId(weatherBean));
     }
-
 
     int toInt(double value) {
         return (int) (value + 0.5);
     }
-
 }
 
