@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_location_failed">定位失败</string>
+    <string name="widget_no_location_permission">请打开APP授予定位权限</string>
+    <string name="widget_unknown">未知</string>
+    <string name="widget_updating">正在更新</string>
+    <string name="widget_update_failed">更新失败</string>
+    <string name="widget_update_time">%1$s 更新</string>
+    <string name="widget_tomorrow">明天</string>
+</resources>
