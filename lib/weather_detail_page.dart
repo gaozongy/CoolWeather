@@ -357,8 +357,7 @@ class _WeatherDetailPageState extends State<_WeatherDetailWidget> {
 
   // 定位
   _initLocation() async {
-    bool result = await AMapLocationClient.startup(new AMapLocationOption(
-        desiredAccuracy: CLLocationAccuracy.kCLLocationAccuracyHundredMeters));
+    bool result = await AMapLocationClient.startup(new AMapLocationOption());
 
     if (result) {
       AMapLocation aMapLocation = await AMapLocationClient.getLocation(true);
@@ -463,7 +462,8 @@ class _WeatherDetailPageState extends State<_WeatherDetailWidget> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(
-            Translation.getWeatherDesc(realtime.skycon),
+            Translation.getWeatherDesc(
+                realtime.skycon, realtime.precipitation.local.intensity),
             style: TextStyle(color: Colors.white, fontSize: 18),
           )
         ],
@@ -510,19 +510,20 @@ class _WeatherDetailPageState extends State<_WeatherDetailWidget> {
     int length = daily.skycon.length;
     for (int i = 0; i < length; i++) {
       Skycon skycon = daily.skycon.elementAt(i);
+      double intensity = daily.precipitation.elementAt(i).max;
       DateTime dateTime = DateTime.parse(skycon.date);
       ImageIcon weatherIcon = _getWeatherIcon(skycon.value);
 
       forecastRow.add(Column(
         children: <Widget>[
-          _textLayout(DateUtils.getWeekday(dateTime.weekday)),
+          _textLayout(DateUtils.getWeekday(dateTime.weekday - 1)),
           _textLayout('${dateTime.month}' + '月' + '${dateTime.day}' + '日'),
           Padding(
             padding: EdgeInsets.only(top: 8, bottom: 2),
             //child: Icon(imageIcon, color: Colors.white),
             child: weatherIcon,
           ),
-          _textLayout(Translation.getWeatherDesc(skycon.value)),
+          _textLayout(Translation.getWeatherDesc(skycon.value, intensity)),
         ],
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
       ));
@@ -547,7 +548,7 @@ class _WeatherDetailPageState extends State<_WeatherDetailWidget> {
 
   ImageIcon _getWeatherIcon(String weather) {
     return ImageIcon(
-      AssetImage(ImageUtils.getIconUriByWeather(weather)),
+      AssetImage(ImageUtils.getWeatherIconUri(weather)),
       size: 22,
       color: Colors.white,
     );

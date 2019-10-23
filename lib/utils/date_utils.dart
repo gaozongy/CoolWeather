@@ -2,7 +2,7 @@
 class DateUtils {
   static String getWeekday(int weekday) {
     List<String> week = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-    String desc = week.elementAt(weekday - 1);
+    String desc = week.elementAt(weekday);
     DateTime dateTime = DateTime.now();
     if (dateTime.weekday== weekday) {
       desc = '今天';

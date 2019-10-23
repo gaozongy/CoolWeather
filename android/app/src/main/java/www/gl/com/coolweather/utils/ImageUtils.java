@@ -1,10 +1,6 @@
 package www.gl.com.coolweather.utils;
 
-import java.util.Date;
-
 import www.gl.com.coolweather.R;
-import www.gl.com.coolweather.bean.Result;
-import www.gl.com.coolweather.bean.WeatherBean;
 
 public class ImageUtils {
     public static int getWeatherIcon(String weather) {
@@ -40,15 +36,8 @@ public class ImageUtils {
         return iconId;
     }
 
-    public static int getBgResourceId(WeatherBean weatherBean) {
+    public static int getBgResourceId(String weather, double intensity, boolean isDay) {
         int bgResId;
-        Result result = weatherBean.result;
-        String currentDate = DateUtils.getFormatDate(new Date(), DateUtils.yyyyMMdd) + " ";
-        Date sunriseDate = DateUtils.getDate(currentDate + result.daily.astro.get(0).sunrise.time, DateUtils.yyyyMMddHHmm);
-        Date sunsetDate = DateUtils.getDate(currentDate + result.daily.astro.get(0).sunset.time, DateUtils.yyyyMMddHHmm);
-        Date date = new Date();
-        boolean isDay = date.compareTo(sunriseDate) >= 0 && date.compareTo(sunsetDate) < 0;
-        String weather = weatherBean.result.realtime.skycon;
         switch (weather) {
             case "CLEAR_DAY":
                 bgResId = R.drawable.bkg_sunny_widget;
@@ -72,10 +61,30 @@ public class ImageUtils {
                 bgResId = isDay ? R.drawable.bkg_haze_widget : R.drawable.bkg_haze_night_widget;
                 break;
             case "RAIN":
-                bgResId = isDay ? R.drawable.bkg_downpour_widget : R.drawable.bkg_downpour_night_widget;
+                if (0.03 < intensity && intensity < 0.25) {
+                    bgResId = isDay ? R.drawable.bkg_drizzle_widget : R.drawable.bkg_drizzle_night_widget;
+                } else if (0.25 < intensity && intensity < 0.35) {
+                    bgResId = isDay ? R.drawable.bkg_rain_widget : R.drawable.bkg_rain_night_widget;
+                } else if (0.35 < intensity && intensity < 0.48) {
+                    bgResId = isDay ? R.drawable.bkg_downpour_widget : R.drawable.bkg_downpour_night_widget;
+                } else if (0.48 < intensity) {
+                    bgResId = isDay ? R.drawable.bkg_rainstorm_widget : R.drawable.bkg_rainstorm_night_widget;
+                } else {
+                    bgResId = isDay ? R.drawable.bkg_rain_widget : R.drawable.bkg_rain_night_widget;
+                }
                 break;
             case "SNOW":
-                bgResId = isDay ? R.drawable.bkg_snow_widget : R.drawable.bkg_snow_night_widget;
+                if (0.03 < intensity && intensity < 0.25) {
+                    bgResId = isDay ? R.drawable.bkg_snow_widget : R.drawable.bkg_snow_night_widget;
+                } else if (0.25 < intensity && intensity < 0.35) {
+                    bgResId = isDay ? R.drawable.bkg_snow_widget : R.drawable.bkg_snow_night_widget;
+                } else if (0.35 < intensity && intensity < 0.48) {
+                    bgResId = isDay ? R.drawable.bkg_snow_widget : R.drawable.bkg_snow_night_widget;
+                } else if (0.48 < intensity) {
+                    bgResId = isDay ? R.drawable.bkg_snow_widget : R.drawable.bkg_snow_night_widget;
+                } else {
+                    bgResId = isDay ? R.drawable.bkg_snow_widget : R.drawable.bkg_snow_night_widget;
+                }
                 break;
             default:
                 bgResId = R.drawable.bkg_sunny_widget;

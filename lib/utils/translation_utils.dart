@@ -1,7 +1,7 @@
 /// 彩云天气接口参数转文字描述
 class Translation {
-  /// 天气代码转文字
-  static String getWeatherDesc(String weather) {
+  /// 天气代码转文字 雷达降水强度（0 ~ 1）判断降水等级：0.03~0.25 小雨(雪)，  中雨(雪)， 大雨(雪)，  暴雨(雪)；
+  static String getWeatherDesc(String weather, double intensity) {
     String desc;
     switch (weather) {
       case 'CLEAR_DAY':
@@ -22,14 +22,30 @@ class Translation {
         desc = '雾霾';
         break;
       case 'RAIN':
-        desc = '雨';
+        desc = getIntensityDesc(intensity) + '雨';
         break;
       case 'SNOW':
-        desc = '雪';
+        desc = getIntensityDesc(intensity) + '雪';
         break;
       default:
         desc = '未知';
         break;
+    }
+    return desc;
+  }
+
+  static String getIntensityDesc(double intensity) {
+    String desc;
+    if (0.03 < intensity && intensity < 0.25) {
+      desc = '小';
+    } else if (0.25 < intensity && intensity < 0.35) {
+      desc = '中';
+    } else if (0.35 < intensity && intensity < 0.48) {
+      desc = '大';
+    } else if (0.48 < intensity) {
+      desc = '暴';
+    } else {
+      desc = '';
     }
     return desc;
   }

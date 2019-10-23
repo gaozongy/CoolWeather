@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:coolweather/utils/image_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -213,7 +214,7 @@ class FocusDistrictListPageState extends State<FocusDistrictListPage> {
                   ),
                   Text(
                       weatherBean != null
-                          ? '${(weatherBean.result.realtime.temperature + 0.5).toInt()}°${Translation.getWeatherDesc(weatherBean.result.realtime.skycon)}'
+                          ? '${(weatherBean.result.realtime.temperature + 0.5).toInt()}°${Translation.getWeatherDesc(weatherBean.result.realtime.skycon, weatherBean.result.realtime.precipitation.local.intensity)}'
                           : '',
                       style: TextStyle(color: Colors.white, fontSize: 16)),
                 ],
@@ -272,71 +273,26 @@ class FocusDistrictListPageState extends State<FocusDistrictListPage> {
   }
 
   AssetImage _getWeatherBg(WeatherBean weatherBean) {
-    String bgResource = 'images/bg_weather/bg_sunny.png';
-    if(weatherBean == null){
-      return AssetImage(bgResource);
+    if (weatherBean == null) {
+      return AssetImage('images/bg_weather/bg_sunny.png');
     }
 
     Result result = weatherBean.result;
+    // 天气描述
+    String weather = result.realtime.skycon;
+    // 降雨（雪）强度
+    double intensity = result.realtime.precipitation.local.intensity;
+    // 是否是白天
     DateTime date = DateTime.now();
     String currentDate =
         "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ";
-
-    print("currentDate:" +
-        currentDate +
-        result.daily.astro.elementAt(0).sunrise.time);
-
     DateTime sunriseDate = DateTime.parse(
         currentDate + result.daily.astro.elementAt(0).sunrise.time);
     DateTime sunsetDate = DateTime.parse(
         currentDate + result.daily.astro.elementAt(0).sunset.time);
-
     bool isDay =
         date.compareTo(sunriseDate) >= 0 && date.compareTo(sunsetDate) < 0;
-    String weather = weatherBean.result.realtime.skycon;
 
-    switch (weather) {
-      case "CLEAR_DAY":
-        bgResource = 'images/bg_weather/bg_sunny.png';
-        break;
-      case "CLEAR_NIGHT":
-        bgResource = 'images/bg_weather/bg_sunny_night.png';
-        break;
-      case "PARTLY_CLOUDY_DAY":
-        bgResource = 'images/bg_weather/bg_cloudy.png';
-        break;
-      case "PARTLY_CLOUDY_NIGHT":
-        bgResource = 'images/bg_weather/bg_cloudy_night.png';
-        break;
-      case "CLOUDY":
-        bgResource = isDay
-            ? 'images/bg_weather/bg_overcast.png'
-            : 'images/bg_weather/bg_overcast_night.png';
-        break;
-      case "WIND":
-        bgResource = isDay
-            ? 'images/bg_weather/bg_sunny.png'
-            : 'images/bg_weather/bg_sunny_night.png';
-        break;
-      case "HAZE":
-        bgResource = isDay
-            ? 'images/bg_weather/bg_haze.png'
-            : 'images/bg_weather/bg_haze_night.png';
-        break;
-      case "RAIN":
-        bgResource = isDay
-            ? 'images/bg_weather/bg_downpour.png'
-            : 'images/bg_weather/bg_downpour_night.png';
-        break;
-      case "SNOW":
-        bgResource = isDay
-            ? 'images/bg_weather/bg_snow.png'
-            : 'images/bg_weather/bg_snow_night.png';
-        break;
-      default:
-        bgResource = 'images/bg_weather/bg_sunny.png';
-        break;
-    }
-    return AssetImage(bgResource);
+    return AssetImage(ImageUtils.getWeatherBgUri(weather, intensity, isDay));
   }
 }

@@ -1,6 +1,6 @@
 package www.gl.com.coolweather.bean;
 
-class PrecipitationRealtime {
-    Nearest nearest;
-    Local local;
+public class PrecipitationRealtime {
+    public Nearest nearest;
+    public Local local;
 }

@@ -29,6 +29,7 @@ import www.gl.com.coolweather.MainActivity;
 import www.gl.com.coolweather.R;
 import www.gl.com.coolweather.bean.Daily;
 import www.gl.com.coolweather.bean.Realtime;
+import www.gl.com.coolweather.bean.Result;
 import www.gl.com.coolweather.bean.Skycon;
 import www.gl.com.coolweather.bean.Temperature;
 import www.gl.com.coolweather.bean.WeatherBean;
@@ -219,8 +220,20 @@ public class AppWidget extends AppWidgetProvider {
                     + " / " + toInt(temperature3.min) + "°");
         }
 
+        // 天气描述
+        String weather = weatherBean.result.realtime.skycon;
+        // 降雨（雪）强度
+        double intensity = weatherBean.result.realtime.precipitation.local.intensity;
+        // 是否是白天
+        Result result = weatherBean.result;
+        String currentDate = DateUtils.getFormatDate(new Date(), DateUtils.yyyyMMdd) + " ";
+        Date sunriseDate = DateUtils.getDate(currentDate + result.daily.astro.get(0).sunrise.time, DateUtils.yyyyMMddHHmm);
+        Date sunsetDate = DateUtils.getDate(currentDate + result.daily.astro.get(0).sunset.time, DateUtils.yyyyMMddHHmm);
+        Date date = new Date();
+        boolean isDay = date.compareTo(sunriseDate) >= 0 && date.compareTo(sunsetDate) < 0;
+
         // 设置背景
-        remoteViews.setInt(R.id.widget_rl, "setBackgroundResource", ImageUtils.getBgResourceId(weatherBean));
+        remoteViews.setInt(R.id.widget_rl, "setBackgroundResource", ImageUtils.getBgResourceId(weather, intensity, isDay));
     }
 
     int toInt(double value) {
