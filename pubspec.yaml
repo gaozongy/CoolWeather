@@ -20,6 +20,8 @@ dependencies:
   permission_handler: ^3.2.0
   provider: ^3.1.0
   package_info: ^0.4.0+6
+  esys_flutter_share: ^1.0.2
+  path_provider: ^1.4.0
 
 dev_dependencies:
   flutter_test:

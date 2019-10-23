@@ -90,7 +90,6 @@ public class AppWidget extends AppWidgetProvider {
         AMapLocationClient locationClient = new AMapLocationClient(context);
         locationClient.setLocationListener(mLocationListener);
         AMapLocationClientOption locationOption = new AMapLocationClientOption();
-        locationOption.setLocationPurpose(AMapLocationClientOption.AMapLocationPurpose.SignIn);
         locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
         locationOption.setOnceLocation(true);
         locationClient.setLocationOption(locationOption);

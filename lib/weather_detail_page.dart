@@ -2,10 +2,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:amap_location/amap_location.dart';
+import 'package:amap_location/amap_location_option.dart';
 import 'package:coolweather/utils/image_utils.dart';
 import 'package:coolweather/utils/unit_convert_utils.dart';
+import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:quiver/strings.dart';
@@ -101,6 +105,22 @@ class WeatherDetailPageState extends State<WeatherDetailPage> {
         _initData();
       }
     });
+  }
+
+  void _share() async {
+    // todo 判断一下定位和天气数据是否已经获取到
+    String tempPath = (await getTemporaryDirectory()).path;
+    File file = File('$tempPath/share.png');
+
+    try {
+      final ByteData bytes = await rootBundle.load('images/bg_main.png');
+      await file.writeAsBytes(bytes.buffer.asUint8List());
+
+      await Share.file(district.name + '天气分享', district.name + '天气.png',
+          await file.readAsBytes(), 'image/png');
+    } catch (e) {
+      print('error: $e');
+    }
   }
 
   _setting() {
@@ -256,7 +276,7 @@ class WeatherDetailPageState extends State<WeatherDetailPage> {
                                 style: TextStyle(fontSize: 16),
                               ),
                             ),
-                            onTap: testToast,
+                            onTap: _share,
                           ),
                           InkWell(
                             child: Padding(
@@ -278,12 +298,6 @@ class WeatherDetailPageState extends State<WeatherDetailPage> {
           ],
         ),
       ),
-    );
-  }
-
-  void testToast() {
-    Fluttertoast.showToast(
-      msg: "立马加班开发",
     );
   }
 
@@ -357,7 +371,8 @@ class _WeatherDetailPageState extends State<_WeatherDetailWidget> {
 
   // 定位
   _initLocation() async {
-    bool result = await AMapLocationClient.startup(new AMapLocationOption());
+    bool result = await AMapLocationClient.startup(
+        AMapLocationOption(onceLocation: true));
 
     if (result) {
       AMapLocation aMapLocation = await AMapLocationClient.getLocation(true);
