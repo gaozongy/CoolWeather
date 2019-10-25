@@ -4,7 +4,7 @@ class DateUtils {
     List<String> week = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
     String desc = week.elementAt(weekday);
     DateTime dateTime = DateTime.now();
-    if (dateTime.weekday== weekday) {
+    if (dateTime.weekday - 1 == weekday) {
       desc = '今天';
     }
     return desc;
@@ -28,5 +28,16 @@ class DateUtils {
     }
     DateTime date = DateTime.fromMillisecondsSinceEpoch(time);
     return "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+  }
+
+  static String getCurrentTime() {
+    DateTime date = DateTime.now();
+    return "${date.month.toString().padLeft(2, '0')}月${date.day.toString().padLeft(2, '0')}日 ${getWeek(date.weekday - 1)}";
+  }
+
+  static String getWeek(int weekday) {
+    List<String> week = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+    String desc = week.elementAt(weekday);
+    return desc;
   }
 }

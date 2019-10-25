@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:amap_location/amap_location.dart';
 import 'package:coolweather/bean/weather_bean.dart';
+import 'package:coolweather/utils/translation_utils.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -95,38 +97,87 @@ class MainPageState extends State<MainPage> {
   }
 
   void _share() async {
-//    RepaintBoundary(
-//      child: Container(
-//        key: rootWidgetKey,
-//        child: Text('天气'),
-//        decoration: BoxDecoration(
-//            image: DecorationImage(
-//                image: AssetImage('images/bg_share/bkg_sunny_share.png'))),
-//      ),
-//    );
-
     if (district != null &&
         district.latitude != -1 &&
         district.longitude != -1 &&
         weatherBean != null) {
       Share.file(district.name + '天气分享', district.name + '天气.png',
               await _capturePng(), 'image/png')
-          .then((value) {});
+          .then((value) {
+        print('gaozy: share end');
+      });
     }
   }
 
   Future<Uint8List> _capturePng() async {
-    try {
-      RenderRepaintBoundary boundary =
-          rootWidgetKey.currentContext.findRenderObject();
-      var image = await boundary.toImage(pixelRatio: 3.0);
-      ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
-      Uint8List pngBytes = byteData.buffer.asUint8List();
-      return pngBytes;
-    } catch (e) {
-      print('gaozy:' + e.toString());
-    }
-    return null;
+    PictureRecorder recorder = new PictureRecorder();
+
+    Canvas canvas = new Canvas(recorder);
+
+    // 背景图片
+    final ByteData data =
+        await rootBundle.load('images/bg_share/bkg_overcast_share.png');
+    if (data == null) throw 'Unable to read data';
+    var codec = await instantiateImageCodec(data.buffer.asUint8List());
+    FrameInfo frame = await codec.getNextFrame();
+    canvas.drawImage(frame.image, new Offset(0, 0), new Paint());
+
+    TextPainter districtTp = getTextPainter(district.name, 50,
+        text2: '    ' + DateUtils.getCurrentTime(), fontSize2: 40);
+    districtTp.paint(canvas, Offset(50, 40));
+
+    TextPainter temperatureTp = getTextPainter(
+        weatherBean.result.realtime.temperature.toStringAsFixed(0) + "°", 150,
+        fontWeight: FontWeight.w300);
+    temperatureTp.paint(canvas, Offset(50, 180));
+
+    TextPainter weatherTp = getTextPainter(
+        Translation.getWeatherDesc(weatherBean.result.realtime.skycon,
+                weatherBean.result.realtime.precipitation.local.intensity) +
+            '  ' +
+            weatherBean.result.daily.temperature
+                .elementAt(0)
+                .max
+                .toStringAsFixed(0) +
+            ' / ' +
+            weatherBean.result.daily.temperature
+                .elementAt(0)
+                .min
+                .toStringAsFixed(0) +
+            '℃',
+        45,
+        fontWeight: FontWeight.w300);
+
+    weatherTp.paint(canvas, Offset(50, 350));
+
+    Picture picture = recorder.endRecording();
+    ByteData byteData = await (await picture.toImage(1038, 450))
+        .toByteData(format: ImageByteFormat.png);
+    return byteData.buffer.asUint8List();
+  }
+
+  // 画文字
+  TextPainter getTextPainter(String text, double fontSize,
+      {String text2, double fontSize2, FontWeight fontWeight}) {
+    return TextPainter(
+      textDirection: TextDirection.ltr,
+      text: TextSpan(children: [
+        TextSpan(
+          text: text,
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: fontSize,
+              fontWeight: fontWeight != null ? fontWeight : FontWeight.w500),
+        ),
+        TextSpan(
+          text: text2,
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: fontSize2,
+          ),
+        )
+      ]),
+    )..layout();
   }
 
   _setting() {
@@ -161,41 +212,38 @@ class MainPageState extends State<MainPage> {
 
     print('statsHeight: $statsHeight');
 
-    return RepaintBoundary(
-      key: rootWidgetKey,
-      child:  Scaffold(
-        body: Container(
-            child: Stack(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(
-                      top: statsHeight + paddingTop + titleHeight),
-                  child: PageView.builder(
-                    controller: _pageController,
-                    itemCount: districtList.length,
-                    itemBuilder: (BuildContext context, int position) {
-                      return WeatherDetailPage(
-                          districtList.elementAt(position),
-                          setLocation,
-                          setLocationWeather,
-                          screenHeight -
+    return Scaffold(
+      body: Container(
+          child: Stack(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(
+                    top: statsHeight + paddingTop + titleHeight),
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: districtList.length,
+                  itemBuilder: (BuildContext context, int position) {
+                    return WeatherDetailPage(
+                        districtList.elementAt(position),
+                        setLocation,
+                        setLocationWeather,
+                        screenHeight -
 
-                              /// ListView 内部自动加了一个 paddingTop，此 paddingTop 的值为 statsHeight
-                              statsHeight * 2 -
-                              paddingTop -
-                              titleHeight);
-                    },
-                  ),
+                            /// ListView 内部自动加了一个 paddingTop，此 paddingTop 的值为 statsHeight
+                            statsHeight * 2 -
+                            paddingTop -
+                            titleHeight);
+                  },
                 ),
-                _titleLayout(),
-              ],
-            ),
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('images/bg_main.png'),
-                  fit: BoxFit.fitHeight,
-                ))),
-      ),
+              ),
+              _titleLayout(),
+            ],
+          ),
+          decoration: BoxDecoration(
+              image: DecorationImage(
+            image: AssetImage('images/bg_main.png'),
+            fit: BoxFit.fitHeight,
+          ))),
     );
   }
 
