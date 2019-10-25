@@ -1,3 +1,4 @@
+import 'package:coolweather/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -7,7 +8,6 @@ import 'focus_district_list_page.dart';
 import 'select_district_page.dart';
 import 'setting_page.dart';
 import 'data/unit_model.dart';
-import 'weather_detail_page.dart';
 
 void main() {
   /// 单位model
@@ -33,7 +33,7 @@ void main() {
       ),
       initialRoute: "/",
       routes: {
-        "/": (context) => WeatherDetailPage(),
+        "/": (context) => MainPage(),
         "focus_district_list": (context) => FocusDistrictListPage(),
         "select_district": (context) => SelectDistrictPage(),
         "setting": (context) => SettingPage(),

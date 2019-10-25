@@ -1,15 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:amap_location/amap_location.dart';
 import 'package:amap_location/amap_location_option.dart';
 import 'package:coolweather/utils/image_utils.dart';
 import 'package:coolweather/utils/unit_convert_utils.dart';
-import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:quiver/strings.dart';
@@ -24,301 +23,22 @@ import 'bean/weather_bean.dart';
 import 'data/global.dart';
 import 'data/unit_model.dart';
 import 'utils/date_utils.dart';
-import 'utils/screen_utils.dart';
 import 'utils/translation_utils.dart';
-import 'views/popup_window_button.dart';
 import 'views/rainfall_line.dart';
 import 'views/sunrise_sunset_line.dart';
 import 'views/temperature_line.dart';
 
 class WeatherDetailPage extends StatefulWidget {
-  WeatherDetailPage({Key key}) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() {
-    return WeatherDetailPageState();
-  }
-}
-
-class WeatherDetailPageState extends State<WeatherDetailPage> {
-  List<District> districtList = new List();
-
-  int currentPage = 0;
-
-  District district;
-
-  PageController _pageController = new PageController();
-
-  /// 是否已取得定位
-  bool position = false;
-
-  String updateTime = '未知';
-
-  double screenHeight;
-  double statsHeight;
-  double titleHeight = 50;
-  double paddingTop = 10;
-
-  @override
-  void initState() {
-    super.initState();
-
-    district = Global.locationDistrict;
-    districtList.add(Global.locationDistrict);
-
-    _initPageController();
-    _initData();
-  }
-
-  _initPageController() {
-    _pageController.addListener(() {
-      int page = (_pageController.page + 0.5).toInt();
-      if (page != currentPage) {
-        setState(() {
-          currentPage = page;
-          district = districtList.elementAt(page);
-        });
-      }
-    });
-  }
-
-  _initData() {
-    Future<SharedPreferences> future = SharedPreferences.getInstance();
-    future.then((prefs) {
-      String focusDistrictListJson = prefs.getString('focus_district_data');
-      if (focusDistrictListJson != null) {
-        FocusDistrictListBean focusDistrictListBean =
-            FocusDistrictListBean.fromJson(json.decode(focusDistrictListJson));
-        setState(() {
-          districtList.removeRange(1, districtList.length);
-          if (focusDistrictListBean != null) {
-            districtList.addAll(focusDistrictListBean.districtList);
-          }
-        });
-      }
-    });
-  }
-
-  _focusDistrictList() {
-    Navigator.of(context).pushNamed("focus_district_list").then((bool) {
-      if (bool) {
-        _initData();
-      }
-    });
-  }
-
-  void _share() async {
-    // todo 判断一下定位和天气数据是否已经获取到
-    String tempPath = (await getTemporaryDirectory()).path;
-    File file = File('$tempPath/share.png');
-
-    try {
-      final ByteData bytes = await rootBundle.load('images/bg_main.png');
-      await file.writeAsBytes(bytes.buffer.asUint8List());
-
-      await Share.file(district.name + '天气分享', district.name + '天气.png',
-          await file.readAsBytes(), 'image/png');
-    } catch (e) {
-      print('error: $e');
-    }
-  }
-
-  _setting() {
-    Navigator.of(context).pushNamed("setting");
-  }
-
-  setUpdateTime(int time) {
-    setState(() {
-      updateTime = DateUtils.getTimeDesc(time) + '更新';
-    });
-  }
-
-  setLocation(District c) {
-    List<District> list = List();
-    list.add(c);
-    districtList.replaceRange(0, 1, list);
-
-    if (currentPage == 0) {
-      setState(() {
-        district = c;
-      });
-    }
-
-    position = true;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    screenHeight = ScreenUtils.getScreenHeight(context);
-    statsHeight = ScreenUtils.getSysStatsHeight(context);
-
-    print('screenHeight：$screenHeight');
-
-    print('statsHeight: $statsHeight');
-
-    return Scaffold(
-      body: Container(
-          child: Stack(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(
-                    top: statsHeight + paddingTop + titleHeight),
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: districtList.length,
-                  itemBuilder: (BuildContext context, int position) {
-                    return _WeatherDetailWidget(
-                        districtList.elementAt(position),
-                        setUpdateTime,
-                        setLocation,
-                        screenHeight -
-
-                            /// ListView 内部自动加了一个 paddingTop，此 paddingTop 的值为 statsHeight
-                            statsHeight * 2 -
-                            paddingTop -
-                            titleHeight);
-                  },
-                ),
-              ),
-              _titleLayout(),
-            ],
-          ),
-          decoration: BoxDecoration(
-              image: DecorationImage(
-            image: AssetImage('images/bg_main.png'),
-            fit: BoxFit.fitHeight,
-          ))),
-    );
-  }
-
-  Widget _titleLayout() {
-    return Padding(
-      padding: EdgeInsets.only(top: statsHeight + paddingTop),
-      child: SizedBox(
-        height: titleHeight,
-        width: double.infinity,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                currentPage == 0
-                    ? Padding(
-                        padding: EdgeInsets.only(left: 22),
-                        child: Image(
-                          image: AssetImage("images/ic_location.png"),
-                          width: 22,
-                          color: Colors.white60,
-                        ),
-                      )
-                    : Container(),
-                Padding(
-                  padding: EdgeInsets.only(left: 20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        district.name,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          decoration: TextDecoration.none,
-                        ),
-                      ),
-                      Text(
-                        updateTime,
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                          decoration: TextDecoration.none,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                IconButton(
-                  icon: Image(
-                    image: AssetImage("images/ic_building.png"),
-                    width: 20,
-                    height: 20,
-                  ),
-                  onPressed: _focusDistrictList,
-                ),
-                Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 15),
-                    child: PopupWindowButton(
-                      offset: Offset(0, 100),
-                      child: Icon(
-                        Icons.more_vert,
-                        color: Colors.white,
-                        size: 25,
-                      ),
-                      window: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          InkWell(
-                            child: Padding(
-                              padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
-                              child: Text(
-                                '分享',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ),
-                            onTap: _share,
-                          ),
-                          InkWell(
-                            child: Padding(
-                              child: Text(
-                                '设置',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
-                            ),
-                            onTap: _setting,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    AMapLocationClient.shutdown();
-    super.dispose();
-  }
-}
-
-class _WeatherDetailWidget extends StatefulWidget {
   final District district;
 
-  final Function setUpdateTime;
+  final Function setLocationWeather;
 
   final Function setLocation;
 
   final double height;
 
-  _WeatherDetailWidget(
-      this.district, this.setUpdateTime, this.setLocation, this.height);
+  WeatherDetailPage(
+      this.district, this.setLocation, this.setLocationWeather, this.height);
 
   @override
   State<StatefulWidget> createState() {
@@ -326,7 +46,7 @@ class _WeatherDetailWidget extends StatefulWidget {
   }
 }
 
-class _WeatherDetailPageState extends State<_WeatherDetailWidget> {
+class _WeatherDetailPageState extends State<WeatherDetailPage> {
   District district;
 
   WeatherBean weatherBean;
@@ -814,7 +534,7 @@ class _WeatherDetailPageState extends State<_WeatherDetailWidget> {
         minutely = result.minutely;
         hourly = result.hourly;
         daily = result.daily;
-        widget.setUpdateTime(weatherBean.server_time);
+        widget.setLocationWeather(weatherBean);
       });
     });
   }
