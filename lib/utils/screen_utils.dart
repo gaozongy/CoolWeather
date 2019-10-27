@@ -16,4 +16,8 @@ class ScreenUtils {
   static double getSysStatsHeight(BuildContext context) {
     return MediaQuery.of(context).padding.top;
   }
+
+  static double pxToLogicalPixels(BuildContext context, double px) {
+    return px / MediaQuery.of(context).devicePixelRatio;
+  }
 }
