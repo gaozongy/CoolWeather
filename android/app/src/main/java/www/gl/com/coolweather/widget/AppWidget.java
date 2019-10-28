@@ -174,7 +174,7 @@ public class AppWidget extends AppWidgetProvider {
         Daily daily = weatherBean.result.daily;
 
         remoteViews.setTextViewText(R.id.widget_district_tv, district);
-        remoteViews.setTextViewText(R.id.widget_weather_tv, TranslationUtils.getWeatherDesc(realtime.skycon));
+        remoteViews.setTextViewText(R.id.widget_weather_tv, TranslationUtils.getWeatherDesc(realtime.skycon, realtime.precipitation.local.intensity));
         remoteViews.setTextViewText(R.id.widget_temperature_tv, toInt(realtime.temperature) + "°");
 
         String updateDate = DateUtils.getFormatDate(weatherBean.server_time * 1000, DateUtils.HHmm);

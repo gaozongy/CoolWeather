@@ -1,8 +1,8 @@
 package www.gl.com.coolweather.utils;
 
 public class TranslationUtils {
-   public static String getWeatherDesc(String weather) {
-        String desc;
+   public static String getWeatherDesc(String weather, double intensity) {
+        String desc = "";
         switch (weather) {
             case "CLEAR_DAY":
             case "CLEAR_NIGHT":
@@ -22,10 +22,26 @@ public class TranslationUtils {
                 desc = "雾霾";
                 break;
             case "RAIN":
-                desc = "雨";
+                if (0.03 < intensity && intensity < 0.25) {
+                    desc = "小雨";
+                } else if (0.25 < intensity && intensity < 0.35) {
+                    desc = "中雨";
+                } else if (0.35 < intensity && intensity < 0.48) {
+                    desc = "大雨";
+                } else if (0.48 < intensity) {
+                    desc = "暴雨";
+                }
                 break;
             case "SNOW":
-                desc = "雪";
+                if (0.03 < intensity && intensity < 0.25) {
+                    desc = "小雪";
+                } else if (0.25 < intensity && intensity < 0.35) {
+                    desc = "中雪";
+                } else if (0.35 < intensity && intensity < 0.48) {
+                    desc = "大雪";
+                } else if (0.48 < intensity) {
+                    desc = "暴雪";
+                }
                 break;
             default:
                 desc = "未知";
