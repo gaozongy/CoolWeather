@@ -102,15 +102,18 @@ class MainPageState extends State<MainPage> {
         district.latitude != -1 &&
         district.longitude != -1 &&
         weatherBean != null) {
-      Share.file(district.name + '天气分享', district.name + '天气.png',
-              await _capturePng(), 'image/png')
+      Share.file(
+              district.name + '天气分享',
+              district.name + DateUtils.getCurrentTimeMMDD() + '天气.png',
+              await _createWeatherCard(),
+              'image/png')
           .then((value) {
         print('gaozy: share end');
       });
     }
   }
 
-  Future<Uint8List> _capturePng() async {
+  Future<Uint8List> _createWeatherCard() async {
     PictureRecorder recorder = new PictureRecorder();
 
     Canvas canvas = new Canvas(recorder);
@@ -128,24 +131,27 @@ class MainPageState extends State<MainPage> {
         currentDate + result.daily.astro.elementAt(0).sunrise.time);
     DateTime sunsetDate = DateTime.parse(
         currentDate + result.daily.astro.elementAt(0).sunset.time);
-    bool isDay =
-        date.compareTo(sunriseDate) >= 0 && date.compareTo(sunsetDate) < 0;
+    bool isDay = DateUtils.isDay(sunriseDate, sunsetDate);
 
     // 背景图片
-    final ByteData data =
-        await rootBundle.load(ImageUtils.getWeatherShareBgUri(weather, intensity, isDay));
-    if (data == null) throw 'Unable to read data';
-    var codec = await instantiateImageCodec(data.buffer.asUint8List());
+    final ByteData bgByteData = await rootBundle
+        .load(ImageUtils.getWeatherShareBgUri(weather, intensity, isDay));
+    if (bgByteData == null) throw 'Unable to read data';
+    var codec = await instantiateImageCodec(bgByteData.buffer.asUint8List());
     FrameInfo frame = await codec.getNextFrame();
     canvas.drawImage(frame.image, new Offset(0, 0), new Paint());
 
     TextPainter districtTp = getTextPainter(district.name, 45,
-        text2: '    ' + DateUtils.getCurrentTime(), fontSize2: 35, fontWeight: FontWeight.w600);
+        fontWeight: FontWeight.w600,
+        text2: '    ' + DateUtils.getCurrentTimeMMDD(),
+        fontSize2: 35);
     districtTp.paint(canvas, Offset(50, 40));
 
     TextPainter temperatureTp = getTextPainter(
-        weatherBean.result.realtime.temperature.toStringAsFixed(0) + "°", 140,
-        fontWeight: FontWeight.w300);
+      weatherBean.result.realtime.temperature.toStringAsFixed(0) + "°",
+      140,
+      fontWeight: FontWeight.w300,
+    );
     temperatureTp.paint(canvas, Offset(50, 180));
 
     TextPainter weatherTp = getTextPainter(
@@ -163,7 +169,6 @@ class MainPageState extends State<MainPage> {
                 .toStringAsFixed(0) +
             '℃',
         45);
-
     weatherTp.paint(canvas, Offset(50, 350));
 
     Picture picture = recorder.endRecording();
@@ -172,9 +177,13 @@ class MainPageState extends State<MainPage> {
     return byteData.buffer.asUint8List();
   }
 
-  // 画文字
-  TextPainter getTextPainter(String text, double fontSize,
-      {String text2, double fontSize2, FontWeight fontWeight}) {
+  TextPainter getTextPainter(
+    String text,
+    double fontSize, {
+    FontWeight fontWeight,
+    String text2,
+    double fontSize2,
+  }) {
     return TextPainter(
       textDirection: TextDirection.ltr,
       text: TextSpan(children: [
@@ -183,7 +192,7 @@ class MainPageState extends State<MainPage> {
           style: TextStyle(
               color: Colors.white,
               fontSize: fontSize,
-              fontWeight: fontWeight != null ? fontWeight : FontWeight.w500),
+              fontWeight: fontWeight != null ? fontWeight : FontWeight.w400),
         ),
         TextSpan(
           text: text2,

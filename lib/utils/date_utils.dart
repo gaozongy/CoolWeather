@@ -1,6 +1,17 @@
 /// 时间工具类
 class DateUtils {
-  static String getWeekday(int weekday) {
+  static String getCurrentTimeMMDD() {
+    DateTime date = DateTime.now();
+    return "${date.month.toString().padLeft(2, '0')}月${date.day.toString().padLeft(2, '0')}日 ${getWeek(date.weekday - 1)}";
+  }
+
+  static String getWeek(int weekday) {
+    List<String> week = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+    String desc = week.elementAt(weekday);
+    return desc;
+  }
+
+  static String getWhichDay(int weekday) {
     List<String> week = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
     String desc = week.elementAt(weekday);
     DateTime dateTime = DateTime.now();
@@ -8,6 +19,12 @@ class DateUtils {
       desc = '今天';
     }
     return desc;
+  }
+
+  /// 是否是白天
+  static bool isDay(DateTime sunriseDate, DateTime sunsetDate) {
+    DateTime date = DateTime.now();
+    return date.compareTo(sunriseDate) >= 0 && date.compareTo(sunsetDate) < 0;
   }
 
   static int currentTimeMillis() {
@@ -28,16 +45,5 @@ class DateUtils {
     }
     DateTime date = DateTime.fromMillisecondsSinceEpoch(time);
     return "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
-  }
-
-  static String getCurrentTime() {
-    DateTime date = DateTime.now();
-    return "${date.month.toString().padLeft(2, '0')}月${date.day.toString().padLeft(2, '0')}日 ${getWeek(date.weekday - 1)}";
-  }
-
-  static String getWeek(int weekday) {
-    List<String> week = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-    String desc = week.elementAt(weekday);
-    return desc;
   }
 }

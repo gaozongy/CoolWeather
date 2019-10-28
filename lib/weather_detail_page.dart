@@ -251,7 +251,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
 
       forecastRow.add(Column(
         children: <Widget>[
-          _textLayout(DateUtils.getWeekday(dateTime.weekday - 1)),
+          _textLayout(DateUtils.getWhichDay(dateTime.weekday - 1)),
           _textLayout('${dateTime.month}' + '月' + '${dateTime.day}' + '日'),
           Padding(
             padding: EdgeInsets.only(top: 8, bottom: 2),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:coolweather/utils/date_utils.dart';
 import 'package:coolweather/utils/image_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -290,8 +291,7 @@ class FocusDistrictListPageState extends State<FocusDistrictListPage> {
         currentDate + result.daily.astro.elementAt(0).sunrise.time);
     DateTime sunsetDate = DateTime.parse(
         currentDate + result.daily.astro.elementAt(0).sunset.time);
-    bool isDay =
-        date.compareTo(sunriseDate) >= 0 && date.compareTo(sunsetDate) < 0;
+    bool isDay = DateUtils.isDay(sunriseDate, sunsetDate);
 
     return AssetImage(ImageUtils.getWeatherBgUri(weather, intensity, isDay));
   }
