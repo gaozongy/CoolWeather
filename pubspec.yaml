@@ -61,6 +61,24 @@ flutter:
     - images/bg_weather/bg_snow_night.png
     - images/bg_weather/bg_drizzle.png
     - images/bg_weather/bg_drizzle_night.png
-    - images/bg_share/bkg_sunny_share.png
-    - images/bg_share/bkg_drizzle_share.png
-    - images/bg_share/bkg_overcast_share.png
+    - images/bg_share/bg_sunny_share.png
+    - images/bg_share/bg_sunny_night_share.png
+    - images/bg_share/bg_cloudy_share.png
+    - images/bg_share/bg_cloudy_night_share.png
+    - images/bg_share/bg_overcast_share.png
+    - images/bg_share/bg_overcast_night_share.png
+    - images/bg_share/bg_sunny_share.png
+    - images/bg_share/bg_sunny_night_share.png
+    - images/bg_share/bg_haze_share.png
+    - images/bg_share/bg_haze_night_share.png
+    - images/bg_share/bg_drizzle_share.png
+    - images/bg_share/bg_drizzle_night_share.png
+    - images/bg_share/bg_rain_share.png
+    - images/bg_share/bg_rain_night_share.png
+    - images/bg_share/bg_downpour_share.png
+    - images/bg_share/bg_downpour_night_share.png
+    - images/bg_share/bg_rainstorm_share.png
+    - images/bg_share/bg_rainstorm_night_share.png
+    - images/bg_share/bg_downpour_share.png
+    - images/bg_share/bg_snow_share.png
+    - images/bg_share/bg_snow_night_share.png

@@ -5,6 +5,7 @@ import 'dart:ui';
 
 import 'package:amap_location/amap_location.dart';
 import 'package:coolweather/bean/weather_bean.dart';
+import 'package:coolweather/utils/image_utils.dart';
 import 'package:coolweather/utils/translation_utils.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
@@ -114,20 +115,36 @@ class MainPageState extends State<MainPage> {
 
     Canvas canvas = new Canvas(recorder);
 
+    Result result = weatherBean.result;
+    // 天气描述
+    String weather = result.realtime.skycon;
+    // 降雨（雪）强度
+    double intensity = result.realtime.precipitation.local.intensity;
+    // 是否是白天
+    DateTime date = DateTime.now();
+    String currentDate =
+        "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ";
+    DateTime sunriseDate = DateTime.parse(
+        currentDate + result.daily.astro.elementAt(0).sunrise.time);
+    DateTime sunsetDate = DateTime.parse(
+        currentDate + result.daily.astro.elementAt(0).sunset.time);
+    bool isDay =
+        date.compareTo(sunriseDate) >= 0 && date.compareTo(sunsetDate) < 0;
+
     // 背景图片
     final ByteData data =
-        await rootBundle.load('images/bg_share/bkg_overcast_share.png');
+        await rootBundle.load(ImageUtils.getWeatherShareBgUri(weather, intensity, isDay));
     if (data == null) throw 'Unable to read data';
     var codec = await instantiateImageCodec(data.buffer.asUint8List());
     FrameInfo frame = await codec.getNextFrame();
     canvas.drawImage(frame.image, new Offset(0, 0), new Paint());
 
-    TextPainter districtTp = getTextPainter(district.name, 50,
-        text2: '    ' + DateUtils.getCurrentTime(), fontSize2: 40);
+    TextPainter districtTp = getTextPainter(district.name, 45,
+        text2: '    ' + DateUtils.getCurrentTime(), fontSize2: 35, fontWeight: FontWeight.w600);
     districtTp.paint(canvas, Offset(50, 40));
 
     TextPainter temperatureTp = getTextPainter(
-        weatherBean.result.realtime.temperature.toStringAsFixed(0) + "°", 150,
+        weatherBean.result.realtime.temperature.toStringAsFixed(0) + "°", 140,
         fontWeight: FontWeight.w300);
     temperatureTp.paint(canvas, Offset(50, 180));
 
@@ -145,8 +162,7 @@ class MainPageState extends State<MainPage> {
                 .min
                 .toStringAsFixed(0) +
             '℃',
-        45,
-        fontWeight: FontWeight.w300);
+        45);
 
     weatherTp.paint(canvas, Offset(50, 350));
 
@@ -207,6 +223,8 @@ class MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     screenHeight = ScreenUtils.getScreenHeight(context);
     statsHeight = ScreenUtils.getSysStatsHeight(context);
+
+    ScreenUtils.pxToLogicalPixels(context, 10);
 
     print('screenHeight：$screenHeight');
 

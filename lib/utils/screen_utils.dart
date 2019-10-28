@@ -18,6 +18,7 @@ class ScreenUtils {
   }
 
   static double pxToLogicalPixels(BuildContext context, double px) {
+    // 一加 3.8 红米 3.0
     return px / MediaQuery.of(context).devicePixelRatio;
   }
 }

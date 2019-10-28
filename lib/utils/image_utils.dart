@@ -114,4 +114,87 @@ class ImageUtils {
     }
     return bgResource;
   }
+
+  static String getWeatherShareBgUri(String weather, double intensity, bool isDay) {
+    String bgResource;
+    switch (weather) {
+      case "CLEAR_DAY":
+        bgResource = 'images/bg_share/bg_sunny_share.png';
+        break;
+      case "CLEAR_NIGHT":
+        bgResource = 'images/bg_share/bg_sunny_night_share.png';
+        break;
+      case "PARTLY_CLOUDY_DAY":
+        bgResource = 'images/bg_share/bg_cloudy_share.png';
+        break;
+      case "PARTLY_CLOUDY_NIGHT":
+        bgResource = 'images/bg_share/bg_cloudy_night_share.png';
+        break;
+      case "CLOUDY":
+        bgResource = isDay
+            ? 'images/bg_share/bg_overcast_share.png'
+            : 'images/bg_share/bg_overcast_night_share.png';
+        break;
+      case "WIND":
+        bgResource = isDay
+            ? 'images/bg_share/bg_sunny_share.png'
+            : 'images/bg_share/bg_sunny_night_share.png';
+        break;
+      case "HAZE":
+        bgResource = isDay
+            ? 'images/bg_share/bg_haze_share.png'
+            : 'images/bg_share/bg_haze_night_share.png';
+        break;
+      case "RAIN":
+        if (0.03 < intensity && intensity < 0.25) {
+          bgResource = isDay
+              ? 'images/bg_share/bg_drizzle_share.png'
+              : 'images/bg_share/bg_drizzle_night_share.png';
+        } else if (0.25 < intensity && intensity < 0.35) {
+          bgResource = isDay
+              ? 'images/bg_share/bg_rain_share.png'
+              : 'images/bg_share/bg_rain_night_share.png';
+        } else if (0.35 < intensity && intensity < 0.48) {
+          bgResource = isDay
+              ? 'images/bg_share/bg_downpour_share.png'
+              : 'images/bg_share/bg_downpour_night_share.png';
+        } else if (0.48 < intensity) {
+          bgResource = isDay
+              ? 'images/bg_share/bg_rainstorm_share.png'
+              : 'images/bg_share/bg_rainstorm_night_share.png';
+        } else {
+          bgResource = isDay
+              ? 'images/bg_share/bg_downpour_share.png'
+              : 'images/bg_share/bg_downpour_night_share.png';
+        }
+        break;
+      case "SNOW":
+        if (0.03 < intensity && intensity < 0.25) {
+          bgResource = isDay
+              ? 'images/bg_share/bg_snow_share.png'
+              : 'images/bg_share/bg_snow_night_share.png';
+        } else if (0.25 < intensity && intensity < 0.35) {
+          bgResource = isDay
+              ? 'images/bg_share/bg_snow_share.png'
+              : 'images/bg_share/bg_snow_night_share.png';
+        } else if (0.35 < intensity && intensity < 0.48) {
+          bgResource = isDay
+              ? 'images/bg_share/bg_snow_share.png'
+              : 'images/bg_share/bg_snow_night_share.png';
+        } else if (0.48 < intensity) {
+          bgResource = isDay
+              ? 'images/bg_share/bg_snow_share.png'
+              : 'images/bg_share/bg_snow_night_share.png';
+        } else {
+          bgResource = isDay
+              ? 'images/bg_share/bg_snow_share.png'
+              : 'images/bg_share/bg_snow_night_share.png';
+        }
+        break;
+      default:
+        bgResource = 'images/bg_share/bg_sunny_share.png';
+        break;
+    }
+    return bgResource;
+  }
 }
