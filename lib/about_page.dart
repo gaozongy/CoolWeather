@@ -80,7 +80,8 @@ class AboutPageState extends State<AboutPage> {
                         children: <Widget>[
                           Text(
                             '1.支持未来两小时雨势准确预测，轻松掌握天气\n2.支持设置单位，多个单位数值自由切换\n'
-                            '3.添加关于页面，了解版本信息，更新介绍\n4.现在支持Android桌面小部件啦～',
+                            '3.添加关于页面，了解版本信息，更新介绍\n4.添加Android桌面小部件，不打开APP就可以实时了解天气变化\n'
+                            '5.添加分享功能，点击分享发送精美卡片\n6.修复了某些已知的bug',
                             style: TextStyle(fontSize: 13),
                           )
                         ],
