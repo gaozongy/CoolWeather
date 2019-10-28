@@ -507,7 +507,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
         String url = 'https://api.caiyunapp.com/v2/' +
             Global.caiYunKey +
             '/$longitude,$latitude/' +
-            'weather.json?dailysteps=6';
+            'weather.json?dailysteps=6&unit=metric:v1';
 
         print(url);
 
