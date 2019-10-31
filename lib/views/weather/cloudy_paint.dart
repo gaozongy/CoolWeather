@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
 
+class Cloud {
+  double dx;
+  double dy;
+
+  Cloud(this.dx, this.dy);
+}
+
 class CloudyPainter extends CustomPainter {
+  List cloudy;
+
+  CloudyPainter(this.cloudy);
+
   Paint cloudPaint = new Paint()
     ..style = PaintingStyle.fill
     ..color = Colors.white38;
@@ -13,23 +24,47 @@ class CloudyPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     double width = size.width;
     double height = size.height;
-    print('width:' + width.toString() + ' height:' + height.toString());
 
-    canvas.drawCircle(Offset(width - 60, 120), 100, cloudPaint);
+    canvas.drawCircle(
+        Offset(
+            width - 60 - cloudy.elementAt(0).dx, 120 + cloudy.elementAt(0).dy),
+        100,
+        cloudPaint);
 
-    canvas.drawCircle(Offset(width / 2, 20), 170, cloudPaint);
+    canvas.drawCircle(
+        Offset(width / 2 - cloudy.elementAt(1).dx, 20 - cloudy.elementAt(1).dy),
+        170,
+        cloudPaint);
 
     canvas.drawCircle(Offset(width / 5 * 3, 140), 50, sunPaint);
 
+    canvas.drawCircle(
+        Offset(width / 5 * 3.6 + cloudy.elementAt(2).dx,
+            -20 - cloudy.elementAt(2).dy),
+        170,
+        cloudPaint);
 
-    canvas.drawCircle(Offset(width / 5 * 3.6, -30), 170, cloudPaint);
-    canvas.drawCircle(Offset(width / 5 * 3.6 - 10, -50), 170, cloudPaint);
+    canvas.drawCircle(
+        Offset(width / 5 * 3.6 - 10 + cloudy.elementAt(3).dx,
+            -50 + cloudy.elementAt(3).dy),
+        170,
+        cloudPaint);
 
-    canvas.drawCircle(Offset(30, -50), 150, cloudPaint);
-    canvas.drawCircle(Offset(35, -100), 160, cloudPaint);
+    canvas.drawCircle(
+        Offset(10 + cloudy.elementAt(4).dx, -30 + cloudy.elementAt(4).dy),
+        180,
+        cloudPaint);
 
-    canvas.drawCircle(Offset(width / 5 * 1.5, -40), 210, cloudPaint);
+    canvas.drawCircle(
+        Offset(35 - cloudy.elementAt(5).dx, -110 + cloudy.elementAt(5).dy),
+        160,
+        cloudPaint);
 
+    canvas.drawCircle(
+        Offset(width / 5 * 1.5 + cloudy.elementAt(6).dx,
+            -40 - cloudy.elementAt(6).dy),
+        210,
+        cloudPaint);
   }
 
   @override
