@@ -24,16 +24,16 @@ class _CloudyBgState extends State<CloudyBg> with TickerProviderStateMixin {
 
     controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 3),
+      duration: Duration(milliseconds: 3750),
     )..addListener(() {
         _render();
       });
 
     animationX = CurvedAnimation(parent: controller, curve: Curves.easeInOut);
-    animationX = Tween<double>(begin: -5, end: 5).animate(animationX);
+    animationX = Tween<double>(begin: -8, end: 8).animate(animationX);
 
     animationY = CurvedAnimation(parent: controller, curve: Curves.easeInOut);
-    animationY = Tween<double>(begin: -5, end: 5).animate(animationY);
+    animationY = Tween<double>(begin: -8, end: 8).animate(animationY);
 
     animationX.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -49,8 +49,8 @@ class _CloudyBgState extends State<CloudyBg> with TickerProviderStateMixin {
   _render() {
     setState(() {
       cloudy.forEach((cloud) {
-        cloud.dy = animationY.value;
-        cloud.dx = animationX.value;
+        cloud.y = animationY.value;
+        cloud.x = animationX.value;
       });
     });
   }

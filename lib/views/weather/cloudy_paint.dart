@@ -27,42 +27,42 @@ class CloudyPainter extends CustomPainter {
 
     canvas.drawCircle(
         Offset(
-            width - 60 - cloudy.elementAt(0).dx, 120 + cloudy.elementAt(0).dy),
+            width - 60 - cloudy.elementAt(0).x, 120 + cloudy.elementAt(0).y),
         100,
         cloudPaint);
 
     canvas.drawCircle(
-        Offset(width / 2 - cloudy.elementAt(1).dx, 20 - cloudy.elementAt(1).dy),
+        Offset(width / 2 - cloudy.elementAt(1).x, 20 - cloudy.elementAt(1).y),
         170,
         cloudPaint);
 
     canvas.drawCircle(Offset(width / 5 * 3, 140), 50, sunPaint);
 
     canvas.drawCircle(
-        Offset(width / 5 * 3.6 + cloudy.elementAt(2).dx,
-            -20 - cloudy.elementAt(2).dy),
+        Offset(width / 5 * 3.6 + cloudy.elementAt(2).x,
+            -20 - cloudy.elementAt(2).y),
         170,
         cloudPaint);
 
     canvas.drawCircle(
-        Offset(width / 5 * 3.6 - 10 + cloudy.elementAt(3).dx,
-            -50 + cloudy.elementAt(3).dy),
+        Offset(width / 5 * 3.6 - 10 + cloudy.elementAt(3).x,
+            -50 + cloudy.elementAt(3).y),
         170,
         cloudPaint);
 
     canvas.drawCircle(
-        Offset(10 + cloudy.elementAt(4).dx, -30 + cloudy.elementAt(4).dy),
+        Offset(10 + cloudy.elementAt(4).x, -30 + cloudy.elementAt(4).y),
         180,
         cloudPaint);
 
     canvas.drawCircle(
-        Offset(35 - cloudy.elementAt(5).dx, -110 + cloudy.elementAt(5).dy),
+        Offset(35 - cloudy.elementAt(5).x, -110 + cloudy.elementAt(5).y),
         160,
         cloudPaint);
 
     canvas.drawCircle(
-        Offset(width / 5 * 1.5 + cloudy.elementAt(6).dx,
-            -40 - cloudy.elementAt(6).dy),
+        Offset(width / 5 * 1.5 + cloudy.elementAt(6).x,
+            -40 - cloudy.elementAt(6).y),
         210,
         cloudPaint);
   }
