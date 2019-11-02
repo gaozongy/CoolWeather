@@ -7,6 +7,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.widget.RemoteViews;
 
@@ -67,23 +68,26 @@ public class AppWidget extends AppWidgetProvider {
     }
 
     void getLocationData(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE);
+        boolean isTransparent = sharedPreferences.getBoolean("flutter.transparent_widget", false);
+
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            updateAppWidget(NO_LOCATION, context, context.getString(R.string.widget_no_location_permission), null);
+            updateAppWidget(NO_LOCATION, context, isTransparent, context.getString(R.string.widget_no_location_permission), null);
             return;
         }
 
         // 显示正在更新
-        updateAppWidget(UPDATING, context, "", null);
+        updateAppWidget(UPDATING, context, isTransparent, "", null);
 
         AMapLocationListener mLocationListener = aMapLocation -> {
             if (aMapLocation.getErrorCode() == 0) {
                 String district = aMapLocation.getDistrict();
                 double longitude = aMapLocation.getLongitude();
                 double latitude = aMapLocation.getLatitude();
-                getWeatherData(context, district, longitude, latitude);
+                getWeatherData(context, isTransparent, district, longitude, latitude);
             } else {
-                updateAppWidget(NO_LOCATION, context, context.getString(R.string.widget_location_failed), null);
+                updateAppWidget(NO_LOCATION, context, isTransparent, context.getString(R.string.widget_location_failed), null);
             }
         };
 
@@ -97,7 +101,7 @@ public class AppWidget extends AppWidgetProvider {
         locationClient.startLocation();
     }
 
-    void getWeatherData(final Context context, String district, double longitude, double latitude) {
+    void getWeatherData(final Context context, boolean isTransparent, String district, double longitude, double latitude) {
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.caiyunapp.com/v2/TwsDo9aQUYewFhV8/")
@@ -109,17 +113,17 @@ public class AppWidget extends AppWidgetProvider {
             @Override
             public void onResponse(@NonNull Call<WeatherBean> call, @NonNull Response<WeatherBean> response) {
                 WeatherBean weatherBean = response.body();
-                updateAppWidget(UPDATE_SUCCESS, context, district, weatherBean);
+                updateAppWidget(UPDATE_SUCCESS, context, isTransparent, district, weatherBean);
             }
 
             @Override
             public void onFailure(@NonNull Call<WeatherBean> call, @NonNull Throwable t) {
-                updateAppWidget(UPDATE_FAIL, context, district, null);
+                updateAppWidget(UPDATE_FAIL, context, isTransparent, district, null);
             }
         });
     }
 
-    void updateAppWidget(int status, Context context, String district, WeatherBean weatherBean) {
+    void updateAppWidget(int status, Context context, boolean isTransparent, String district, WeatherBean weatherBean) {
         ComponentName componentName = new ComponentName(context, AppWidget.class);
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.app_widget);
 
@@ -150,7 +154,7 @@ public class AppWidget extends AppWidgetProvider {
             remoteViews.removeAllViews(R.id.widget_update_anim_fl);
             remoteViews.addView(R.id.widget_update_anim_fl, animView);
         } else if (status == UPDATE_SUCCESS) {
-            showAppWidgetData(context, remoteViews, district, weatherBean);
+            showAppWidgetData(context, remoteViews, isTransparent, district, weatherBean);
             remoteViews.setOnClickPendingIntent(R.id.widget_rl, launchPendingIntent);
             remoteViews.setOnClickPendingIntent(R.id.widget_update_fl, updatePendingIntent);
 
@@ -166,10 +170,14 @@ public class AppWidget extends AppWidgetProvider {
             remoteViews.removeAllViews(R.id.widget_update_anim_fl);
             remoteViews.addView(R.id.widget_update_anim_fl, animViewDefault);
         }
+
+        if (isTransparent) {
+            remoteViews.setInt(R.id.widget_rl, "setBackgroundResource", R.drawable.shape_rectangle_transparent_bg);
+        }
         AppWidgetManager.getInstance(context).updateAppWidget(componentName, remoteViews);
     }
 
-    private void showAppWidgetData(Context context, RemoteViews remoteViews, String district, WeatherBean weatherBean) {
+    private void showAppWidgetData(Context context, RemoteViews remoteViews, boolean isTransparent, String district, WeatherBean weatherBean) {
         Realtime realtime = weatherBean.result.realtime;
         Daily daily = weatherBean.result.daily;
 
@@ -231,8 +239,10 @@ public class AppWidget extends AppWidgetProvider {
         Date date = new Date();
         boolean isDay = date.compareTo(sunriseDate) >= 0 && date.compareTo(sunsetDate) < 0;
 
-        // 设置背景
-        remoteViews.setInt(R.id.widget_rl, "setBackgroundResource", ImageUtils.getBgResourceId(weather, intensity, isDay));
+        if (!isTransparent) {
+            // 如果不是透明背景，根据天气设置背景图
+            remoteViews.setInt(R.id.widget_rl, "setBackgroundResource", ImageUtils.getBgResourceId(weather, intensity, isDay));
+        }
     }
 
     int toInt(double value) {

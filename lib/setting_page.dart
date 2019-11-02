@@ -2,6 +2,7 @@ import 'package:coolweather/data/unit_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingPage extends StatefulWidget {
   @override
@@ -11,7 +12,25 @@ class SettingPage extends StatefulWidget {
 }
 
 class SettingPageState extends State<SettingPage> {
-  bool isNotifyOpen = true;
+  bool isNotifyOpen = false;
+
+  bool isTransparentWidget = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initData();
+  }
+
+  void _initData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isNotify = prefs.getBool('notify_open');
+    bool isTransparent = prefs.getBool('transparent_widget');
+    setState(() {
+      isNotifyOpen = isNotify != null ? isNotify : false;
+      isTransparentWidget = isTransparent != null ? isTransparent : false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +49,7 @@ class SettingPageState extends State<SettingPage> {
                   '温度单位',
                   temperatureUnitList.elementAt(unitModel.temperature.index),
                   temperatureUnitList,
+                  // todo 传方法不太好，最好传个 sp 的 key，以下相同
                   unitModel.setTemperatureUnit),
             ),
             _unitRowWidget('风力单位', windUnitList.elementAt(unitModel.wind.index),
@@ -52,6 +72,8 @@ class SettingPageState extends State<SettingPage> {
               unitModel.setAirPressureUnit,
             ),
             _warnRowWidget(),
+            _dividerLayout(),
+            _transparentRowWidget(),
             _dividerLayout(),
             _aboutRowWidget(),
             _dividerLayout()
@@ -116,16 +138,61 @@ class SettingPageState extends State<SettingPage> {
           Switch(
             activeColor: Colors.blue,
             value: isNotifyOpen,
-            onChanged: (value) {},
+            onChanged: (value) {
+              updateSpData('notify_open', value);
+            },
           ),
         ],
       ),
       onTap: () {
         setState(() {
           isNotifyOpen = !isNotifyOpen;
+          updateSpData('notify_open', isNotifyOpen);
         });
       },
     );
+  }
+
+  Widget _transparentRowWidget() {
+    return InkWell(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  '透明小部件',
+                  style: TextStyle(fontSize: 17),
+                ),
+                Text('设置完后请刷新小部件查看最新效果',
+                    style: TextStyle(fontSize: 12.5, color: Colors.grey))
+              ],
+            ),
+          ),
+          Switch(
+            activeColor: Colors.blue,
+            value: isTransparentWidget,
+            onChanged: (value) {
+              updateSpData('transparent_widget', value);
+            },
+          ),
+        ],
+      ),
+      onTap: () {
+        setState(() {
+          isTransparentWidget = !isTransparentWidget;
+          updateSpData('transparent_widget', isTransparentWidget);
+        });
+      },
+    );
+  }
+
+  updateSpData(String key, bool value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool(key, value);
   }
 
   Widget _aboutRowWidget() {
