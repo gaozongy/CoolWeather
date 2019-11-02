@@ -14,8 +14,6 @@ class SettingPage extends StatefulWidget {
 class SettingPageState extends State<SettingPage> {
   bool isNotifyOpen = false;
 
-  bool isTransparentWidget = false;
-
   @override
   void initState() {
     super.initState();
@@ -25,10 +23,8 @@ class SettingPageState extends State<SettingPage> {
   void _initData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isNotify = prefs.getBool('notify_open');
-    bool isTransparent = prefs.getBool('transparent_widget');
     setState(() {
       isNotifyOpen = isNotify != null ? isNotify : false;
-      isTransparentWidget = isTransparent != null ? isTransparent : false;
     });
   }
 
@@ -72,8 +68,6 @@ class SettingPageState extends State<SettingPage> {
               unitModel.setAirPressureUnit,
             ),
             _warnRowWidget(),
-            _dividerLayout(),
-            _transparentRowWidget(),
             _dividerLayout(),
             _aboutRowWidget(),
             _dividerLayout()
@@ -148,43 +142,6 @@ class SettingPageState extends State<SettingPage> {
         setState(() {
           isNotifyOpen = !isNotifyOpen;
           updateSpData('notify_open', isNotifyOpen);
-        });
-      },
-    );
-  }
-
-  Widget _transparentRowWidget() {
-    return InkWell(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  '透明小部件',
-                  style: TextStyle(fontSize: 17),
-                ),
-                Text('设置完后请刷新小部件查看最新效果',
-                    style: TextStyle(fontSize: 12.5, color: Colors.grey))
-              ],
-            ),
-          ),
-          Switch(
-            activeColor: Colors.blue,
-            value: isTransparentWidget,
-            onChanged: (value) {
-              updateSpData('transparent_widget', value);
-            },
-          ),
-        ],
-      ),
-      onTap: () {
-        setState(() {
-          isTransparentWidget = !isTransparentWidget;
-          updateSpData('transparent_widget', isTransparentWidget);
         });
       },
     );
