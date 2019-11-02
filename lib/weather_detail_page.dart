@@ -318,14 +318,25 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
         }
 
         double windSpeed = realtime.wind.speed;
-        if (unitModel.wind == WindUnit.m_s) {
-          windSpeed = UnitConvertUtils.kmhToMs(windSpeed);
-        } else if (unitModel.wind == WindUnit.ft_s) {
-          windSpeed = UnitConvertUtils.kmhToFts(windSpeed);
-        } else if (unitModel.wind == WindUnit.mph) {
-          windSpeed = UnitConvertUtils.kmhToMph(windSpeed);
-        } else if (unitModel.wind == WindUnit.kts) {
-          windSpeed = UnitConvertUtils.kmhToKts(windSpeed);
+        String windSpeedDesc;
+        // 如果风力单位是"级"，则单位显示在主内容上
+        String windUnit = '';
+
+        if (unitModel.wind == WindUnit.grade) {
+          windSpeedDesc = UnitConvertUtils.kmhToGrade(windSpeed) +
+              windUnitList.elementAt(unitModel.wind.index).unitEN;
+        } else {
+          if (unitModel.wind == WindUnit.m_s) {
+            windSpeed = UnitConvertUtils.kmhToMs(windSpeed);
+          } else if (unitModel.wind == WindUnit.ft_s) {
+            windSpeed = UnitConvertUtils.kmhToFts(windSpeed);
+          } else if (unitModel.wind == WindUnit.mph) {
+            windSpeed = UnitConvertUtils.kmhToMph(windSpeed);
+          } else if (unitModel.wind == WindUnit.kts) {
+            windSpeed = UnitConvertUtils.kmhToKts(windSpeed);
+          }
+          windSpeedDesc = windSpeed.toStringAsFixed(1);
+          windUnit = windUnitList.elementAt(unitModel.wind.index).unitEN;
         }
 
         double visibility = realtime.visibility;
@@ -364,10 +375,8 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
                       children: <Widget>[
                         getWidget(
                             Translation.getWindDir(realtime.wind.direction),
-                            windSpeed.toStringAsFixed(1),
-                            windUnitList
-                                .elementAt(unitModel.wind.index)
-                                .unitEN),
+                            windSpeedDesc,
+                            windUnit),
                         getWidget(
                             '体感温度',
                             temperature.toStringAsFixed(0) +

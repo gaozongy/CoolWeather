@@ -8,7 +8,7 @@ enum TemperatureUnit {
 }
 
 /// 风速单位
-enum WindUnit { m_s, km_h, ft_s, mph, kts }
+enum WindUnit { grade, m_s, km_h, ft_s, mph, kts }
 
 /// 降雨量单位
 enum RainfallUnit { mm, in_ }
@@ -37,6 +37,7 @@ List<Unit> temperatureUnitList = [
 ];
 
 List<Unit> windUnitList = [
+  Unit('级', '等级'),
   Unit('m/s', '米/秒'),
   Unit('km/h ', ' 千米/小时'),
   Unit('ft/s ', ' 英尺/秒'),
@@ -68,7 +69,7 @@ String airPressureUnitKey = 'airPressureUnitKey';
 
 class UnitModel with ChangeNotifier {
   TemperatureUnit temperature = TemperatureUnit.celsius;
-  WindUnit wind = WindUnit.km_h;
+  WindUnit wind = WindUnit.grade;
   RainfallUnit rainfall = RainfallUnit.mm;
   VisibilityUnit visibility = VisibilityUnit.km;
   AirPressureUnit airPressure = AirPressureUnit.hPa;
