@@ -31,14 +31,14 @@ import 'views/temperature_line.dart';
 class WeatherDetailPage extends StatefulWidget {
   final District district;
 
-  final Function setLocationWeather;
+  final Function setWeatherData;
 
   final Function setLocation;
 
   final double height;
 
   WeatherDetailPage(
-      this.district, this.setLocation, this.setLocationWeather, this.height);
+      this.district, this.setLocation, this.setWeatherData, this.height);
 
   @override
   State<StatefulWidget> createState() {
@@ -543,7 +543,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
         minutely = result.minutely;
         hourly = result.hourly;
         daily = result.daily;
-        widget.setLocationWeather(weatherBean);
+        widget.setWeatherData(weatherBean);
       });
     });
   }

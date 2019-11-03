@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'cloudy_paint.dart';
 
-class CloudyBg extends StatefulWidget {
+class CloudyAnim extends StatefulWidget {
   @override
-  _CloudyBgState createState() => _CloudyBgState();
+  _CloudyAnimState createState() => _CloudyAnimState();
 }
 
-class _CloudyBgState extends State<CloudyBg> with TickerProviderStateMixin {
+class _CloudyAnimState extends State<CloudyAnim> with TickerProviderStateMixin {
   AnimationController controller;
   Animation<double> animationX;
   Animation<double> animationY;
