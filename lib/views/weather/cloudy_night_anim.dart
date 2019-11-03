@@ -9,6 +9,7 @@ class Star {
   double x;
   double y;
   Color color;
+  int alphaChange = 1;
 
   Star(this.x, this.y, this.color);
 }
@@ -24,22 +25,22 @@ class _CloudyNightState extends State<CloudyNightAnim>
   Animation<double> animationX;
   Animation<double> animationY;
 
-  List<Cloud> cloudy = [];
-  List<Star> star = [];
+  List<Cloud> cloudList = [];
+  List<Star> starList = [];
 
   @override
   void initState() {
     super.initState();
 
     for (int i = 0; i < 7; i++) {
-      cloudy.add(Cloud(0, 0));
+      cloudList.add(Cloud(0, 0));
     }
 
-    for (int i = 0; i < 80; i++) {
-      Color color = Colors.white;
-
-      star.add(Star(Random().nextInt(400).toDouble(),
-          Random().nextInt(1000).toDouble(), color));
+    for (int i = 0; i < 45; i++) {
+      int alpha = Random().nextInt(110);
+      Color color = Color.fromARGB(alpha, 255, 255, 255);
+      starList.add(Star(Random().nextInt(450).toDouble(),
+          Random().nextInt(450).toDouble(), color));
     }
 
     controller = AnimationController(
@@ -68,9 +69,20 @@ class _CloudyNightState extends State<CloudyNightAnim>
 
   _render() {
     setState(() {
-      cloudy.forEach((cloud) {
+      cloudList.forEach((cloud) {
         cloud.dx = animationX.value;
         cloud.dy = animationY.value;
+      });
+
+      starList.forEach((star) {
+        int alpha = star.color.alpha;
+        if (alpha <= 0) {
+          star.alphaChange = 1;
+        } else if (alpha >= 110) {
+          star.alphaChange = -1;
+        }
+        alpha += star.alphaChange;
+        star.color = Color.fromARGB(alpha, 255, 255, 255);
       });
     });
   }
@@ -79,7 +91,7 @@ class _CloudyNightState extends State<CloudyNightAnim>
   Widget build(BuildContext context) {
     return Container(
       child: CustomPaint(
-        painter: CloudyPainter(cloudy, star),
+        painter: CloudyPainter(cloudList, starList),
       ),
       decoration: BoxDecoration(color: Color(0xFF041322)),
     );
@@ -93,11 +105,11 @@ class _CloudyNightState extends State<CloudyNightAnim>
 }
 
 class CloudyPainter extends CustomPainter {
-  List cloudy;
+  List<Cloud> cloudList;
 
-  List<Star> star;
+  List<Star> starList;
 
-  CloudyPainter(this.cloudy, this.star);
+  CloudyPainter(this.cloudList, this.starList);
 
   Paint darkCloudPaint = new Paint()
     ..style = PaintingStyle.fill
@@ -116,7 +128,7 @@ class CloudyPainter extends CustomPainter {
   // 高清图再校准一下颜色
   Paint sunPaint = new Paint()
     ..style = PaintingStyle.fill
-    ..color = Color(0xFFF9FFBD);
+    ..color = Color(0xFFFBFFC0);
 
   Paint starPaint = new Paint()..style = PaintingStyle.fill;
 
@@ -125,50 +137,53 @@ class CloudyPainter extends CustomPainter {
     double width = size.width;
     double height = size.height;
 
+    for (var star in starList) {
+      starPaint.color = star.color;
+      canvas.drawCircle(Offset(star.x, star.y), 1.2, starPaint);
+    }
+
     canvas.drawCircle(
-        Offset(width - 60 - cloudy.elementAt(0).x, 120 + cloudy.elementAt(0).y),
+        Offset(width - 60 - cloudList.elementAt(0).dx,
+            120 + cloudList.elementAt(0).dy),
         100,
         darkCloudPaint);
 
     canvas.drawCircle(
-        Offset(width / 2 - cloudy.elementAt(1).x, 20 - cloudy.elementAt(1).y),
+        Offset(width / 2 - cloudList.elementAt(1).dx,
+            20 - cloudList.elementAt(1).dy),
         170,
         darkCloudPaint);
 
     canvas.drawCircle(Offset(width / 5 * 3, 140), 50, sunPaint);
 
     canvas.drawCircle(
-        Offset(width / 5 * 3.6 + cloudy.elementAt(2).x,
-            -20 - cloudy.elementAt(2).y),
+        Offset(width / 5 * 3.6 + cloudList.elementAt(2).dx,
+            -20 - cloudList.elementAt(2).dy),
         170,
         cloudPaint);
 
     canvas.drawCircle(
-        Offset(width / 5 * 1.5 + cloudy.elementAt(6).x,
-            -40 - cloudy.elementAt(6).y),
+        Offset(width / 5 * 1.5 + cloudList.elementAt(6).dx,
+            -40 - cloudList.elementAt(6).dy),
         210,
         cloudPaint);
 
     canvas.drawCircle(
-        Offset(width / 5 * 3.6 - 10 + cloudy.elementAt(3).x,
-            -50 + cloudy.elementAt(3).y),
+        Offset(width / 5 * 3.6 - 10 + cloudList.elementAt(3).dx,
+            -50 + cloudList.elementAt(3).dy),
         170,
         lightCloudPaint);
 
     canvas.drawCircle(
-        Offset(10 + cloudy.elementAt(4).x, -30 + cloudy.elementAt(4).y),
+        Offset(10 + cloudList.elementAt(4).dx, -30 + cloudList.elementAt(4).dy),
         180,
         darkCloudPaint);
 
     canvas.drawCircle(
-        Offset(35 - cloudy.elementAt(5).x, -110 + cloudy.elementAt(5).y),
+        Offset(
+            35 - cloudList.elementAt(5).dx, -110 + cloudList.elementAt(5).dy),
         160,
         lightCloudPaint);
-
-    for (var value in star) {
-      starPaint.color = value.color;
-      canvas.drawCircle(Offset(value.x, value.y), 1, starPaint);
-    }
   }
 
   @override
