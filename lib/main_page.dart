@@ -209,7 +209,7 @@ class MainPageState extends State<MainPage> {
     Navigator.of(context).pushNamed("setting");
   }
 
-  setLocationWeather(WeatherBean weatherBean) {
+  setWeatherData(WeatherBean weatherBean) {
     this.weatherBean = weatherBean;
     setState(() {
       updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
@@ -253,7 +253,7 @@ class MainPageState extends State<MainPage> {
                     return WeatherDetailPage(
                         districtList.elementAt(position),
                         setLocation,
-                        setLocationWeather,
+                        setWeatherData,
                         screenHeight -
 
                             /// ListView 内部自动加了一个 paddingTop，此 paddingTop 的值为 statsHeight
