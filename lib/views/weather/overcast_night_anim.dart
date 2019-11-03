@@ -3,25 +3,25 @@ import 'package:flutter/material.dart';
 
 import 'cloudy_paint.dart';
 
-class OvercastAnim extends StatefulWidget {
+class OvercastNightAnim extends StatefulWidget {
   @override
-  _OvercastAnimState createState() => _OvercastAnimState();
+  _OvercastNightAnimState createState() => _OvercastNightAnimState();
 }
 
-class _OvercastAnimState extends State<OvercastAnim>
+class _OvercastNightAnimState extends State<OvercastNightAnim>
     with TickerProviderStateMixin {
   AnimationController controller;
   Animation<double> animationX;
   Animation<double> animationY;
 
-  List<Cloud> cloudy = [];
+  List<Cloud> cloudList = [];
 
   @override
   void initState() {
     super.initState();
 
     for (int i = 0; i < 7; i++) {
-      cloudy.add(Cloud(0, 0));
+      cloudList.add(Cloud(0, 0));
     }
 
     controller = AnimationController(
@@ -50,7 +50,7 @@ class _OvercastAnimState extends State<OvercastAnim>
 
   _render() {
     setState(() {
-      cloudy.forEach((cloud) {
+      cloudList.forEach((cloud) {
         cloud.dx = animationX.value;
         cloud.dy = animationY.value;
       });
@@ -60,8 +60,8 @@ class _OvercastAnimState extends State<OvercastAnim>
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: CustomPaint(painter: OvercastPainter(cloudy)),
-      decoration: BoxDecoration(color: Color(0xFF93A4AE)),
+      child: CustomPaint(painter: OvercastPainter(cloudList)),
+      decoration: BoxDecoration(color: Color(0xFF171E26)),
     );
   }
 
@@ -73,17 +73,18 @@ class _OvercastAnimState extends State<OvercastAnim>
 }
 
 class OvercastPainter extends CustomPainter {
-  List<Cloud> cloudy;
+  List<Cloud> cloudList;
 
   Paint whiteCloudPaint = new Paint()
     ..style = PaintingStyle.fill
-    ..color = Colors.white54;
+    ..color = Color(0x994A616E);
+  Color c = Colors.white24;
 
   Paint greyCloudPaint = new Paint()
     ..style = PaintingStyle.fill
-    ..color = Color(0xB382939E);
+    ..color = Color(0x99162832);
 
-  OvercastPainter(this.cloudy);
+  OvercastPainter(this.cloudList);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -91,47 +92,49 @@ class OvercastPainter extends CustomPainter {
     double height = size.height;
 
     canvas.drawCircle(
-        Offset(
-            width - 60 - cloudy.elementAt(0).dx, 110 + cloudy.elementAt(0).dy),
+        Offset(width - 60 - cloudList.elementAt(0).dx,
+            110 + cloudList.elementAt(0).dy),
         100,
         greyCloudPaint);
 
     canvas.drawCircle(
-        Offset(width / 2 - cloudy.elementAt(1).dx, 20 - cloudy.elementAt(1).dy),
+        Offset(width / 2 - cloudList.elementAt(1).dx,
+            20 - cloudList.elementAt(1).dy),
         170,
         greyCloudPaint);
 
     canvas.drawCircle(
-        Offset(width / 5 * 3.6 + cloudy.elementAt(2).dx,
-            -20 - cloudy.elementAt(2).dy),
+        Offset(width / 5 * 3.6 + cloudList.elementAt(2).dx,
+            -20 - cloudList.elementAt(2).dy),
         170,
         whiteCloudPaint);
 
     canvas.drawCircle(
-        Offset(width / 5 * 3.6 - 10 + cloudy.elementAt(3).dx,
-            -50 + cloudy.elementAt(3).dy),
+        Offset(width / 5 * 3.6 - 10 + cloudList.elementAt(3).dx,
+            -50 + cloudList.elementAt(3).dy),
         170,
         greyCloudPaint);
 
     canvas.drawCircle(
-        Offset(width / 5 * 1.5 + cloudy.elementAt(6).dx,
-            -40 - cloudy.elementAt(6).dy),
+        Offset(width / 5 * 1.5 + cloudList.elementAt(6).dx,
+            -40 - cloudList.elementAt(6).dy),
         210,
         whiteCloudPaint);
 
     canvas.drawCircle(
-        Offset(10 + cloudy.elementAt(4).dx, -30 + cloudy.elementAt(4).dy),
+        Offset(10 + cloudList.elementAt(4).dx, -30 + cloudList.elementAt(4).dy),
         180,
         greyCloudPaint);
 
     canvas.drawCircle(
-        Offset(35 - cloudy.elementAt(5).dx, -110 + cloudy.elementAt(5).dy),
+        Offset(
+            35 - cloudList.elementAt(5).dx, -110 + cloudList.elementAt(5).dy),
         160,
         whiteCloudPaint);
 
     canvas.drawCircle(
-        Offset(width / 5 * 4 - 10 + cloudy.elementAt(3).dx,
-            -90 + cloudy.elementAt(3).dy),
+        Offset(width / 5 * 4 - 10 + cloudList.elementAt(3).dx,
+            -90 + cloudList.elementAt(3).dy),
         170,
         whiteCloudPaint);
   }
