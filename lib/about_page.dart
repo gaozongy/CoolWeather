@@ -65,26 +65,23 @@ class AboutPageState extends State<AboutPage> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 36, vertical: 50),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Text(
-                          '更新日志：',
-                          style: TextStyle(fontSize: 16),
-                        )
-                      ],
+                    Text(
+                      '更新日志：',
+                      style: TextStyle(fontSize: 16),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 5),
-                      child: Row(
-                        children: <Widget>[
-                          Text(
-                            '1.支持未来两小时雨势准确预测，轻松掌握天气\n2.支持设置单位，多个单位数值自由切换\n'
-                            '3.添加关于页面，了解版本信息，更新介绍\n4.添加Android桌面小部件，不打开APP就可以实时了解天气变化\n'
-                            '5.添加分享功能，点击分享发送精美卡片\n6.修复了某些已知的bug',
-                            style: TextStyle(fontSize: 13),
-                          )
-                        ],
+                      child: Text(
+                        '1.支持未来两小时雨势准确预测，轻松掌握天气\n'
+                        '2.添加Android桌面小部件，无需打开APP就可以实时了解天气变化\n'
+                        '3.添加分享功能，点击分享发送精美卡片\n'
+                        '4.添加透明桌面小部件，添加小部件到桌面时就能看见哦\n'
+                        '5.风力大小显示默认单位改为风力等级\n'
+                        '6.修复了某些已知的bug\n',
+                        softWrap: true,
+                        style: TextStyle(fontSize: 13),
                       ),
                     )
                   ],

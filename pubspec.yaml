@@ -1,7 +1,7 @@
 name: coolweather
 description: A new Flutter application about weather forecast.
 
-version: 1.2.0+7
+version: 1.2.1+8
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
