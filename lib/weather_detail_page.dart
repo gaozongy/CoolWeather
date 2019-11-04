@@ -148,7 +148,8 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
                   ),
                 ),
                 _tempLineLayout(),
-                _dividerLayout(edgeInsets: EdgeInsets.only(top: 30)),
+                _moreForecastLayout(),
+                _dividerLayout(edgeInsets: EdgeInsets.only(top: 20)),
                 _sunriseSunsetLayout(),
                 _dividerLayout(),
                 _moreInfLayout(),
@@ -274,11 +275,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
   }
 
   Widget _textLayout(String content) {
-    return Text(content,
-        style: TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            decoration: TextDecoration.none));
+    return Text(content, style: TextStyle(color: Colors.white, fontSize: 12));
   }
 
   ImageIcon _getWeatherIcon(String weather) {
@@ -300,6 +297,28 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
     return Padding(
       padding: EdgeInsets.only(top: 5, bottom: 20),
       child: TemperatureLine(tempList),
+    );
+  }
+
+  Widget _moreForecastLayout() {
+    return Padding(
+      padding: EdgeInsets.only(top: 25),
+      child: Center(
+          child: OutlineButton(
+        padding: EdgeInsets.symmetric(horizontal: 25),
+        child: new Text(
+          '15天天气预报',
+          style: new TextStyle(color: Colors.white54),
+        ),
+        onPressed: () {
+          print('https://api.caiyunapp.com/v2/TAkhjf8d1nlSlspN/121.6544,25.1552/daily.json?lang=en_US&dailysteps=360');
+        },
+        highlightColor: Colors.transparent,
+        splashColor: Colors.white30,
+        borderSide: BorderSide(color: Colors.white30),
+        highlightedBorderColor: Colors.white30,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      )),
     );
   }
 

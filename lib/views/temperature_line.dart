@@ -141,7 +141,7 @@ class TemperatureLinePainter extends CustomPainter {
       text: TextSpan(
         text: text,
         style: TextStyle(
-          color: Colors.white70,
+          color: Colors.white54,
           fontSize: 10,
         ),
       ),
