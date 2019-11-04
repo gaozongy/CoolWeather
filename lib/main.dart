@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'about_page.dart';
 import 'focus_district_list_page.dart';
+import 'more_day_forecast_page.dart';
 import 'select_district_page.dart';
 import 'setting_page.dart';
 import 'data/unit_model.dart';
@@ -34,6 +35,7 @@ void main() {
       initialRoute: "/",
       routes: {
         "/": (context) => MainPage(),
+        "more_day_forecast":(context) => MoreDayForecast(),
         "focus_district_list": (context) => FocusDistrictListPage(),
         "select_district": (context) => SelectDistrictPage(),
         "setting": (context) => SettingPage(),

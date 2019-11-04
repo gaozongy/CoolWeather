@@ -243,8 +243,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
 
   Widget _forecastLayout() {
     List<Widget> forecastRow = new List();
-    int length = daily.skycon.length;
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < 6; i++) {
       Skycon skycon = daily.skycon.elementAt(i);
       double intensity = daily.precipitation.elementAt(i).max;
       DateTime dateTime = DateTime.parse(skycon.date);
@@ -291,7 +290,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
     List<Temp> tempList = List();
 
     var forecast = daily.temperature;
-    for (int i = 0; i < forecast.length; i++) {
+    for (int i = 0; i < 6; i++) {
       tempList.add(Temp(forecast.elementAt(i).max, forecast.elementAt(i).min));
     }
     return Padding(
@@ -311,7 +310,8 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
           style: new TextStyle(color: Colors.white54),
         ),
         onPressed: () {
-          print('https://api.caiyunapp.com/v2/TAkhjf8d1nlSlspN/121.6544,25.1552/daily.json?lang=en_US&dailysteps=360');
+          Navigator.of(context).pushNamed("more_day_forecast",
+              arguments: weatherBean.result.daily);
         },
         highlightColor: Colors.transparent,
         splashColor: Colors.white30,
@@ -535,7 +535,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
         String url = 'https://api.caiyunapp.com/v2/' +
             Global.caiYunKey +
             '/$longitude,$latitude/' +
-            'weather.json?dailysteps=6&unit=metric:v1';
+            'weather.json?dailysteps=15&unit=metric:v1';
 
         print(url);
 
