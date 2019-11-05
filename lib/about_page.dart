@@ -64,27 +64,29 @@ class AboutPageState extends State<AboutPage> {
               flex: 4,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 36, vertical: 50),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      '更新日志：',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 5),
-                      child: Text(
-                        '1.支持未来两小时雨势准确预测，轻松掌握天气\n'
-                        '2.添加Android桌面小部件，无需打开APP就可以实时了解天气变化\n'
-                        '3.添加分享功能，点击分享发送精美卡片\n'
-                        '4.添加透明桌面小部件，添加小部件到桌面时就能看见哦\n'
-                        '5.风力大小显示默认单位改为风力等级\n'
-                        '6.修复了某些已知的bug\n',
-                        softWrap: true,
-                        style: TextStyle(fontSize: 13),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '更新日志：',
+                        style: TextStyle(fontSize: 16),
                       ),
-                    )
-                  ],
+                      Padding(
+                        padding: EdgeInsets.only(top: 5),
+                        child: Text(
+                          '1.新增15天天气预报功能\n'
+                          '2.新增每小时天气预报功能\n'
+                          '3.修改APP桌面显示名为“天气”\n'
+                          '4.优化闪屏页UI\n'
+                          '5.修复了某些已知的bug\n',
+                          softWrap: true,
+                          style: TextStyle(fontSize: 13),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

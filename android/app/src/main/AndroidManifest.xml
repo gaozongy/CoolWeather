@@ -25,7 +25,7 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:icon="@drawable/ic_launcher"
-        android:label="Cool天气">
+        android:label="天气">
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
