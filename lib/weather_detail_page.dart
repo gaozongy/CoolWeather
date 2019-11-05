@@ -278,7 +278,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
   }
 
   Widget _textLayout(String content) {
-    return Text(content, style: TextStyle(color: Colors.white, fontSize: 12));
+    return Text(content, style: TextStyle(color: Colors.white, fontSize: 13));
   }
 
   ImageIcon _getWeatherIcon(String weather) {
@@ -311,7 +311,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
         padding: EdgeInsets.symmetric(horizontal: 25),
         child: Text(
           '15天天气预报',
-          style: TextStyle(color: Colors.white54),
+          style: TextStyle(fontSize: 14, color: Colors.white54),
         ),
         onPressed: () {
           Navigator.of(context).pushNamed("more_day_forecast",
@@ -391,13 +391,13 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
                     Text(
                         DateUtils.getFormatTimeHHmm(
                             skyconList.elementAt(position).datetime),
-                        style: TextStyle(color: Colors.white70, fontSize: 14)),
+                        style: TextStyle(color: Colors.white54, fontSize: 14)),
                     Padding(
                       padding: EdgeInsets.only(top: 7, bottom: 7),
                       child: weatherIcon,
                     ),
                     Text(desc,
-                        style: TextStyle(color: Colors.white70, fontSize: 14)),
+                        style: TextStyle(color: Colors.white54, fontSize: 14)),
                   ],
                 ),
               ),
@@ -535,7 +535,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
           Text(title,
               style: TextStyle(
                 color: Colors.white54,
-                fontSize: 12,
+                fontSize: 14,
               )),
           Padding(
             padding: EdgeInsets.only(top: 2),
