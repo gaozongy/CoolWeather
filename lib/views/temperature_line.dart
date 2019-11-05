@@ -2,17 +2,19 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
 
 /// 气温折线图
 class TemperatureLine extends StatelessWidget {
+  final double screenWidth;
   final List<Temp> tempList;
 
-  TemperatureLine(this.tempList);
+  TemperatureLine(this.screenWidth, this.tempList);
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(size: Size(0, 140), painter: TemperatureLinePainter(tempList));
+    return CustomPaint(
+        size: Size(screenWidth / 6 * tempList.length, 140),
+        painter: TemperatureLinePainter(tempList));
   }
 }
 
@@ -54,7 +56,10 @@ class TemperatureLinePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.translate(0, size.height / 2);
+    double width = size.width;
+    double height = size.height;
+
+    canvas.translate(0, height / 2);
 
     double total = 0;
     tempList.forEach((temp) {
@@ -68,7 +73,7 @@ class TemperatureLinePainter extends CustomPainter {
       drawList.add(Temp((average - temp.max) * 8, (average - temp.min) * 8));
     });
 
-    double distance = size.width / tempList.length;
+    double distance = width / tempList.length;
 
     // 画线
     drawLine(drawList, distance, canvas);
@@ -77,7 +82,7 @@ class TemperatureLinePainter extends CustomPainter {
     drawDotText(drawList, distance, canvas);
 
     // 画背景颜色
-    drawBg(drawList, distance, size, canvas);
+    drawBg(drawList, distance, width, canvas);
   }
 
   void drawLine(List<Temp> dots, double distance, Canvas canvas) {
@@ -148,7 +153,7 @@ class TemperatureLinePainter extends CustomPainter {
     )..layout();
   }
 
-  void drawBg(List<Temp> dots, double distance, Size size, Canvas canvas) {
+  void drawBg(List<Temp> dots, double distance, double width, Canvas canvas) {
     Path path = new Path();
     path.moveTo(0, dots.elementAt(0).max);
     for (int i = 0; i < dots.length; i++) {
@@ -156,12 +161,12 @@ class TemperatureLinePainter extends CustomPainter {
       path.lineTo(x, dots.elementAt(i).max);
     }
 
-    path.lineTo(size.width, dots.elementAt(5).max);
-    path.lineTo(size.width, dots.elementAt(5).min + margin);
+    path.lineTo(width, dots.elementAt(dots.length - 1).max);
+    path.lineTo(width, dots.elementAt(dots.length - 1).min + margin);
 
     for (int i = 0; i < dots.length; i++) {
-      double x = distance * (5 - i) + distance / 2;
-      path.lineTo(x, dots.elementAt(5 - i).min + margin);
+      double x = distance * (dots.length - 1 - i) + distance / 2;
+      path.lineTo(x, dots.elementAt(dots.length - 1 - i).min + margin);
     }
 
     path.lineTo(0, dots.elementAt(0).min + margin);

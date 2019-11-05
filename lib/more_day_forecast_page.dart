@@ -3,36 +3,59 @@ import 'package:coolweather/utils/image_utils.dart';
 import 'package:coolweather/utils/screen_utils.dart';
 import 'package:coolweather/utils/translation_utils.dart';
 import 'package:coolweather/views/temperature_line.dart';
-import 'package:coolweather/views/temperature_line_c.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'bean/daily.dart';
 
 class MoreDayForecast extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     Daily daily = ModalRoute.of(context).settings.arguments;
     double screenWidth = ScreenUtils.getScreenWidth(context);
-    double itemWidth = screenWidth / 6;
 
     return Material(
       child: Container(
         color: Colors.blue,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[_forecastLayout(itemWidth, daily), _tempLineLayout(itemWidth, daily)],
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  _forecastLayout(screenWidth, daily),
+                  _tempLineLayout(screenWidth, daily)
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 60),
+              child: OutlineButton(
+                padding: EdgeInsets.all(12),
+                child: Icon(
+                  Icons.close,
+                  color: Colors.white70,
+                ),
+                onPressed: () {
+                  Navigator.pop(context, true);
+                },
+                highlightColor: Colors.transparent,
+                splashColor: Colors.white30,
+                borderSide: BorderSide(color: Colors.white30),
+                highlightedBorderColor: Colors.white30,
+                shape: CircleBorder(),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _forecastLayout(double itemWidth, Daily daily) {
+  Widget _forecastLayout(double screenWidth, Daily daily) {
     List<Widget> forecastRow = new List();
     int length = daily.skycon.length;
 
@@ -43,11 +66,12 @@ class MoreDayForecast extends StatelessWidget {
       ImageIcon weatherIcon = _getWeatherIcon(skycon.value);
 
       forecastRow.add(SizedBox(
-        width: itemWidth,
+        width: screenWidth / 6,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            _textLayout(DateUtils.getWhichDay(dateTime.weekday - 1)),
+            _textLayout(
+                DateUtils.getWhichDay(dateTime.weekday - 1, todayWeek: false)),
             _textLayout('${dateTime.month}' + '月' + '${dateTime.day}' + '日'),
             Padding(
               padding: EdgeInsets.only(top: 8, bottom: 2),
@@ -79,16 +103,17 @@ class MoreDayForecast extends StatelessWidget {
   }
 
   // 气温折线图
-  Widget _tempLineLayout(double itemWidth, Daily daily) {
+  Widget _tempLineLayout(double screenWidth, Daily daily) {
     List<Temp> tempList = List();
 
     var forecast = daily.temperature;
     for (int i = 0; i < forecast.length; i++) {
       tempList.add(Temp(forecast.elementAt(i).max, forecast.elementAt(i).min));
     }
+
     return Padding(
-      padding: EdgeInsets.only(top: 5, bottom: 20),
-      child: TemperatureLineC(itemWidth, tempList),
+      padding: EdgeInsets.only(top: 35, bottom: 30),
+      child: TemperatureLine(screenWidth, tempList),
     );
   }
 }

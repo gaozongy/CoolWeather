@@ -11,11 +11,11 @@ class DateUtils {
     return desc;
   }
 
-  static String getWhichDay(int weekday) {
+  static String getWhichDay(int weekday, {bool todayWeek}) {
     List<String> week = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
     String desc = week.elementAt(weekday);
     DateTime dateTime = DateTime.now();
-    if (dateTime.weekday - 1 == weekday) {
+    if ((todayWeek == null || todayWeek) && dateTime.weekday - 1 == weekday) {
       desc = '今天';
     }
     return desc;

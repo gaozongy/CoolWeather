@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:amap_location/amap_location.dart';
 import 'package:amap_location/amap_location_option.dart';
 import 'package:coolweather/utils/image_utils.dart';
+import 'package:coolweather/utils/screen_utils.dart';
 import 'package:coolweather/utils/unit_convert_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -122,6 +123,8 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
   Widget weatherDetailLayout(BuildContext context) {
     // 一加5 1080 / 731.4285714285714 = 1.4765625
     // 红米note2 1080 / 640.0 = 1.6875
+    double screenWidth = ScreenUtils.getScreenWidth(context);
+
     if (weatherBean != null) {
       return Theme(
         data: Theme.of(context)
@@ -147,7 +150,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
                     ],
                   ),
                 ),
-                _tempLineLayout(),
+                _tempLineLayout(screenWidth),
                 _moreForecastLayout(),
                 _dividerLayout(edgeInsets: EdgeInsets.only(top: 20)),
                 _sunriseSunsetLayout(),
@@ -286,7 +289,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
   }
 
   // 气温折线图
-  Widget _tempLineLayout() {
+  Widget _tempLineLayout(double screenWidth) {
     List<Temp> tempList = List();
 
     var forecast = daily.temperature;
@@ -295,7 +298,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
     }
     return Padding(
       padding: EdgeInsets.only(top: 5, bottom: 20),
-      child: TemperatureLine(tempList),
+      child: TemperatureLine(screenWidth, tempList),
     );
   }
 
@@ -305,9 +308,9 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
       child: Center(
           child: OutlineButton(
         padding: EdgeInsets.symmetric(horizontal: 25),
-        child: new Text(
+        child: Text(
           '15天天气预报',
-          style: new TextStyle(color: Colors.white54),
+          style: TextStyle(color: Colors.white54),
         ),
         onPressed: () {
           Navigator.of(context).pushNamed("more_day_forecast",
