@@ -3,8 +3,10 @@ class ImageUtils {
     String weatherIcon;
     switch (weather) {
       case 'CLEAR_DAY':
-      case 'CLEAR_NIGHT':
         weatherIcon = 'images/ic_weather/ic_sunny.png';
+        break;
+      case 'CLEAR_NIGHT':
+        weatherIcon = 'images/ic_weather/ic_sunny_night.png';
         break;
       case 'PARTLY_CLOUDY_DAY':
       case 'PARTLY_CLOUDY_NIGHT':
@@ -25,7 +27,14 @@ class ImageUtils {
       case 'SNOW':
         weatherIcon = 'images/ic_weather/ic_snow.png';
         break;
+      case 'SUNRISE':
+        weatherIcon = 'images/ic_weather/ic_sunrise.png';
+        break;
+      case 'SUNSET':
+        weatherIcon = 'images/ic_weather/ic_sunset.png';
+        break;
       default:
+        weatherIcon = 'images/ic_weather/ic_sunny.png';
         break;
     }
 
@@ -115,7 +124,8 @@ class ImageUtils {
     return bgResource;
   }
 
-  static String getWeatherShareBgUri(String weather, double intensity, bool isDay) {
+  static String getWeatherShareBgUri(
+      String weather, double intensity, bool isDay) {
     String bgResource;
     switch (weather) {
       case "CLEAR_DAY":

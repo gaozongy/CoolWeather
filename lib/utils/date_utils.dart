@@ -1,8 +1,13 @@
 /// 时间工具类
 class DateUtils {
   static String getCurrentTimeMMDD() {
-    DateTime date = DateTime.now();
-    return "${date.month.toString().padLeft(2, '0')}月${date.day.toString().padLeft(2, '0')}日 ${getWeek(date.weekday - 1)}";
+    DateTime dateTime = DateTime.now();
+    return "${dateTime.month.toString().padLeft(2, '0')}月${dateTime.day.toString().padLeft(2, '0')}日";
+  }
+
+  static String getFormatTimeHHmm(String date) {
+    DateTime dateTime = DateTime.parse(date);
+    return "${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}";
   }
 
   static String getWeek(int weekday) {

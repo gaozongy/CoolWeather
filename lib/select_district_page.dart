@@ -1,11 +1,12 @@
 import 'dart:convert';
-import 'package:coolweather/bean/focus_district_list_bean.dart';
-import 'package:flutter/material.dart';
 import 'dart:io';
+
+import 'package:convert/convert.dart';
+import 'package:coolweather/bean/focus_district_list_bean.dart';
+import 'package:crypto/crypto.dart';
+import 'package:flutter/material.dart';
 import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:convert/convert.dart';
-import 'package:crypto/crypto.dart';
 
 class SelectDistrictPage extends StatelessWidget {
   @override
@@ -18,7 +19,8 @@ class SelectDistrictPageState extends StatefulWidget {
   SelectDistrictPageState({Key key}) : super(key: key);
 
   @override
-  _SelectDistrictPageStateState createState() => _SelectDistrictPageStateState();
+  _SelectDistrictPageStateState createState() =>
+      _SelectDistrictPageStateState();
 }
 
 class _SelectDistrictPageStateState extends State<SelectDistrictPageState> {
@@ -109,7 +111,7 @@ class _SelectDistrictPageStateState extends State<SelectDistrictPageState> {
                     valueColor: AlwaysStoppedAnimation(Colors.blue),
                   ),
                 )
-              : new ListView.builder(
+              : ListView.builder(
                   itemCount: arrayData.length,
                   itemBuilder: (BuildContext context, int position) {
                     var itemData = arrayData.elementAt(position);
@@ -175,7 +177,6 @@ class _SelectDistrictPageStateState extends State<SelectDistrictPageState> {
   }
 
   Future<List<double>> getLatLon(String address) async {
-
     String parameter =
         'address=' + address + '&key=38366adde7d7ec1e94d652f9e90f78ce';
 

@@ -9,39 +9,39 @@ class UnitConvertUtils {
     String windSpeedDesc;
     if (speed < 1) {
       windSpeedDesc = '0';
-    } else if (1 <= speed && speed <= 5) {
+    } else if (1 <= speed && speed < 6) {
       windSpeedDesc = '1';
-    } else if (6 <= speed && speed <= 11) {
+    } else if (6 <= speed && speed < 12) {
       windSpeedDesc = '2';
-    } else if (12 <= speed && speed <= 19) {
+    } else if (12 <= speed && speed < 20) {
       windSpeedDesc = '3';
-    } else if (20 <= speed && speed <= 28) {
+    } else if (20 <= speed && speed < 29) {
       windSpeedDesc = '4';
-    } else if (29 <= speed && speed <= 38) {
+    } else if (29 <= speed && speed < 39) {
       windSpeedDesc = '5';
-    } else if (39 <= speed && speed <= 49) {
+    } else if (39 <= speed && speed < 50) {
       windSpeedDesc = '6';
-    } else if (50 <= speed && speed <= 61) {
+    } else if (50 <= speed && speed < 62) {
       windSpeedDesc = '7';
-    } else if (62 <= speed && speed <= 74) {
+    } else if (62 <= speed && speed < 75) {
       windSpeedDesc = '8';
-    } else if (75 <= speed && speed <= 88) {
+    } else if (75 <= speed && speed < 89) {
       windSpeedDesc = '9';
-    } else if (89 <= speed && speed <= 102) {
+    } else if (89 <= speed && speed < 103) {
       windSpeedDesc = '10';
-    } else if (103 <= speed && speed <= 117) {
+    } else if (103 <= speed && speed < 118) {
       windSpeedDesc = '11';
-    } else if (118 <= speed && speed <= 133) {
+    } else if (118 <= speed && speed < 134) {
       windSpeedDesc = '12';
-    } else if (134 <= speed && speed <= 149) {
+    } else if (134 <= speed && speed < 150) {
       windSpeedDesc = '13';
-    } else if (150 <= speed && speed <= 166) {
+    } else if (150 <= speed && speed < 167) {
       windSpeedDesc = '14';
-    } else if (167 <= speed && speed <= 183) {
+    } else if (167 <= speed && speed < 184) {
       windSpeedDesc = '15';
-    } else if (184 <= speed && speed <= 202) {
+    } else if (184 <= speed && speed < 203) {
       windSpeedDesc = '16';
-    } else if (203 <= speed && speed <= 220) {
+    } else if (203 <= speed && speed < 221) {
       windSpeedDesc = '17';
     } else if (221 <= speed) {
       windSpeedDesc = '17+';

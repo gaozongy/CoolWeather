@@ -26,7 +26,6 @@ import 'data/unit_model.dart';
 import 'utils/date_utils.dart';
 import 'utils/translation_utils.dart';
 import 'views/rainfall_line.dart';
-import 'views/sunrise_sunset_line.dart';
 import 'views/temperature_line.dart';
 
 class WeatherDetailPage extends StatefulWidget {
@@ -48,6 +47,8 @@ class WeatherDetailPage extends StatefulWidget {
 }
 
 class _WeatherDetailPageState extends State<WeatherDetailPage> {
+  double screenWidth;
+
   District district;
 
   WeatherBean weatherBean;
@@ -117,14 +118,14 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    screenWidth = ScreenUtils.getScreenWidth(context);
+
     return weatherDetailLayout(context);
   }
 
   Widget weatherDetailLayout(BuildContext context) {
     // 一加5 1080 / 731.4285714285714 = 1.4765625
     // 红米note2 1080 / 640.0 = 1.6875
-    double screenWidth = ScreenUtils.getScreenWidth(context);
-
     if (weatherBean != null) {
       return Theme(
         data: Theme.of(context)
@@ -150,10 +151,10 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
                     ],
                   ),
                 ),
-                _tempLineLayout(screenWidth),
+                _tempLineLayout(),
                 _moreForecastLayout(),
                 _dividerLayout(edgeInsets: EdgeInsets.only(top: 20)),
-                _sunriseSunsetLayout(),
+                _hourlyForecastLayout(),
                 _dividerLayout(),
                 _moreInfLayout(),
                 _dataFromLayout(),
@@ -289,7 +290,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
   }
 
   // 气温折线图
-  Widget _tempLineLayout(double screenWidth) {
+  Widget _tempLineLayout() {
     List<Temp> tempList = List();
 
     var forecast = daily.temperature;
@@ -325,13 +326,89 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
     );
   }
 
-  // 日出日落
-  Widget _sunriseSunsetLayout() {
-    return SunriseSunsetLine(daily.astro.elementAt(0));
+  // 小时预报
+  Widget _hourlyForecastLayout() {
+    List<StringValue> skyconList = hourly.skycon.toList();
+    List<DoubleValue> tempList = hourly.temperature.toList();
+
+    DateTime minDateTime = DateTime.parse(hourly.skycon.elementAt(0).datetime);
+    DateTime maxDateTime = DateTime.parse(
+        hourly.skycon.elementAt(hourly.skycon.length - 1).datetime);
+
+    daily.astro.forEach((day) {
+      String sunriseString = day.date + ' ' + day.sunrise.time;
+      DateTime sunrise = DateTime.parse(sunriseString);
+      if (sunrise.compareTo(minDateTime) >= 0 &&
+          sunrise.compareTo(maxDateTime) <= 0) {
+        skyconList.add(StringValue('SUNRISE', sunriseString));
+        tempList.add(DoubleValue(-1001, sunriseString));
+      }
+
+      String sunsetString = day.date + ' ' + day.sunset.time;
+      DateTime sunset = DateTime.parse(sunsetString);
+      if (sunset.compareTo(minDateTime) >= 0 &&
+          sunset.compareTo(maxDateTime) <= 0) {
+        skyconList.add(StringValue('SUNSET', sunsetString));
+        tempList.add(DoubleValue(1001, sunsetString));
+      }
+    });
+
+    skyconList.sort((skycon1, skycon2) {
+      return DateTime.parse(skycon1.datetime)
+          .compareTo(DateTime.parse(skycon2.datetime));
+    });
+
+    tempList.sort((temp1, temp2) {
+      return DateTime.parse(temp1.datetime)
+          .compareTo(DateTime.parse(temp2.datetime));
+    });
+
+    return SizedBox(
+      height: 100,
+      child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: skyconList.length,
+          itemBuilder: (BuildContext context, int position) {
+            ImageIcon weatherIcon =
+                _getWeatherIcon(skyconList.elementAt(position).value);
+            String desc;
+            double temp = tempList.elementAt(position).value;
+            if (temp == -1001) {
+              desc = '日出';
+            } else if (temp == 1001) {
+              desc = '日落';
+            } else {
+              desc = temp.toStringAsFixed(0) + '°';
+            }
+
+            return SizedBox(
+              width: screenWidth / 6.5,
+              child: Padding(
+                padding: EdgeInsets.only(top: 5, bottom: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                        DateUtils.getFormatTimeHHmm(
+                            skyconList.elementAt(position).datetime),
+                        style: TextStyle(color: Colors.white70, fontSize: 14)),
+                    Padding(
+                      padding: EdgeInsets.only(top: 7, bottom: 7),
+                      child: weatherIcon,
+                    ),
+                    Text(desc,
+                        style: TextStyle(color: Colors.white70, fontSize: 14)),
+                  ],
+                ),
+              ),
+            );
+          }),
+    );
   }
 
   //  更多信息
   Widget _moreInfLayout() {
+    // todo 可以使用 GridView 替换
     return Consumer<UnitModel>(
       builder: (context, unitModel, _) {
         double temperature = realtime.temperature;

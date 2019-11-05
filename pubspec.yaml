@@ -44,7 +44,10 @@ flutter:
     - images/ic_weather/ic_rain.png
     - images/ic_weather/ic_snow.png
     - images/ic_weather/ic_sunny.png
+    - images/ic_weather/ic_sunny_night.png
     - images/ic_weather/ic_wind.png
+    - images/ic_weather/ic_sunrise.png
+    - images/ic_weather/ic_sunset.png
     - images/bg_weather/bg_sunny.png
     - images/bg_weather/bg_sunny_night.png
     - images/bg_weather/bg_cloudy.png
