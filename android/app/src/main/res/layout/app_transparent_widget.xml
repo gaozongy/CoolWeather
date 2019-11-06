@@ -130,7 +130,7 @@
             android:layout_height="18dp"
             android:layout_marginTop="7dp"
             tools:ignore="ContentDescription"
-            tools:src="@drawable/sunny_ic" />
+            tools:src="@drawable/ic_sunny" />
 
         <TextView
             android:id="@+id/widget_forecast_temperature_1_iv"
@@ -169,7 +169,7 @@
             android:layout_height="18dp"
             android:layout_marginTop="7dp"
             tools:ignore="ContentDescription"
-            tools:src="@drawable/sunny_ic" />
+            tools:src="@drawable/ic_sunny" />
 
         <TextView
             android:id="@+id/widget_forecast_temperature_2_iv"
@@ -208,7 +208,7 @@
             android:layout_height="18dp"
             android:layout_marginTop="7dp"
             tools:ignore="ContentDescription"
-            tools:src="@drawable/sunny_ic" />
+            tools:src="@drawable/ic_sunny" />
 
         <TextView
             android:id="@+id/widget_forecast_temperature_3_iv"

@@ -2,4 +2,5 @@
 <resources>
     <color name="colorText">#8AFFFFFF</color>
     <color name="colorTransparent">#00FFFFFF</color>
+    <color name="colorLaunchBg">#51B0E0</color>
 </resources>
