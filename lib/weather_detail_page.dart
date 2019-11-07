@@ -26,7 +26,7 @@ import 'data/unit_model.dart';
 import 'utils/date_utils.dart';
 import 'utils/translation_utils.dart';
 import 'views/rainfall_line.dart';
-import 'views/temperature_line.dart';
+import 'views/temp_line.dart';
 
 class WeatherDetailPage extends StatefulWidget {
   final District district;
@@ -240,7 +240,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
     return rain
         ? Padding(
             padding: EdgeInsets.symmetric(vertical: 20),
-            child: RainfallLine(minutely.precipitation_2h),
+            child: RainfallLine(ScreenUtils.getScreenWidth(context), minutely.precipitation_2h),
           )
         : Center();
   }
@@ -299,7 +299,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
     }
     return Padding(
       padding: EdgeInsets.only(top: 5, bottom: 20),
-      child: TemperatureLine(screenWidth, tempList),
+      child: TempLine(screenWidth, tempList),
     );
   }
 

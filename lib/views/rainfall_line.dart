@@ -1,39 +1,24 @@
 import 'dart:ui';
 
-import 'package:coolweather/utils/screen_utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
 class RainfallLine extends StatelessWidget {
+  final double width;
   final List<double> precipitation2h;
 
-  RainfallLine(this.precipitation2h);
+  RainfallLine(this.width, this.precipitation2h);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: CustomPaint(
-          size: Size(ScreenUtils.getScreenWidth(context), 100),
+          size: Size(width, 100),
           painter: RainfallLinePainter(precipitation2h)),
       decoration: BoxDecoration(color: Colors.transparent),
     );
   }
 }
-
-Paint bottomLinePaint = new Paint()
-  ..style = PaintingStyle.stroke
-  ..color = Colors.white38
-  ..strokeWidth = 1;
-
-Paint auxiliaryLinePaint = new Paint()
-  ..style = PaintingStyle.stroke
-  ..color = Colors.white12
-  ..strokeWidth = 1;
-
-Paint trendLinePaint = new Paint()
-  ..style = PaintingStyle.stroke
-  ..color = Colors.white60
-  ..strokeWidth = 1.2;
 
 class RainfallLinePainter extends CustomPainter {
   List<double> precipitation2h;
@@ -47,8 +32,23 @@ class RainfallLinePainter extends CustomPainter {
 
     canvas.translate(0, height);
 
+    Paint bottomLinePaint = new Paint()
+      ..style = PaintingStyle.stroke
+      ..color = Colors.white38
+      ..strokeWidth = 1;
+
+    Paint auxiliaryLinePaint = new Paint()
+      ..style = PaintingStyle.stroke
+      ..color = Colors.white12
+      ..strokeWidth = 1;
+
+    Paint trendLinePaint = new Paint()
+      ..style = PaintingStyle.stroke
+      ..color = Colors.white60
+      ..strokeWidth = 1.2;
+
     double distance = width / precipitation2h.length;
-    drawLine(precipitation2h, distance, canvas);
+    drawLine(precipitation2h, distance, canvas, trendLinePaint);
 
     canvas.drawLine(Offset(0, 0), Offset(width, 0), bottomLinePaint);
 
@@ -99,26 +99,27 @@ class RainfallLinePainter extends CustomPainter {
     canvas.drawParagraph(paragraph, offset);
   }
 
-  void drawLine(List<double> precipitation2h, double distance, Canvas canvas) {
+  void drawLine(List<double> precipitation2h, double distance, Canvas canvas, Paint trendLinePaint) {
     for (int i = 0; i < precipitation2h.length - 1; i++) {
       double x = distance * i + distance / 2;
+      int multiple = 200;
 
       canvas.drawLine(
-          Offset(x, -precipitation2h.elementAt(i) * 100),
-          Offset(x + distance, -precipitation2h.elementAt(i + 1) * 100),
+          Offset(x, -precipitation2h.elementAt(i) * multiple),
+          Offset(x + distance, -precipitation2h.elementAt(i + 1) * multiple),
           trendLinePaint);
 
       if (i == 0) {
         canvas.drawLine(
-            Offset(0, -precipitation2h.elementAt(0) * 100),
-            Offset(distance / 2, -precipitation2h.elementAt(0) * 100),
+            Offset(0, -precipitation2h.elementAt(0) * multiple),
+            Offset(distance / 2, -precipitation2h.elementAt(0) * multiple),
             trendLinePaint);
       } else if (i == precipitation2h.length - 2) {
         canvas.drawLine(
             Offset(x + distance,
-                -precipitation2h.elementAt(precipitation2h.length - 1) * 100),
+                -precipitation2h.elementAt(precipitation2h.length - 1) * multiple),
             Offset(x + distance + distance / 2,
-                -precipitation2h.elementAt(precipitation2h.length - 1) * 100),
+                -precipitation2h.elementAt(precipitation2h.length - 1) * multiple),
             trendLinePaint);
       }
     }

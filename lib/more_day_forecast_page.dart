@@ -2,7 +2,7 @@ import 'package:coolweather/utils/date_utils.dart';
 import 'package:coolweather/utils/image_utils.dart';
 import 'package:coolweather/utils/screen_utils.dart';
 import 'package:coolweather/utils/translation_utils.dart';
-import 'package:coolweather/views/temperature_line.dart';
+import 'package:coolweather/views/temp_line.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -113,7 +113,7 @@ class MoreDayForecast extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(top: 35, bottom: 30),
-      child: TemperatureLine(screenWidth, tempList),
+      child: TempLine(screenWidth, tempList),
     );
   }
 }

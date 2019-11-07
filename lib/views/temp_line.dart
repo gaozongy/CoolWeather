@@ -4,48 +4,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 /// 气温折线图
-class TemperatureLine extends StatelessWidget {
-  final double screenWidth;
+class TempLine extends StatelessWidget {
+  final double width;
   final List<Temp> tempList;
 
-  TemperatureLine(this.screenWidth, this.tempList);
+  TempLine(this.width, this.tempList);
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-        size: Size(screenWidth / 6 * tempList.length, 140),
+        size: Size(width / 6 * tempList.length, 140),
         painter: TemperatureLinePainter(tempList));
   }
 }
-
-Paint maxLinePaint = new Paint()
-  ..style = PaintingStyle.stroke
-  ..color = Colors.white70
-  ..strokeWidth = 1;
-
-Paint minLinePaint = new Paint()
-  ..style = PaintingStyle.stroke
-  ..color = Colors.white38
-  ..strokeWidth = 1;
-
-Paint dotPaint = new Paint()
-  ..style = PaintingStyle.fill
-  ..color = Colors.white;
-
-Gradient gradient = new LinearGradient(
-  begin: Alignment.topCenter,
-  end: Alignment.bottomCenter,
-  colors: [
-    Colors.white30,
-    Colors.transparent,
-  ],
-);
-
-Rect arcRect = Rect.fromLTRB(0, 0, 0, 140);
-
-Paint bgPaint = new Paint()
-  ..style = PaintingStyle.fill
-  ..shader = gradient.createShader(arcRect);
 
 class TemperatureLinePainter extends CustomPainter {
   List<Temp> tempList;
@@ -60,6 +31,35 @@ class TemperatureLinePainter extends CustomPainter {
     double height = size.height;
 
     canvas.translate(0, height / 2);
+
+    Paint maxLinePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..color = Colors.white70
+      ..strokeWidth = 1;
+
+    Paint minLinePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..color = Colors.white38
+      ..strokeWidth = 1;
+
+    Paint dotPaint = Paint()
+      ..style = PaintingStyle.fill
+      ..color = Colors.white;
+
+    Gradient gradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        Colors.white30,
+        Colors.transparent,
+      ],
+    );
+
+    Rect arcRect = Rect.fromLTRB(0, 0, 0, 140);
+
+    Paint bgPaint = Paint()
+      ..style = PaintingStyle.fill
+      ..shader = gradient.createShader(arcRect);
 
     double total = 0;
     tempList.forEach((temp) {
@@ -76,16 +76,17 @@ class TemperatureLinePainter extends CustomPainter {
     double distance = width / tempList.length;
 
     // 画线
-    drawLine(drawList, distance, canvas);
+    drawLine(drawList, distance, canvas, maxLinePaint, minLinePaint);
 
     // 画点和文字
-    drawDotText(drawList, distance, canvas);
+    drawDotText(drawList, distance, canvas, dotPaint);
 
     // 画背景颜色
-    drawBg(drawList, distance, width, canvas);
+    drawBg(drawList, distance, width, canvas, bgPaint);
   }
 
-  void drawLine(List<Temp> dots, double distance, Canvas canvas) {
+  void drawLine(List<Temp> dots, double distance, Canvas canvas,
+      Paint maxLinePaint, Paint minLinePaint) {
     for (int i = 0; i < dots.length - 1; i++) {
       double x = distance * i + distance / 2;
 
@@ -118,7 +119,8 @@ class TemperatureLinePainter extends CustomPainter {
     }
   }
 
-  void drawDotText(List<Temp> dots, double distance, Canvas canvas) {
+  void drawDotText(
+      List<Temp> dots, double distance, Canvas canvas, Paint dotPaint) {
     for (int i = 0; i < dots.length; i++) {
       double x = distance * i + distance / 2;
 
@@ -153,7 +155,8 @@ class TemperatureLinePainter extends CustomPainter {
     )..layout();
   }
 
-  void drawBg(List<Temp> dots, double distance, double width, Canvas canvas) {
+  void drawBg(List<Temp> dots, double distance, double width, Canvas canvas,
+      Paint bgPaint) {
     Path path = new Path();
     path.moveTo(0, dots.elementAt(0).max);
     for (int i = 0; i < dots.length; i++) {
