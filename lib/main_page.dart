@@ -89,9 +89,28 @@ class MainPageState extends State<MainPage> {
     });
   }
 
+  setWeatherData(WeatherBean weatherBean) {
+    this.weatherBean = weatherBean;
+    setState(() {
+      updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
+    });
+  }
+
+  setLocation(District district) {
+    List<District> list = List();
+    list.add(district);
+    districtList.replaceRange(0, 1, list);
+
+    if (currentPage == 0) {
+      setState(() {
+        this.district = district;
+      });
+    }
+  }
+
   _focusDistrictList() {
-    Navigator.of(context).pushNamed("focus_district_list").then((bool) {
-      if (bool) {
+    Navigator.of(context).pushNamed("focus_district_list").then((hasChanged) {
+      if (hasChanged) {
         _initData();
       }
     });
@@ -103,13 +122,10 @@ class MainPageState extends State<MainPage> {
         district.longitude != -1 &&
         weatherBean != null) {
       Share.file(
-              district.name + '天气分享',
-              district.name + DateUtils.getCurrentTimeMMDD() + '天气.png',
-              await _createWeatherCard(),
-              'image/png')
-          .then((value) {
-        print('gaozy: share end');
-      });
+          district.name + '天气分享',
+          district.name + DateUtils.getCurrentTimeMMDD() + '天气.png',
+          await _createWeatherCard(),
+          'image/png');
     }
   }
 
@@ -205,39 +221,10 @@ class MainPageState extends State<MainPage> {
     )..layout();
   }
 
-  _setting() {
-    Navigator.of(context).pushNamed("setting");
-  }
-
-  setWeatherData(WeatherBean weatherBean) {
-    this.weatherBean = weatherBean;
-    setState(() {
-      updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
-    });
-  }
-
-  setLocation(District district) {
-    List<District> list = List();
-    list.add(district);
-    districtList.replaceRange(0, 1, list);
-
-    if (currentPage == 0) {
-      setState(() {
-        this.district = district;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     screenHeight = ScreenUtils.getScreenHeight(context);
     statsHeight = ScreenUtils.getSysStatsHeight(context);
-
-    ScreenUtils.pxToLogicalPixels(context, 10);
-
-    print('screenHeight：$screenHeight');
-
-    print('statsHeight: $statsHeight');
 
     return Scaffold(
       body: Container(
@@ -282,105 +269,114 @@ class MainPageState extends State<MainPage> {
         width: double.infinity,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                currentPage == 0
-                    ? Padding(
-                        padding: EdgeInsets.only(left: 22),
-                        child: Image(
-                          image: AssetImage("images/ic_location.png"),
-                          width: 22,
-                          color: Colors.white60,
-                        ),
-                      )
-                    : Container(),
-                Padding(
-                  padding: EdgeInsets.only(left: 20),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        district.name,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          decoration: TextDecoration.none,
-                        ),
-                      ),
-                      Text(
-                        updateTime,
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                          decoration: TextDecoration.none,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                IconButton(
-                  icon: Image(
-                    image: AssetImage("images/ic_building.png"),
-                    width: 20,
-                    height: 20,
-                  ),
-                  onPressed: _focusDistrictList,
-                ),
-                Center(
-                  child: Padding(
-                    padding: EdgeInsets.only(right: 15),
-                    child: PopupWindowButton(
-                      offset: Offset(0, 100),
-                      child: Icon(
-                        Icons.more_vert,
-                        color: Colors.white,
-                        size: 25,
-                      ),
-                      window: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          InkWell(
-                            child: Padding(
-                              padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
-                              child: Text(
-                                '分享',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ),
-                            onTap: _share,
-                          ),
-                          InkWell(
-                            child: Padding(
-                              child: Text(
-                                '设置',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
-                            ),
-                            onTap: _setting,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            )
-          ],
+          children: <Widget>[_titleContentLayout(), _titleMenuIconLayout()],
         ),
       ),
+    );
+  }
+
+  Widget _titleContentLayout() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        currentPage == 0
+            ? Padding(
+                padding: EdgeInsets.only(left: 22),
+                child: Image(
+                  image: AssetImage("images/ic_location.png"),
+                  width: 22,
+                  color: Colors.white60,
+                ),
+              )
+            : SizedBox(),
+        Padding(
+          padding: EdgeInsets.only(left: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                district.name,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+              Text(
+                updateTime,
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 12,
+                  decoration: TextDecoration.none,
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _titleMenuIconLayout() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        IconButton(
+          icon: Image(
+            image: AssetImage("images/ic_building.png"),
+            width: 20,
+            height: 20,
+          ),
+          onPressed: _focusDistrictList,
+        ),
+        Center(
+          child: Padding(
+            padding: EdgeInsets.only(right: 15),
+            child: PopupWindowButton(
+              offset: Offset(0, 100),
+              child: Icon(
+                Icons.more_vert,
+                color: Colors.white,
+                size: 25,
+              ),
+              window: _menusLayout(),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _menusLayout() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        InkWell(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
+            child: Text(
+              '分享',
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          onTap: _share,
+        ),
+        InkWell(
+          child: Padding(
+            child: Text(
+              '设置',
+              style: TextStyle(fontSize: 16),
+            ),
+            padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
+          ),
+          onTap: () => Navigator.of(context).pushNamed("setting"),
+        ),
+      ],
     );
   }
 
