@@ -85,7 +85,6 @@ class MoreDayForecast extends StatelessWidget {
     }
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
       children: forecastRow,
     );
   }

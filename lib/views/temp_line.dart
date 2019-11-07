@@ -178,7 +178,7 @@ class TemperatureLinePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => true;
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
 class Temp {

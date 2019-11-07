@@ -104,7 +104,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
         return;
       }
 
-      district = new District(
+      district = District(
           aMapLocation.district, aMapLocation.latitude, aMapLocation.longitude);
       Global.locationDistrict = district;
       widget.setLocation(district);
@@ -142,13 +142,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
                   width: double.infinity,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      _tempLayout(), // 当前气温
-                      _weatherLayout(), // 当前天气
-                      _tipsLayout(), // 温馨提示
-                      _rainTendencyLayout(), // 2小时降雨趋势图
-                      _forecastLayout(), // 未来6天天气预报
-                    ],
+                    children: _layout(),
                   ),
                 ),
                 _tempLineLayout(), // 未来6天温度折线图
@@ -166,6 +160,28 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
     } else {
       return Center();
     }
+  }
+
+  List<Widget> _layout() {
+    List<Widget> list = List();
+    list.add(_tempLayout()); // 当前气温
+    list.add(_weatherLayout()); // 当前天气
+    list.add(_tipsLayout()); // 温馨提示
+
+    minutely.precipitation_2h.forEach((rainfall) {
+      if (rainfall > 0) {
+        // 2小时降雨趋势图
+        list.add(Padding(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          child: RainfallLine(
+              ScreenUtils.getScreenWidth(context), minutely.precipitation_2h),
+        ));
+        return;
+      }
+    });
+
+    list.add(_forecastLayout()); // 未来6天天气预报
+    return list;
   }
 
   Widget _tempLayout() {
@@ -227,22 +243,6 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
         ],
       ),
     );
-  }
-
-  Widget _rainTendencyLayout() {
-    bool rain = false;
-    minutely.precipitation_2h.forEach((rainfall) {
-      if (rainfall > 0) {
-        rain = true;
-      }
-    });
-
-    return rain
-        ? Padding(
-            padding: EdgeInsets.symmetric(vertical: 20),
-            child: RainfallLine(ScreenUtils.getScreenWidth(context), minutely.precipitation_2h),
-          )
-        : Center();
   }
 
   Widget _forecastLayout() {
@@ -366,6 +366,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
     // 使用ListView
     return SizedBox(
       height: 100,
+      width: screenWidth,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: skyconList.length,
@@ -406,7 +407,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
           }),
     );
 
-  // 使用SingleChildScrollView
+    // 使用SingleChildScrollView
 //    List<Widget> forecastRow = new List();
 //    for (int i = 0; i < skyconList.length; i++) {
 //      StringValue skycon = skyconList.elementAt(i);

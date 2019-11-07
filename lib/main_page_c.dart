@@ -1,9 +1,7 @@
-import 'package:coolweather/bean/weather_bean.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'bean/focus_district_list_bean.dart';
-import 'data/global.dart';
 import 'utils/screen_utils.dart';
 
 class MainPageC extends StatefulWidget {
@@ -20,10 +18,6 @@ class MainPageCState extends State<MainPageC> {
 
   int currentPage = 0;
 
-  District district;
-
-  WeatherBean weatherBean;
-
   PageController _pageController = new PageController();
 
   double screenHeight;
@@ -32,9 +26,6 @@ class MainPageCState extends State<MainPageC> {
   @override
   void initState() {
     super.initState();
-
-    district = Global.locationDistrict;
-    districtList.add(Global.locationDistrict);
 
     _initPageController();
   }
@@ -64,17 +55,42 @@ class MainPageCState extends State<MainPageC> {
             children: <Widget>[
               Container(
                 height: 200,
-                decoration: BoxDecoration(color: Colors.blue),
+                decoration: BoxDecoration(
+                    color: position % 2 == 0 ? Colors.blue : Colors.red),
               ),
-              ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 15,
-                  itemBuilder: (BuildContext context, int position) {
-                    return Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Text(position.toString()),
-                    );
-                  })
+              Container(
+                height: 200,
+                decoration: BoxDecoration(
+                    color: position % 2 == 1 ? Colors.blue : Colors.red),
+              ),
+              Container(
+                height: 200,
+                decoration: BoxDecoration(
+                    color: position % 2 == 0 ? Colors.blue : Colors.red),
+              ),
+              Container(
+                height: 200,
+                decoration: BoxDecoration(
+                    color: position % 2 == 1 ? Colors.blue : Colors.red),
+              ),
+              Container(
+                height: 200,
+                decoration: BoxDecoration(
+                    color: position % 2 == 0 ? Colors.blue : Colors.red),
+              ),
+              SizedBox(
+                height: 100,
+                width: double.infinity,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 80,
+                    itemBuilder: (BuildContext context, int position) {
+                      return Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Text(position.toString()),
+                      );
+                    }),
+              )
             ],
           );
         },
