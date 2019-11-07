@@ -143,21 +143,21 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
-                      _tempLayout(),
-                      _weatherLayout(),
-                      _tipsLayout(),
-                      _rainTendencyLayout(),
-                      _forecastLayout(),
+                      _tempLayout(), // 当前气温
+                      _weatherLayout(), // 当前天气
+                      _tipsLayout(), // 温馨提示
+                      _rainTendencyLayout(), // 2小时降雨趋势图
+                      _forecastLayout(), // 未来6天天气预报
                     ],
                   ),
                 ),
-                _tempLineLayout(),
-                _moreForecastLayout(),
+                _tempLineLayout(), // 未来6天温度折线图
+                _moreForecastLayout(), // 未来15天天气预报
                 _dividerLayout(edgeInsets: EdgeInsets.only(top: 20)),
-                _hourlyForecastLayout(),
+                _hourlyForecastLayout(), // 小时预报
                 _dividerLayout(),
-                _moreInfLayout(),
-                _dataFromLayout(),
+                _moreInfLayout(), // 更多信息，空气质量，风向风速，紫外线等。。。
+                _dataFromLayout(), // 数据来源
               ],
             ),
           ),
@@ -363,6 +363,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
           .compareTo(DateTime.parse(temp2.datetime));
     });
 
+    // 使用ListView
     return SizedBox(
       height: 100,
       child: ListView.builder(
@@ -404,6 +405,47 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
             );
           }),
     );
+
+  // 使用SingleChildScrollView
+//    List<Widget> forecastRow = new List();
+//    for (int i = 0; i < skyconList.length; i++) {
+//      StringValue skycon = skyconList.elementAt(i);
+//
+//      String desc;
+//      double temp = tempList.elementAt(i).value;
+//      if (temp == -1001) {
+//        desc = '日出';
+//      } else if (temp == 1001) {
+//        desc = '日落';
+//      } else {
+//        desc = temp.toStringAsFixed(0) + '°';
+//      }
+//
+//      forecastRow.add(Column(
+//        children: <Widget>[
+//          Text(DateUtils.getFormatTimeHHmm(skycon.datetime),
+//              style: TextStyle(color: Colors.white54, fontSize: 14)),
+//          Padding(
+//            padding: EdgeInsets.only(top: 8, bottom: 2),
+//            //child: Icon(imageIcon, color: Colors.white),
+//            child: _getWeatherIcon(skycon.value),
+//          ),
+//          Text(desc, style: TextStyle(color: Colors.white54, fontSize: 14)),
+//        ],
+//        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//      ));
+//    }
+//
+//    return SingleChildScrollView(
+//      scrollDirection: Axis.horizontal,
+//      child: Padding(
+//        padding: EdgeInsets.fromLTRB(12, 30, 12, 15),
+//        child: Row(
+//          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//          children: forecastRow,
+//        ),
+//      ),
+//    );
   }
 
   //  更多信息
