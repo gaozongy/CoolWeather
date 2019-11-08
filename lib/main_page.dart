@@ -39,7 +39,7 @@ class MainPageState extends State<MainPage> {
 
   PageController _pageController = new PageController();
 
-  String updateTime = '未知';
+  String updateTime = '努力加载中';
 
   double screenHeight;
   double statsHeight;
@@ -318,7 +318,7 @@ class MainPageState extends State<MainPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                district != null ? district.name : '未知',
+                district != null ? district.name : '正在定位',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,

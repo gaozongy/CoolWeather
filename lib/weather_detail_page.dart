@@ -48,7 +48,8 @@ class WeatherDetailPage extends StatefulWidget {
   }
 }
 
-class _WeatherDetailPageState extends State<WeatherDetailPage> with AutomaticKeepAliveClientMixin {
+class _WeatherDetailPageState extends State<WeatherDetailPage>
+    with AutomaticKeepAliveClientMixin {
   double screenWidth;
 
   District district;
@@ -324,7 +325,6 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> with AutomaticKee
 
   // 小时预报
   Widget _hourlyForecastLayout() {
-
     // 使用ListView
     return SizedBox(
       height: 100,
@@ -603,59 +603,55 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> with AutomaticKee
   // 查询天气信息
   Future<void> _queryWeather(double longitude, double latitude,
       {bool force}) async {
-    Future<SharedPreferences> future = SharedPreferences.getInstance();
-    await future.then((prefs) async {
-      String json = prefs.getString(district.name);
-      WeatherBean weatherBean;
-      if (!isEmpty(json) && (force == null || !force)) {
-        Map map = jsonDecode(json);
-        weatherBean = WeatherBean.fromJson(map);
-        if (DateUtils.currentTimeMillis() - weatherBean.server_time * 1000 >
-            1000 * 60 * 15) {
-          weatherBean = null;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String json = prefs.getString(district.name);
+    WeatherBean weatherBean;
+    if (!isEmpty(json) && (force == null || !force)) {
+      Map map = jsonDecode(json);
+      weatherBean = WeatherBean.fromJson(map);
+      if (DateUtils.currentTimeMillis() - weatherBean.server_time * 1000 >
+          1000 * 60 * 15) {
+        weatherBean = null;
+      }
+    }
+
+    if (weatherBean == null) {
+      String url = 'https://api.caiyunapp.com/v2/' +
+          Global.caiYunKey +
+          '/$longitude,$latitude/' +
+          'weather.json?dailysteps=15&unit=metric:v1';
+
+      print(url);
+
+      var httpClient = new HttpClient();
+      try {
+        var request = await httpClient.getUrl(Uri.parse(url));
+        var response = await request.close();
+        if (response.statusCode == HttpStatus.ok) {
+          json = await response.transform(utf8.decoder).join();
+          Map map = jsonDecode(json);
+          weatherBean = WeatherBean.fromJson(map);
+
+          prefs.setString(district.name, json);
         }
-      }
+      } catch (ignore) {}
+    }
 
-      if (weatherBean == null) {
-        String url = 'https://api.caiyunapp.com/v2/' +
-            Global.caiYunKey +
-            '/$longitude,$latitude/' +
-            'weather.json?dailysteps=15&unit=metric:v1';
+    weatherBean = _processData(weatherBean);
 
-        print(url);
-
-        var httpClient = new HttpClient();
-        try {
-          var request = await httpClient.getUrl(Uri.parse(url));
-          var response = await request.close();
-          if (response.statusCode == HttpStatus.ok) {
-            json = await response.transform(utf8.decoder).join();
-            Map map = jsonDecode(json);
-            weatherBean = WeatherBean.fromJson(map);
-
-            future.then((prefs) {
-              prefs.setString(district.name, json);
-            });
-          }
-        } catch (ignore) {}
-      }
-
-      weatherBean = _processData(weatherBean);
-
-      setState(() {
-        this.weatherBean = weatherBean;
-        result = weatherBean.result;
-        realtime = result.realtime;
-        minutely = result.minutely;
-        hourly = result.hourly;
-        daily = result.daily;
-        widget.setWeatherData(weatherBean);
-      });
+    setState(() {
+      this.weatherBean = weatherBean;
+      result = weatherBean.result;
+      realtime = result.realtime;
+      minutely = result.minutely;
+      hourly = result.hourly;
+      daily = result.daily;
+      widget.setWeatherData(weatherBean);
     });
   }
 
   // 提前对数据进行处理，避免卡顿
-  WeatherBean _processData(WeatherBean weatherBean){
+  WeatherBean _processData(WeatherBean weatherBean) {
     Hourly hourly = weatherBean.result.hourly;
     Daily daily = weatherBean.result.daily;
 
@@ -701,7 +697,8 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> with AutomaticKee
     // 6天天气
     var forecast = daily.temperature;
     for (int i = 0; i < 6; i++) {
-      temperatureList.add(Temp(forecast.elementAt(i).max, forecast.elementAt(i).min));
+      temperatureList
+          .add(Temp(forecast.elementAt(i).max, forecast.elementAt(i).min));
     }
 
     return weatherBean;
