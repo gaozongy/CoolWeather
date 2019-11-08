@@ -48,7 +48,7 @@ class WeatherDetailPage extends StatefulWidget {
   }
 }
 
-class _WeatherDetailPageState extends State<WeatherDetailPage> {
+class _WeatherDetailPageState extends State<WeatherDetailPage> with AutomaticKeepAliveClientMixin {
   double screenWidth;
 
   District district;
@@ -64,6 +64,9 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
   Hourly hourly;
 
   Daily daily;
+
+  // 气温折线图使用
+  List<Temp> temperatureList = List();
 
   _WeatherDetailPageState(this.district);
 
@@ -116,6 +119,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     screenWidth = ScreenUtils.getScreenWidth(context);
 
     return weatherDetailLayout(context);
@@ -289,15 +293,9 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
 
   // 气温折线图
   Widget _tempLineLayout() {
-    List<Temp> tempList = List();
-
-    var forecast = daily.temperature;
-    for (int i = 0; i < 6; i++) {
-      tempList.add(Temp(forecast.elementAt(i).max, forecast.elementAt(i).min));
-    }
     return Padding(
       padding: EdgeInsets.only(top: 5, bottom: 20),
-      child: TempLine(screenWidth, tempList),
+      child: TempLine(screenWidth, temperatureList),
     );
   }
 
@@ -326,40 +324,6 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
 
   // 小时预报
   Widget _hourlyForecastLayout() {
-    List<StringValue> skyconList = hourly.skycon.toList();
-    List<DoubleValue> tempList = hourly.temperature.toList();
-
-    DateTime minDateTime = DateTime.parse(hourly.skycon.elementAt(0).datetime);
-    DateTime maxDateTime = DateTime.parse(
-        hourly.skycon.elementAt(hourly.skycon.length - 1).datetime);
-
-    daily.astro.forEach((day) {
-      String sunriseString = day.date + ' ' + day.sunrise.time;
-      DateTime sunrise = DateTime.parse(sunriseString);
-      if (sunrise.compareTo(minDateTime) >= 0 &&
-          sunrise.compareTo(maxDateTime) <= 0) {
-        skyconList.add(StringValue('SUNRISE', sunriseString));
-        tempList.add(DoubleValue(-1001, sunriseString));
-      }
-
-      String sunsetString = day.date + ' ' + day.sunset.time;
-      DateTime sunset = DateTime.parse(sunsetString);
-      if (sunset.compareTo(minDateTime) >= 0 &&
-          sunset.compareTo(maxDateTime) <= 0) {
-        skyconList.add(StringValue('SUNSET', sunsetString));
-        tempList.add(DoubleValue(1001, sunsetString));
-      }
-    });
-
-    skyconList.sort((skycon1, skycon2) {
-      return DateTime.parse(skycon1.datetime)
-          .compareTo(DateTime.parse(skycon2.datetime));
-    });
-
-    tempList.sort((temp1, temp2) {
-      return DateTime.parse(temp1.datetime)
-          .compareTo(DateTime.parse(temp2.datetime));
-    });
 
     // 使用ListView
     return SizedBox(
@@ -367,12 +331,12 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
       width: screenWidth,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: skyconList.length,
+          itemCount: hourly.skycon.length,
           itemBuilder: (BuildContext context, int position) {
             ImageIcon weatherIcon =
-                _getWeatherIcon(skyconList.elementAt(position).value);
+                _getWeatherIcon(hourly.skycon.elementAt(position).value);
             String desc;
-            double temp = tempList.elementAt(position).value;
+            double temp = hourly.temperature.elementAt(position).value;
             if (temp == -1001) {
               desc = '日出';
             } else if (temp == 1001) {
@@ -390,7 +354,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
                   children: <Widget>[
                     Text(
                         DateUtils.getFormatTimeHHmm(
-                            skyconList.elementAt(position).datetime),
+                            hourly.skycon.elementAt(position).datetime),
                         style: TextStyle(color: Colors.white54, fontSize: 14)),
                     Padding(
                       padding: EdgeInsets.only(top: 7, bottom: 7),
@@ -405,7 +369,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
           }),
     );
 
-    // 使用SingleChildScrollView
+//    //  使用SingleChildScrollView
 //    List<Widget> forecastRow = new List();
 //    for (int i = 0; i < skyconList.length; i++) {
 //      StringValue skycon = skyconList.elementAt(i);
@@ -642,17 +606,17 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
     Future<SharedPreferences> future = SharedPreferences.getInstance();
     await future.then((prefs) async {
       String json = prefs.getString(district.name);
-      WeatherBean bean;
+      WeatherBean weatherBean;
       if (!isEmpty(json) && (force == null || !force)) {
         Map map = jsonDecode(json);
-        bean = WeatherBean.fromJson(map);
-        if (DateUtils.currentTimeMillis() - bean.server_time * 1000 >
+        weatherBean = WeatherBean.fromJson(map);
+        if (DateUtils.currentTimeMillis() - weatherBean.server_time * 1000 >
             1000 * 60 * 15) {
-          bean = null;
+          weatherBean = null;
         }
       }
 
-      if (bean == null) {
+      if (weatherBean == null) {
         String url = 'https://api.caiyunapp.com/v2/' +
             Global.caiYunKey +
             '/$longitude,$latitude/' +
@@ -667,7 +631,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
           if (response.statusCode == HttpStatus.ok) {
             json = await response.transform(utf8.decoder).join();
             Map map = jsonDecode(json);
-            bean = WeatherBean.fromJson(map);
+            weatherBean = WeatherBean.fromJson(map);
 
             future.then((prefs) {
               prefs.setString(district.name, json);
@@ -676,8 +640,10 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
         } catch (ignore) {}
       }
 
+      weatherBean = _processData(weatherBean);
+
       setState(() {
-        weatherBean = bean;
+        this.weatherBean = weatherBean;
         result = weatherBean.result;
         realtime = result.realtime;
         minutely = result.minutely;
@@ -687,4 +653,60 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
       });
     });
   }
+
+  // 提前对数据进行处理，避免卡顿
+  WeatherBean _processData(WeatherBean weatherBean){
+    Hourly hourly = weatherBean.result.hourly;
+    Daily daily = weatherBean.result.daily;
+
+    // 小时天气
+    List<StringValue> skyconList = hourly.skycon.toList();
+    List<DoubleValue> tempList = hourly.temperature.toList();
+
+    DateTime minDateTime = DateTime.parse(hourly.skycon.elementAt(0).datetime);
+    DateTime maxDateTime = DateTime.parse(
+        hourly.skycon.elementAt(hourly.skycon.length - 1).datetime);
+
+    daily.astro.forEach((day) {
+      String sunriseString = day.date + ' ' + day.sunrise.time;
+      DateTime sunrise = DateTime.parse(sunriseString);
+      if (sunrise.compareTo(minDateTime) >= 0 &&
+          sunrise.compareTo(maxDateTime) <= 0) {
+        skyconList.add(StringValue('SUNRISE', sunriseString));
+        tempList.add(DoubleValue(-1001, sunriseString));
+      }
+
+      String sunsetString = day.date + ' ' + day.sunset.time;
+      DateTime sunset = DateTime.parse(sunsetString);
+      if (sunset.compareTo(minDateTime) >= 0 &&
+          sunset.compareTo(maxDateTime) <= 0) {
+        skyconList.add(StringValue('SUNSET', sunsetString));
+        tempList.add(DoubleValue(1001, sunsetString));
+      }
+    });
+
+    skyconList.sort((skycon1, skycon2) {
+      return DateTime.parse(skycon1.datetime)
+          .compareTo(DateTime.parse(skycon2.datetime));
+    });
+
+    tempList.sort((temp1, temp2) {
+      return DateTime.parse(temp1.datetime)
+          .compareTo(DateTime.parse(temp2.datetime));
+    });
+
+    hourly.skycon = skyconList;
+    hourly.temperature = tempList;
+
+    // 6天天气
+    var forecast = daily.temperature;
+    for (int i = 0; i < 6; i++) {
+      temperatureList.add(Temp(forecast.elementAt(i).max, forecast.elementAt(i).min));
+    }
+
+    return weatherBean;
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }
