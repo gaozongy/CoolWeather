@@ -39,8 +39,8 @@ class WeatherDetailPage extends StatefulWidget {
 
   final needLocation;
 
-  WeatherDetailPage(
-      this.district, this.setLocation, this.setWeatherData, this.height, this.needLocation);
+  WeatherDetailPage(this.district, this.setLocation, this.setWeatherData,
+      this.height, this.needLocation);
 
   @override
   State<StatefulWidget> createState() {
@@ -166,17 +166,17 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
     list.add(_weatherLayout()); // 当前天气
     list.add(_tipsLayout()); // 温馨提示
 
-    minutely.precipitation_2h.forEach((rainfall) {
-      if (rainfall > 0) {
+    for (int i = 0; i < minutely.precipitation_2h.length; i++) {
+      if (minutely.precipitation_2h.elementAt(i) > 0) {
         // 2小时降雨趋势图
         list.add(Padding(
           padding: EdgeInsets.symmetric(vertical: 20),
           child: RainfallLine(
               ScreenUtils.getScreenWidth(context), minutely.precipitation_2h),
         ));
-        return;
+        break;
       }
-    });
+    }
 
     list.add(_forecastLayout()); // 未来6天天气预报
     return list;
