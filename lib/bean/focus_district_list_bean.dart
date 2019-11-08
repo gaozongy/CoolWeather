@@ -21,8 +21,9 @@ class District {
   String name;
   double latitude;
   double longitude;
+  bool isLocation;
 
-  District(this.name, this.latitude, this.longitude);
+  District(this.name, this.latitude, this.longitude, this.isLocation);
 
   factory District.fromJson(Map<String, dynamic> json) => _$DistrictFromJson(json);
 

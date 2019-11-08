@@ -37,8 +37,10 @@ class WeatherDetailPage extends StatefulWidget {
 
   final double height;
 
+  final needLocation;
+
   WeatherDetailPage(
-      this.district, this.setLocation, this.setWeatherData, this.height);
+      this.district, this.setLocation, this.setWeatherData, this.height, this.needLocation);
 
   @override
   State<StatefulWidget> createState() {
@@ -69,7 +71,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
   void initState() {
     super.initState();
 
-    if (district.latitude == -1 && district.longitude == -1) {
+    if (district.isLocation && widget.needLocation) {
       _checkPermission();
     } else {
       _queryWeather(district.longitude, district.latitude);
@@ -104,15 +106,11 @@ class _WeatherDetailPageState extends State<WeatherDetailPage> {
         return;
       }
 
-      district = District(
-          aMapLocation.district, aMapLocation.latitude, aMapLocation.longitude);
-      Global.locationDistrict = district;
+      district = District(aMapLocation.district, aMapLocation.latitude,
+          aMapLocation.longitude, true);
+
       widget.setLocation(district);
       _queryWeather(district.longitude, district.latitude);
-
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String locationDistrictJson = jsonEncode(district.toJson());
-      prefs.setString('location_district', locationDistrictJson);
     }
   }
 

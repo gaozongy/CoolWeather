@@ -165,7 +165,7 @@ class _SelectDistrictPageStateState extends State<SelectDistrictPageState> {
             }
             getLatLon(province + '省' + city + '市' + countyName).then((list) {
               focusDistrictListBean.districtList.add(District(
-                  countyName, list.elementAt(0), list.elementAt(1))); // 北京坐标
+                  countyName, list.elementAt(0), list.elementAt(1), false));
               focusCountyJson = jsonEncode(focusDistrictListBean.toJson());
               prefs.setString('focus_district_data', focusCountyJson);
               Navigator.pop(context, true);

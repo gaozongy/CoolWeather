@@ -11,6 +11,9 @@ import 'setting_page.dart';
 import 'data/unit_model.dart';
 
 void main() {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
   /// 单位model
   final unitModel = UnitModel();
   unitModel.initUnit();

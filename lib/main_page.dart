@@ -14,7 +14,6 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bean/focus_district_list_bean.dart';
-import 'data/global.dart';
 import 'utils/date_utils.dart';
 import 'utils/screen_utils.dart';
 import 'views/popup_window_button.dart';
@@ -49,12 +48,11 @@ class MainPageState extends State<MainPage> {
 
   GlobalKey rootWidgetKey = GlobalKey();
 
+  bool needLocation = true;
+
   @override
   void initState() {
     super.initState();
-
-    district = Global.locationDistrict;
-    districtList.add(Global.locationDistrict);
 
     _initPageController();
     _initData();
@@ -72,21 +70,34 @@ class MainPageState extends State<MainPage> {
     });
   }
 
-  _initData() {
-    Future<SharedPreferences> future = SharedPreferences.getInstance();
-    future.then((prefs) {
+  _initData() async {
+    districtList.clear();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('focus_district_data')) {
       String focusDistrictListJson = prefs.getString('focus_district_data');
       if (focusDistrictListJson != null) {
         FocusDistrictListBean focusDistrictListBean =
             FocusDistrictListBean.fromJson(json.decode(focusDistrictListJson));
-        setState(() {
-          districtList.removeRange(1, districtList.length);
-          if (focusDistrictListBean != null) {
+        if (focusDistrictListBean != null) {
+          setState(() {
             districtList.addAll(focusDistrictListBean.districtList);
-          }
-        });
+            if (currentPage == 0) {
+              this.district = focusDistrictListBean.districtList.elementAt(0);
+            }
+          });
+        }
       }
-    });
+    } else {
+      District district = District('未知', -1, -1, true);
+      setState(() {
+        districtList.add(district);
+        this.district = district;
+      });
+      FocusDistrictListBean focusDistrictListBean =
+          FocusDistrictListBean(districtList);
+      prefs.setString(
+          'focus_district_data', json.encode(focusDistrictListBean));
+    }
   }
 
   setWeatherData(WeatherBean weatherBean) {
@@ -97,6 +108,7 @@ class MainPageState extends State<MainPage> {
   }
 
   setLocation(District district) {
+    needLocation = false;
     List<District> list = List();
     list.add(district);
     districtList.replaceRange(0, 1, list);
@@ -106,6 +118,12 @@ class MainPageState extends State<MainPage> {
         this.district = district;
       });
     }
+
+    Future<SharedPreferences> future = SharedPreferences.getInstance();
+    future.then((prefs) {
+      prefs.setString('focus_district_data',
+          json.encode(FocusDistrictListBean(districtList)));
+    });
   }
 
   _focusDistrictList() {
@@ -246,7 +264,8 @@ class MainPageState extends State<MainPage> {
                             /// ListView 内部自动加了一个 paddingTop，此 paddingTop 的值为 statsHeight
                             statsHeight * 2 -
                             paddingTop -
-                            titleHeight);
+                            titleHeight,
+                        needLocation);
                   },
                 ),
               ),
@@ -299,7 +318,7 @@ class MainPageState extends State<MainPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                district.name,
+                district != null ? district.name : '未知',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,

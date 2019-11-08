@@ -42,8 +42,6 @@ class FocusDistrictListPageState extends State<FocusDistrictListPage> {
     dataList.clear();
     districtList.clear();
 
-    dataList.add(Global.locationDistrict);
-
     List<DistrictWeather> resultList = List();
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -90,7 +88,7 @@ class FocusDistrictListPageState extends State<FocusDistrictListPage> {
       temp.removeAt(pos);
     });
     FocusDistrictListBean focusDistrictListBean =
-        FocusDistrictListBean(temp.sublist(1));
+        FocusDistrictListBean(temp);
     String focusCountyJson = jsonEncode(focusDistrictListBean.toJson());
     prefs.setString('focus_district_data', focusCountyJson);
     closeEditMode();

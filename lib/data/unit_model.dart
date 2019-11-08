@@ -111,14 +111,24 @@ class UnitModel with ChangeNotifier {
     });
   }
 
-  void initUnit() {
-    Future<SharedPreferences> future = SharedPreferences.getInstance();
-    future.then((prefs) {
+  void initUnit() async {
+    temperature = TemperatureUnit.values[0];
+    wind = WindUnit.values[0];
+    rainfall = RainfallUnit.values[0];
+    visibility = VisibilityUnit.values[0];
+    airPressure = AirPressureUnit.values[0];
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey(temperatureUnitKey) &&
+        prefs.containsKey(windUnitKey) &&
+        prefs.containsKey(rainfallUnitKey) &&
+        prefs.containsKey(visibilityUnitKey) &&
+        prefs.containsKey(airPressureUnitKey)) {
       temperature = TemperatureUnit.values[prefs.getInt(temperatureUnitKey)];
       wind = WindUnit.values[prefs.getInt(windUnitKey)];
       rainfall = RainfallUnit.values[prefs.getInt(rainfallUnitKey)];
       visibility = VisibilityUnit.values[prefs.getInt(visibilityUnitKey)];
       airPressure = AirPressureUnit.values[prefs.getInt(airPressureUnitKey)];
-    });
+    }
   }
 }
