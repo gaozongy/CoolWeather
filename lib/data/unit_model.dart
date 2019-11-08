@@ -119,15 +119,19 @@ class UnitModel with ChangeNotifier {
     airPressure = AirPressureUnit.values[0];
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey(temperatureUnitKey) &&
-        prefs.containsKey(windUnitKey) &&
-        prefs.containsKey(rainfallUnitKey) &&
-        prefs.containsKey(visibilityUnitKey) &&
-        prefs.containsKey(airPressureUnitKey)) {
+    if (prefs.containsKey(temperatureUnitKey)) {
       temperature = TemperatureUnit.values[prefs.getInt(temperatureUnitKey)];
+    }
+    if (prefs.containsKey(windUnitKey)) {
       wind = WindUnit.values[prefs.getInt(windUnitKey)];
+    }
+    if (prefs.containsKey(rainfallUnitKey)) {
       rainfall = RainfallUnit.values[prefs.getInt(rainfallUnitKey)];
+    }
+    if (prefs.containsKey(visibilityUnitKey)) {
       visibility = VisibilityUnit.values[prefs.getInt(visibilityUnitKey)];
+    }
+    if (prefs.containsKey(airPressureUnitKey)) {
       airPressure = AirPressureUnit.values[prefs.getInt(airPressureUnitKey)];
     }
   }
