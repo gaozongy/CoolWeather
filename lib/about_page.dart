@@ -76,11 +76,10 @@ class AboutPageState extends State<AboutPage> {
                       Padding(
                         padding: EdgeInsets.only(top: 5),
                         child: Text(
-                          '1.新增15天天气预报功能\n'
-                          '2.新增每小时天气预报功能\n'
-                          '3.修改APP桌面显示名为“天气”\n'
-                          '4.优化闪屏页UI\n'
-                          '5.修复了某些已知的bug\n',
+                          '1.优化首页切换城市卡顿问题\n'
+                          '2.优化2小时雨势趋势图与实际天气不符的问题\n'
+                          '3.添加新的启动页\n'
+                          '4.修复了某些已知的bug\n',
                           softWrap: true,
                           style: TextStyle(fontSize: 13),
                         ),

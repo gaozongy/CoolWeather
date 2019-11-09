@@ -696,6 +696,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
 
     // 6天天气
     var forecast = daily.temperature;
+    temperatureList.clear();
     for (int i = 0; i < 6; i++) {
       temperatureList
           .add(Temp(forecast.elementAt(i).max, forecast.elementAt(i).min));
