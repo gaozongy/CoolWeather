@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -62,17 +61,23 @@ class TemperatureLinePainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..shader = gradient.createShader(arcRect);
 
-    double total = 0;
+    double maxTemp = -double.infinity;
+    double minTemp = double.infinity;
     tempList.forEach((temp) {
-      total += (temp.max + temp.min);
+      if (temp.max > maxTemp) {
+        maxTemp = temp.max;
+      }
+      if (temp.min < minTemp) {
+        minTemp = temp.min;
+      }
     });
-    double average = total / (tempList.length * 2);
+    double centerLine = (maxTemp + minTemp) / 2;
+    double cell = 140 / (maxTemp - minTemp) * 4 / 5;
 
     List<Temp> drawList = List();
-
     tempList.forEach((temp) {
-      drawList.add(Temp(atan((average - temp.max) / 2) / (pi / 2) * 60,
-          atan((average - temp.min) / 2) / (pi / 2) * 60 ));
+      drawList.add(
+          Temp((centerLine - temp.max) * cell, (centerLine - temp.min) * cell));
     });
 
     double distance = width / tempList.length;
