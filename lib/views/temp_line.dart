@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -70,7 +71,8 @@ class TemperatureLinePainter extends CustomPainter {
     List<Temp> drawList = List();
 
     tempList.forEach((temp) {
-      drawList.add(Temp((average - temp.max) * 8, (average - temp.min) * 8));
+      drawList.add(Temp(atan((average - temp.max) / 2) / (pi / 2) * 60,
+          atan((average - temp.min) / 2) / (pi / 2) * 60 ));
     });
 
     double distance = width / tempList.length;

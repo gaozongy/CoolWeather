@@ -64,6 +64,8 @@ flutter:
     - images/bg_weather/bg_snow_night.png
     - images/bg_weather/bg_drizzle.png
     - images/bg_weather/bg_drizzle_night.png
+    - images/bg_weather/bg_rain.png
+    - images/bg_weather/bg_rain_night.png
     - images/bg_share/bg_sunny_share.png
     - images/bg_share/bg_sunny_night_share.png
     - images/bg_share/bg_cloudy_share.png

@@ -72,15 +72,15 @@ class ImageUtils {
             : 'images/bg_weather/bg_haze_night.png';
         break;
       case "RAIN":
-        if (0.03 < intensity && intensity < 0.25) {
+        if (0.03 < intensity && intensity <= 0.25) {
           bgResource = isDay
               ? 'images/bg_weather/bg_drizzle.png'
               : 'images/bg_weather/bg_drizzle_night.png';
-        } else if (0.25 < intensity && intensity < 0.35) {
+        } else if (0.25 < intensity && intensity <= 0.35) {
           bgResource = isDay
               ? 'images/bg_weather/bg_rain.png'
               : 'images/bg_weather/bg_rain_night.png';
-        } else if (0.35 < intensity && intensity < 0.48) {
+        } else if (0.35 < intensity && intensity <= 0.48) {
           bgResource = isDay
               ? 'images/bg_weather/bg_downpour.png'
               : 'images/bg_weather/bg_downpour_night.png';
@@ -95,15 +95,15 @@ class ImageUtils {
         }
         break;
       case "SNOW":
-        if (0.03 < intensity && intensity < 0.25) {
+        if (0.03 < intensity && intensity <= 0.25) {
           bgResource = isDay
               ? 'images/bg_weather/bg_snow.png'
               : 'images/bg_weather/bg_snow_night.png';
-        } else if (0.25 < intensity && intensity < 0.35) {
+        } else if (0.25 < intensity && intensity <= 0.35) {
           bgResource = isDay
               ? 'images/bg_weather/bg_snow.png'
               : 'images/bg_weather/bg_snow_night.png';
-        } else if (0.35 < intensity && intensity < 0.48) {
+        } else if (0.35 < intensity && intensity <= 0.48) {
           bgResource = isDay
               ? 'images/bg_weather/bg_snow.png'
               : 'images/bg_weather/bg_snow_night.png';
