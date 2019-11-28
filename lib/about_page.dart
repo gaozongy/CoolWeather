@@ -76,10 +76,9 @@ class AboutPageState extends State<AboutPage> {
                       Padding(
                         padding: EdgeInsets.only(top: 5),
                         child: Text(
-                          '1.优化首页切换城市卡顿问题\n'
-                          '2.优化2小时雨势趋势图与实际天气不符的问题\n'
-                          '3.添加新的启动页\n'
-                          '4.修复了某些已知的bug\n',
+                          '1.优化气温折线图，现在不会和其他信息重叠了\n'
+                          '2.APP锁定竖屏显示，避免横屏带来UI错乱\n'
+                          '3.修复了已关注的城市背景加载不出来的bug\n',
                           softWrap: true,
                           style: TextStyle(fontSize: 13),
                         ),
