@@ -51,7 +51,7 @@ class TemperatureLinePainter extends CustomPainter {
       end: Alignment.bottomCenter,
       colors: [
         Colors.white30,
-        Colors.transparent,
+        Colors.white10,
       ],
     );
 
