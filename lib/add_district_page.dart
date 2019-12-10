@@ -37,8 +37,9 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
   void initState() {
     super.initState();
 
-    initListener();
+    initFocusedCityData();
     initHotCityData();
+    initListener();
   }
 
   void initListener() {
@@ -53,9 +54,7 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
     });
   }
 
-  initHotCityData() async {
-    initData();
-
+  initFocusedCityData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     FocusDistrictListBean focusDistrictListBean;
     String focusCountyJson = prefs.getString('focus_district_data');
@@ -290,7 +289,7 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
     Navigator.pop(context, true);
   }
 
-  initData() {
+  initHotCityData() {
     District beiJing = District("010", "110100", "北京", 39.928353, 116.416357);
     District shangHai = District("021", "310100", "上海", 31.230416, 121.473701);
     District shenZhen = District("0755", "440301", "深圳", 22.543099, 114.057868);
