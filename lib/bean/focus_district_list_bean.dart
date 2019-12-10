@@ -18,14 +18,19 @@ class FocusDistrictListBean {
 
 @JsonSerializable()
 class District {
+  String cityCode;
+  String adCode;
   String name;
+  String addressDesc;
   double latitude;
   double longitude;
   bool isLocation;
 
-  District(this.name, this.latitude, this.longitude, this.isLocation);
+  District(this.cityCode, this.adCode, this.name, this.latitude, this.longitude,
+      {this.addressDesc = "", this.isLocation = false});
 
-  factory District.fromJson(Map<String, dynamic> json) => _$DistrictFromJson(json);
+  factory District.fromJson(Map<String, dynamic> json) =>
+      _$DistrictFromJson(json);
 
   Map<String, dynamic> toJson() => _$DistrictToJson(this);
 }

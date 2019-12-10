@@ -110,8 +110,9 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
         return;
       }
 
-      district = District(aMapLocation.district, aMapLocation.latitude,
-          aMapLocation.longitude, true);
+      district = District(aMapLocation.citycode, aMapLocation.adcode,
+          aMapLocation.district, aMapLocation.latitude, aMapLocation.longitude,
+          isLocation: true);
 
       widget.setLocation(district);
       _queryWeather(district.longitude, district.latitude);

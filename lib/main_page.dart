@@ -88,7 +88,7 @@ class MainPageState extends State<MainPage> {
         }
       }
     } else {
-      District district = District('未知', -1, -1, true);
+      District district = District("", "", '未知', -1, -1, isLocation: true);
       setState(() {
         districtList.add(district);
         this.district = district;
