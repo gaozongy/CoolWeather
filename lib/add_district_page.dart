@@ -37,11 +37,24 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
   void initState() {
     super.initState();
 
+    initListener();
     initHotCityData();
   }
 
+  void initListener() {
+    textEditingController.addListener(() {
+      String keyword = textEditingController.text;
+      setState(() {
+        isKeywordEmpty = isEmpty(keyword);
+      });
+      if (!isKeywordEmpty) {
+        queryCity(keyword);
+      }
+    });
+  }
+
   initHotCityData() async {
-    _initData();
+    initData();
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     FocusDistrictListBean focusDistrictListBean;
@@ -61,10 +74,11 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
   Widget build(BuildContext context) {
     List<Widget> actionBtnList = List();
     if (!isKeywordEmpty) {
-      actionBtnList
-          .add(IconButton(icon: new Icon(Icons.clear), onPressed: () {}));
-    } else {
-      actionBtnList.clear();
+      actionBtnList.add(IconButton(
+          icon: new Icon(Icons.clear),
+          onPressed: () {
+            textEditingController.clear();
+          }));
     }
 
     return Scaffold(
@@ -72,14 +86,6 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
           title: TextField(
             autofocus: true,
             controller: textEditingController,
-            onChanged: (keyword) {
-              setState(() {
-                isKeywordEmpty = isEmpty(keyword);
-              });
-              if (!isKeywordEmpty) {
-                queryCity(keyword);
-              }
-            },
             decoration: InputDecoration(
               hintText: "城市名",
               hintStyle: TextStyle(color: Colors.grey[400]),
@@ -175,20 +181,47 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
   }
 
   Widget cityRow(District district) {
+    bool hasAdded = false;
+    focusDistrictList.forEach((focusDistrict) {
+      if (equalsIgnoreCase(focusDistrict.cityCode, district.cityCode) &&
+          equalsIgnoreCase(focusDistrict.adCode, district.adCode)) {
+        hasAdded = true;
+      }
+    });
+
+    List<Widget> widgetList = List();
+    widgetList.add(Text(district.name, style: TextStyle(fontSize: 17)));
+    if (hasAdded) {
+      widgetList.add(Container(
+          margin: EdgeInsets.symmetric(horizontal: 5),
+          padding: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+          child:
+              Text("已关注", style: TextStyle(fontSize: 8, color: Colors.white)),
+          decoration: new BoxDecoration(
+            color: Colors.blue,
+            borderRadius: new BorderRadius.circular(5),
+          )));
+    }
+
     return InkWell(
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(district.name, style: TextStyle(fontSize: 17)),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: widgetList,
+            ),
             Text(district.addressDesc,
                 style: TextStyle(fontSize: 13, color: Colors.grey))
           ],
         ),
       ),
       onTap: () {
-        saveFocusCity(district);
+        if (!hasAdded) {
+          saveFocusCity(district);
+        }
       },
     );
   }
@@ -217,15 +250,17 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
         List list = map['tips'];
         List<District> cityList = [];
         list.forEach((district) {
-          String location = district['location'];
-          List<String> strList = location.split(',');
-          cityList.add(District(
-              district["id"],
-              district["adcode"],
-              district["name"],
-              double.parse(strList[1]),
-              double.parse(strList[0]),
-              addressDesc: district["district"]));
+          var location = district['location'];
+          if (location is String) {
+            List<String> strList = location.split(',');
+            cityList.add(District(
+                district["id"],
+                district["adcode"],
+                district["name"],
+                double.parse(strList[1]),
+                double.parse(strList[0]),
+                addressDesc: district["district"]));
+          }
         });
 
         setState(() {
@@ -255,7 +290,7 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
     Navigator.pop(context, true);
   }
 
-  _initData() {
+  initData() {
     District beiJing = District("010", "110100", "北京", 39.928353, 116.416357);
     District shangHai = District("021", "310100", "上海", 31.230416, 121.473701);
     District shenZhen = District("0755", "440301", "深圳", 22.543099, 114.057868);
