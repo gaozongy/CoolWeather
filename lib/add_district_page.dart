@@ -29,6 +29,8 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
 
   bool isLoading = false;
 
+  String oldKeyword = "";
+
   bool isKeywordEmpty = true;
 
   TextEditingController textEditingController = TextEditingController();
@@ -45,11 +47,14 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
   void initListener() {
     textEditingController.addListener(() {
       String keyword = textEditingController.text;
-      setState(() {
-        isKeywordEmpty = isEmpty(keyword);
-      });
-      if (!isKeywordEmpty) {
-        queryCity(keyword);
+      if (keyword != oldKeyword) {
+        setState(() {
+          isKeywordEmpty = isEmpty(keyword);
+        });
+        if (!isKeywordEmpty) {
+          queryCity(keyword);
+        }
+        oldKeyword = keyword;
       }
     });
   }
@@ -236,8 +241,6 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
     String url =
         'https://restapi.amap.com/v3/assistant/inputtips?key=38366adde7d7ec1e94d652f9e90f78ce' +
             parameter;
-
-    print("url:" + url);
 
     HttpClient httpClient = new HttpClient();
     try {
