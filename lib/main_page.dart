@@ -243,39 +243,42 @@ class MainPageState extends State<MainPage> {
     screenHeight = ScreenUtils.getScreenHeight(context);
     statsHeight = ScreenUtils.getSysStatsHeight(context);
 
-    return Scaffold(
-      body: Container(
-          child: Stack(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(
-                    top: statsHeight + paddingTop + titleHeight),
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: districtList.length,
-                  itemBuilder: (BuildContext context, int position) {
-                    return WeatherDetailPage(
-                        districtList.elementAt(position),
-                        setLocation,
-                        setWeatherData,
-                        screenHeight -
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
+      child: Scaffold(
+        body: Container(
+            child: Stack(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: statsHeight + paddingTop + titleHeight),
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: districtList.length,
+                    itemBuilder: (BuildContext context, int position) {
+                      return WeatherDetailPage(
+                          districtList.elementAt(position),
+                          setLocation,
+                          setWeatherData,
+                          screenHeight -
 
-                            /// ListView 内部自动加了一个 paddingTop，此 paddingTop 的值为 statsHeight
-                            statsHeight * 2 -
-                            paddingTop -
-                            titleHeight,
-                        needLocation);
-                  },
+                              /// ListView 内部自动加了一个 paddingTop，此 paddingTop 的值为 statsHeight
+                              statsHeight * 2 -
+                              paddingTop -
+                              titleHeight,
+                          needLocation);
+                    },
+                  ),
                 ),
-              ),
-              _titleLayout(),
-            ],
-          ),
-          decoration: BoxDecoration(
-              image: DecorationImage(
-            image: AssetImage('images/bg_main.png'),
-            fit: BoxFit.fitHeight,
-          ))),
+                _titleLayout(),
+              ],
+            ),
+            decoration: BoxDecoration(
+                image: DecorationImage(
+              image: AssetImage('images/bg_main.png'),
+              fit: BoxFit.fitHeight,
+            ))),
+      ),
     );
   }
 
