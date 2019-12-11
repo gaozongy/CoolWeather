@@ -16,7 +16,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'bean/focus_district_list_bean.dart';
 import 'utils/date_utils.dart';
 import 'utils/screen_utils.dart';
-import 'views/popup_window_button.dart';
 import 'weather_detail_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -341,33 +340,47 @@ class MainPageState extends State<MainPage> {
   }
 
   Widget _titleMenuIconLayout() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        IconButton(
-          icon: Image(
-            image: AssetImage("images/ic_building.png"),
-            width: 20,
-            height: 20,
-          ),
-          onPressed: _focusDistrictList,
-        ),
-        Center(
-          child: Padding(
-            padding: EdgeInsets.only(right: 15),
-            child: PopupWindowButton(
-              offset: Offset(0, 100),
-              child: Icon(
-                Icons.more_vert,
-                color: Colors.white,
-                size: 25,
-              ),
-              window: _menusLayout(),
+    return Padding(
+      padding: EdgeInsets.only(right: 5),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          IconButton(
+            icon: Image(
+              image: AssetImage("images/ic_building.png"),
+              width: 20,
+              height: 20,
             ),
+            onPressed: _focusDistrictList,
           ),
-        )
-      ],
+          PopupMenuButton(
+            icon: Icon(
+              Icons.more_vert,
+              color: Colors.white,
+            ),
+            onSelected: (position) {
+              if (position == 0) {
+                _share();
+              } else if (position == 1) {
+                Navigator.of(context).pushNamed("setting");
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return <PopupMenuItem>[
+                PopupMenuItem(
+                  value: 0,
+                  child: Text("分享"),
+                ),
+                PopupMenuItem(
+                  value: 1,
+                  child: Text("设置"),
+                )
+              ];
+            },
+          ),
+        ],
+      ),
     );
   }
 
