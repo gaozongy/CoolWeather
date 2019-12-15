@@ -17,6 +17,7 @@ import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bean/focus_district_list_bean.dart';
@@ -97,9 +98,11 @@ class MainPageState extends State<MainPage> {
 
           districtList.forEach((district) {
             String weatherJson = prefs.getString(district.name);
-            Map map = jsonDecode(weatherJson);
-            WeatherBean weatherBean = WeatherBean.fromJson(map);
-            district.weatherBean = weatherBean;
+            if (!isEmpty(weatherJson)) {
+              Map map = jsonDecode(weatherJson);
+              WeatherBean weatherBean = WeatherBean.fromJson(map);
+              district.weatherBean = weatherBean;
+            }
           });
         }
       }
