@@ -282,14 +282,7 @@ class FocusDistrictListPageState extends State<FocusDistrictListPage> {
     // 降雨（雪）强度
     double intensity = result.realtime.precipitation.local.intensity;
     // 是否是白天
-    DateTime date = DateTime.now();
-    String currentDate =
-        "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ";
-    DateTime sunriseDate = DateTime.parse(
-        currentDate + result.daily.astro.elementAt(0).sunrise.time);
-    DateTime sunsetDate = DateTime.parse(
-        currentDate + result.daily.astro.elementAt(0).sunset.time);
-    bool isDay = DateUtils.isDay(sunriseDate, sunsetDate);
+    bool isDay = DateUtils.isDay(weatherBean);
 
     return AssetImage(ImageUtils.getWeatherBgUri(weather, intensity, isDay));
   }

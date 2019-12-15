@@ -27,8 +27,16 @@ class _OvercastAnimState extends State<OvercastAnim>
     controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 3750),
-    )..addListener(() {
+    )
+      ..addListener(() {
         _render();
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          controller.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          controller.forward();
+        }
       });
 
     animationX = CurvedAnimation(parent: controller, curve: Curves.easeInOut);
@@ -60,7 +68,9 @@ class _OvercastAnimState extends State<OvercastAnim>
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: CustomPaint(painter: OvercastPainter(cloudy)),
+      child: CustomPaint(
+          size: Size(double.infinity, double.infinity),
+          painter: OvercastPainter(cloudy)),
       decoration: BoxDecoration(color: Color(0xFF93A4AE)),
     );
   }

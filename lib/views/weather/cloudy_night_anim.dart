@@ -46,8 +46,16 @@ class _CloudyNightState extends State<CloudyNightAnim>
     controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 3750),
-    )..addListener(() {
+    )
+      ..addListener(() {
         _render();
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          controller.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          controller.forward();
+        }
       });
 
     animationX = CurvedAnimation(parent: controller, curve: Curves.easeInOut);
@@ -63,7 +71,6 @@ class _CloudyNightState extends State<CloudyNightAnim>
         controller.forward();
       }
     });
-
     controller.forward();
   }
 
@@ -91,6 +98,7 @@ class _CloudyNightState extends State<CloudyNightAnim>
   Widget build(BuildContext context) {
     return Container(
       child: CustomPaint(
+        size: Size(double.infinity, double.infinity),
         painter: CloudyPainter(cloudList, starList),
       ),
       decoration: BoxDecoration(color: Color(0xFF041322)),

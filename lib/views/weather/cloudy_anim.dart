@@ -25,8 +25,16 @@ class _CloudyAnimState extends State<CloudyAnim> with TickerProviderStateMixin {
     controller = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 3750),
-    )..addListener(() {
+    )
+      ..addListener(() {
         _render();
+      })
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          controller.reverse();
+        } else if (status == AnimationStatus.dismissed) {
+          controller.forward();
+        }
       });
 
     animationX = CurvedAnimation(parent: controller, curve: Curves.easeInOut);
@@ -59,6 +67,7 @@ class _CloudyAnimState extends State<CloudyAnim> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Container(
       child: CustomPaint(
+        size: Size(double.infinity, double.infinity),
         painter: CloudyPainter(cloudy),
       ),
       decoration: BoxDecoration(color: Color(0xFF4B97D1)),

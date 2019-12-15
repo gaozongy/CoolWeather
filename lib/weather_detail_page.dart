@@ -12,7 +12,6 @@ import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bean/daily.dart';
@@ -78,7 +77,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
     if (district.isLocation && widget.needLocation) {
       _checkPermission();
     } else {
-      _queryWeather(district.longitude, district.latitude);
+      _queryWeather(district);
     }
   }
 
@@ -115,7 +114,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
           isLocation: true);
 
       widget.setLocation(district);
-      _queryWeather(district.longitude, district.latitude);
+      _queryWeather(district);
     }
   }
 
@@ -135,8 +134,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
         data: Theme.of(context)
             .copyWith(accentColor: Color.fromARGB(255, 51, 181, 229)),
         child: RefreshIndicator(
-          onRefresh: () =>
-              _queryWeather(district.longitude, district.latitude, force: true),
+          onRefresh: () => _queryWeather(district, force: true),
           child: Theme(
             data: Theme.of(context).copyWith(accentColor: Colors.white),
             child: ListView(
@@ -602,21 +600,20 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
   }
 
   // 查询天气信息
-  Future<void> _queryWeather(double longitude, double latitude,
-      {bool force}) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String json = prefs.getString(district.name);
+  Future<void> _queryWeather(District district, {bool force}) async {
     WeatherBean weatherBean;
-    if (!isEmpty(json) && (force == null || !force)) {
-      Map map = jsonDecode(json);
-      weatherBean = WeatherBean.fromJson(map);
-      if (DateUtils.currentTimeMillis() - weatherBean.server_time * 1000 >
-          1000 * 60 * 15) {
+    if (force == null || !force) {
+      weatherBean = district.weatherBean;
+      if (weatherBean != null &&
+          DateUtils.currentTimeMillis() - weatherBean.server_time * 1000 >
+              1000 * 60 * 15) {
         weatherBean = null;
       }
     }
 
     if (weatherBean == null) {
+      double longitude = district.longitude;
+      double latitude = district.latitude;
       String url = 'https://api.caiyunapp.com/v2/' +
           Global.caiYunKey +
           '/$longitude,$latitude/' +
@@ -629,10 +626,11 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
         var request = await httpClient.getUrl(Uri.parse(url));
         var response = await request.close();
         if (response.statusCode == HttpStatus.ok) {
-          json = await response.transform(utf8.decoder).join();
+          String json = await response.transform(utf8.decoder).join();
           Map map = jsonDecode(json);
           weatherBean = WeatherBean.fromJson(map);
 
+          SharedPreferences prefs = await SharedPreferences.getInstance();
           prefs.setString(district.name, json);
         }
       } catch (ignore) {}
@@ -642,6 +640,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
 
     setState(() {
       this.weatherBean = weatherBean;
+      this.district.weatherBean = weatherBean;
       result = weatherBean.result;
       realtime = result.realtime;
       minutely = result.minutely;

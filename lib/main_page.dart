@@ -7,6 +7,12 @@ import 'package:amap_location/amap_location.dart';
 import 'package:coolweather/bean/weather_bean.dart';
 import 'package:coolweather/utils/image_utils.dart';
 import 'package:coolweather/utils/translation_utils.dart';
+import 'package:coolweather/views/weather/cloudy_anim.dart';
+import 'package:coolweather/views/weather/cloudy_night_anim.dart';
+import 'package:coolweather/views/weather/overcast_anim.dart';
+import 'package:coolweather/views/weather/overcast_night_anim.dart';
+import 'package:coolweather/views/weather/sunny_anim.dart';
+import 'package:coolweather/views/weather/sunny_night_anim.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -64,6 +70,10 @@ class MainPageState extends State<MainPage> {
         setState(() {
           currentPage = page;
           district = districtList.elementAt(page);
+          if (district.weatherBean != null) {
+            weatherBean = district.weatherBean;
+            updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
+          }
         });
       }
     });
@@ -84,6 +94,13 @@ class MainPageState extends State<MainPage> {
               this.district = focusDistrictListBean.districtList.elementAt(0);
             }
           });
+
+          districtList.forEach((district) {
+            String weatherJson = prefs.getString(district.name);
+            Map map = jsonDecode(weatherJson);
+            WeatherBean weatherBean = WeatherBean.fromJson(map);
+            district.weatherBean = weatherBean;
+          });
         }
       }
     } else {
@@ -100,9 +117,9 @@ class MainPageState extends State<MainPage> {
   }
 
   setWeatherData(WeatherBean weatherBean) {
-    this.weatherBean = weatherBean;
     setState(() {
-      updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
+      this.weatherBean = weatherBean;
+      this.updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
     });
   }
 
@@ -157,14 +174,7 @@ class MainPageState extends State<MainPage> {
     // 降雨（雪）强度
     double intensity = result.realtime.precipitation.local.intensity;
     // 是否是白天
-    DateTime date = DateTime.now();
-    String currentDate =
-        "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ";
-    DateTime sunriseDate = DateTime.parse(
-        currentDate + result.daily.astro.elementAt(0).sunrise.time);
-    DateTime sunsetDate = DateTime.parse(
-        currentDate + result.daily.astro.elementAt(0).sunset.time);
-    bool isDay = DateUtils.isDay(sunriseDate, sunsetDate);
+    bool isDay = DateUtils.isDay(weatherBean);
 
     // 背景图片
     final ByteData bgByteData = await rootBundle
@@ -246,40 +256,77 @@ class MainPageState extends State<MainPage> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
-        body: Container(
-            child: Stack(
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(
-                      top: statsHeight + paddingTop + titleHeight),
-                  child: PageView.builder(
-                    controller: _pageController,
-                    itemCount: districtList.length,
-                    itemBuilder: (BuildContext context, int position) {
-                      return WeatherDetailPage(
-                          districtList.elementAt(position),
-                          setLocation,
-                          setWeatherData,
-                          screenHeight -
-
-                              /// ListView 内部自动加了一个 paddingTop，此 paddingTop 的值为 statsHeight
-                              statsHeight * 2 -
-                              paddingTop -
-                              titleHeight,
-                          needLocation);
-                    },
-                  ),
-                ),
-                _titleLayout(),
-              ],
-            ),
-            decoration: BoxDecoration(
-                image: DecorationImage(
-              image: AssetImage('images/bg_main.png'),
-              fit: BoxFit.fitHeight,
-            ))),
+        body: _createLayout(),
       ),
     );
+  }
+
+  Widget _createLayout() {
+    List<Widget> layoutList = List();
+
+    Widget weatherDetailWidget = Padding(
+      padding: EdgeInsets.only(top: statsHeight + paddingTop + titleHeight),
+      child: PageView.builder(
+        controller: _pageController,
+        itemCount: districtList.length,
+        itemBuilder: (BuildContext context, int position) {
+          return WeatherDetailPage(
+              districtList.elementAt(position),
+              setLocation,
+              setWeatherData,
+              screenHeight -
+
+                  /// ListView 内部自动加了一个 paddingTop，此 paddingTop 的值为 statsHeight
+                  statsHeight * 2 -
+                  paddingTop -
+                  titleHeight,
+              needLocation);
+        },
+      ),
+    );
+
+    layoutList.add(_getWeatherAnimWidget());
+    layoutList.add(weatherDetailWidget);
+    layoutList.add(_titleLayout());
+
+    Widget mainLayout = Stack(
+      children: layoutList,
+    );
+
+    return mainLayout;
+  }
+
+  Widget _getWeatherAnimWidget() {
+    Widget animWidget;
+    if (weatherBean == null) {
+      animWidget = SunnyAnim();
+    } else {
+      switch (weatherBean.result.realtime.skycon) {
+        case 'CLEAR_DAY':
+          animWidget = SunnyAnim();
+          break;
+        case 'CLEAR_NIGHT':
+          animWidget = SunnyNightAnim();
+          break;
+        case 'PARTLY_CLOUDY_DAY':
+          animWidget = CloudyAnim();
+          break;
+        case 'PARTLY_CLOUDY_NIGHT':
+          animWidget = CloudyNightAnim();
+          break;
+        case 'CLOUDY':
+          if (DateUtils.isDay(weatherBean)) {
+            animWidget = OvercastAnim();
+          } else {
+            animWidget = OvercastNightAnim();
+          }
+          break;
+        default:
+          animWidget = SunnyAnim();
+      }
+    }
+
+    return animWidget;
   }
 
   Widget _titleLayout() {

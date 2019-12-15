@@ -26,8 +26,10 @@ class District {
   double longitude;
   bool isLocation;
 
+  WeatherBean weatherBean;
+
   District(this.cityCode, this.adCode, this.name, this.latitude, this.longitude,
-      {this.addressDesc = "", this.isLocation = false});
+      {this.addressDesc = "", this.isLocation = false,  this.weatherBean});
 
   factory District.fromJson(Map<String, dynamic> json) =>
       _$DistrictFromJson(json);

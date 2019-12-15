@@ -18,7 +18,7 @@ class _SunnyAnimState extends State<SunnyAnim> with TickerProviderStateMixin {
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 30),
+      duration: Duration(days: 1),
     )..addListener(() {
         setState(() {
           radians += 0.006;
@@ -30,7 +30,9 @@ class _SunnyAnimState extends State<SunnyAnim> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: CustomPaint(painter: SunnyPainter(radians)),
+      child: CustomPaint(
+          size: Size(double.infinity, double.infinity),
+          painter: SunnyPainter(radians)),
       decoration: BoxDecoration(color: Color(0xFF4A97D2)),
     );
   }

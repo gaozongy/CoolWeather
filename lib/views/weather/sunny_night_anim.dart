@@ -16,7 +16,7 @@ class _SunnyNightAnimState extends State<SunnyNightAnim>
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: Duration(days: 365 * 999),
+      duration: Duration(days: 1),
     )..addListener(() {
         setState(() {
           radians += 0.01;
@@ -27,7 +27,12 @@ class _SunnyNightAnimState extends State<SunnyNightAnim>
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(painter: SunnyNightPainter(radians));
+    return Container(
+      child: CustomPaint(
+          size: Size(double.infinity, double.infinity),
+          painter: SunnyNightPainter(radians)),
+      decoration: BoxDecoration(color: Color(0xFF051325)),
+    );
   }
 
   @override
@@ -154,8 +159,6 @@ class SunnyNightPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     double width = size.width;
     double height = size.height;
-
-    print(width.toString() + "  " + height.toString());
 
     canvas.translate(-350, -130);
     canvas.rotate(radians);

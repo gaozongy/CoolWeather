@@ -1,3 +1,5 @@
+import 'package:coolweather/bean/weather_bean.dart';
+
 /// 时间工具类
 class DateUtils {
   static String getCurrentTimeMMDD() {
@@ -26,8 +28,19 @@ class DateUtils {
     return desc;
   }
 
+  static bool isDay(WeatherBean weatherBean) {
+    DateTime date = DateTime.now();
+    String currentDate =
+        "${date.year.toString()}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ";
+    DateTime sunriseDate = DateTime.parse(currentDate +
+        weatherBean.result.daily.astro.elementAt(0).sunrise.time);
+    DateTime sunsetDate = DateTime.parse(currentDate +
+        weatherBean.result.daily.astro.elementAt(0).sunset.time);
+    return isDayLocaL(sunriseDate, sunsetDate);
+  }
+
   /// 是否是白天
-  static bool isDay(DateTime sunriseDate, DateTime sunsetDate) {
+  static bool isDayLocaL(DateTime sunriseDate, DateTime sunsetDate) {
     DateTime date = DateTime.now();
     return date.compareTo(sunriseDate) >= 0 && date.compareTo(sunsetDate) < 0;
   }
