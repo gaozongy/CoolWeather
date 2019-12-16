@@ -119,11 +119,13 @@ class MainPageState extends State<MainPage> {
     }
   }
 
-  setWeatherData(WeatherBean weatherBean) {
-    setState(() {
-      this.weatherBean = weatherBean;
-      this.updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
-    });
+  setWeatherData(District district, WeatherBean weatherBean) {
+    if (district == this.district) {
+      setState(() {
+        this.weatherBean = weatherBean;
+        this.updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
+      });
+    }
   }
 
   setLocation(District district) {

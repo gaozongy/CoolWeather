@@ -12,7 +12,7 @@ class _CloudyAnimState extends State<CloudyAnim> with TickerProviderStateMixin {
   Animation<double> animationX;
   Animation<double> animationY;
 
-  List cloudy = <Cloud>[];
+  List <Cloud> cloudy = List();
 
   @override
   void initState() {
@@ -57,8 +57,8 @@ class _CloudyAnimState extends State<CloudyAnim> with TickerProviderStateMixin {
   _render() {
     setState(() {
       cloudy.forEach((cloud) {
-        cloud.y = animationY.value;
-        cloud.x = animationX.value;
+        cloud.dy = animationY.value;
+        cloud.dx = animationX.value;
       });
     });
   }

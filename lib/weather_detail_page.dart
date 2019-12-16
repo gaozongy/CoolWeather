@@ -646,7 +646,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
       minutely = result.minutely;
       hourly = result.hourly;
       daily = result.daily;
-      widget.setWeatherData(weatherBean);
+      widget.setWeatherData(district, weatherBean);
     });
   }
 
