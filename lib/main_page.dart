@@ -56,6 +56,8 @@ class MainPageState extends State<MainPage> {
 
   bool needLocation = true;
 
+  double scrollProgress = 0;
+
   @override
   void initState() {
     super.initState();
@@ -275,17 +277,26 @@ class MainPageState extends State<MainPage> {
         controller: _pageController,
         itemCount: districtList.length,
         itemBuilder: (BuildContext context, int position) {
-          return WeatherDetailPage(
-              districtList.elementAt(position),
-              setLocation,
-              setWeatherData,
-              screenHeight -
+          return NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification notification) {
+              setState(() {
+                scrollProgress = notification.metrics.pixels /
+                    notification.metrics.maxScrollExtent;
+              });
+              return true;
+            },
+            child: WeatherDetailPage(
+                districtList.elementAt(position),
+                setLocation,
+                setWeatherData,
+                screenHeight -
 
-                  /// ListView 内部自动加了一个 paddingTop，此 paddingTop 的值为 statsHeight
-                  statsHeight * 2 -
-                  paddingTop -
-                  titleHeight,
-              needLocation);
+                    /// ListView 内部自动加了一个 paddingTop，此 paddingTop 的值为 statsHeight
+                    statsHeight * 2 -
+                    paddingTop -
+                    titleHeight,
+                needLocation),
+          );
         },
       ),
     );
@@ -314,7 +325,7 @@ class MainPageState extends State<MainPage> {
           animWidget = SunnyNightAnim();
           break;
         case 'PARTLY_CLOUDY_DAY':
-          animWidget = CloudyAnim();
+          animWidget = CloudyAnim(scrollProgress);
           break;
         case 'PARTLY_CLOUDY_NIGHT':
           animWidget = CloudyNightAnim();

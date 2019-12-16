@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 import 'cloudy_paint.dart';
 
 class CloudyAnim extends StatefulWidget {
+
+  final double maskAlpha;
+
+  CloudyAnim(this.maskAlpha);
+
   @override
-  _CloudyAnimState createState() => _CloudyAnimState();
+  _CloudyAnimState createState() => _CloudyAnimState(maskAlpha);
 }
 
 class _CloudyAnimState extends State<CloudyAnim> with TickerProviderStateMixin {
@@ -13,6 +18,10 @@ class _CloudyAnimState extends State<CloudyAnim> with TickerProviderStateMixin {
   Animation<double> animationY;
 
   List <Cloud> cloudy = List();
+
+  double maskAlpha;
+
+  _CloudyAnimState(this.maskAlpha);
 
   @override
   void initState() {
@@ -68,7 +77,7 @@ class _CloudyAnimState extends State<CloudyAnim> with TickerProviderStateMixin {
     return Container(
       child: CustomPaint(
         size: Size(double.infinity, double.infinity),
-        painter: CloudyPainter(cloudy),
+        painter: CloudyPainter(cloudy, maskAlpha),
       ),
       decoration: BoxDecoration(color: Color(0xFF4B97D1)),
     );
