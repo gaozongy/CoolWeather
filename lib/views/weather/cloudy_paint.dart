@@ -10,7 +10,7 @@ class Cloud {
 class CloudyPainter extends CustomPainter {
   List<Cloud> cloudy;
 
-  double maskAlpha = 0;
+  double maskAlpha;
 
   CloudyPainter(this.cloudy, this.maskAlpha);
 
@@ -29,10 +29,10 @@ class CloudyPainter extends CustomPainter {
     double width = size.width;
     double height = size.height;
 
-    cloudPaint
-      ..color = Color.fromARGB((98 * (1 - maskAlpha)).toInt(), 255, 255, 255);
+    sunPaint..color = Color.fromARGB((230 * maskAlpha).toInt(), 232, 207, 45);
 
-    print("maskAlpha:" + maskAlpha.toString());
+    cloudPaint..color = Color.fromARGB((98 * maskAlpha).toInt(), 255, 255, 255);
+
     canvas.drawCircle(
         Offset(
             width - 60 - cloudy.elementAt(0).dx, 120 + cloudy.elementAt(0).dy),

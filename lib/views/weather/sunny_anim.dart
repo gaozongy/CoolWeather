@@ -4,6 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SunnyAnim extends StatefulWidget {
+  final double maskAlpha;
+
+  SunnyAnim(this.maskAlpha);
+
   @override
   _SunnyAnimState createState() => _SunnyAnimState();
 }
@@ -32,7 +36,7 @@ class _SunnyAnimState extends State<SunnyAnim> with TickerProviderStateMixin {
     return Container(
       child: CustomPaint(
           size: Size(double.infinity, double.infinity),
-          painter: SunnyPainter(radians)),
+          painter: SunnyPainter(radians, widget.maskAlpha)),
       decoration: BoxDecoration(color: Color(0xFF4A97D2)),
     );
   }
@@ -49,41 +53,45 @@ class SunnyPainter extends CustomPainter {
 
   int mEdgeSize = 11;
 
-  SunnyPainter(this.radians);
+  double maskAlpha = 0;
+
+  SunnyPainter(this.radians, this.maskAlpha);
 
   @override
   void paint(Canvas canvas, Size size) {
     double width = size.width;
     double height = size.height;
 
-    drawLight(6, 12, radToDeg(-radians * 2), Colors.white24, 200, 330, canvas);
+    Color lightColor = Color.fromARGB((61 * maskAlpha).toInt(), 255, 255, 255);
 
-    drawLight(6, 18, radToDeg(-radians * 2), Colors.white24, 180, 420, canvas);
+    drawLight(6, 12, radToDeg(-radians * 2), lightColor, 200, 330, canvas);
 
-    drawLight(6, 25, radToDeg(-radians * 2), Colors.white24, 165, 490, canvas);
+    drawLight(6, 18, radToDeg(-radians * 2), lightColor, 180, 420, canvas);
 
-    drawLight(6, 30, radToDeg(-radians * 2), Colors.white24, 150, 580, canvas);
+    drawLight(6, 25, radToDeg(-radians * 2), lightColor, 165, 490, canvas);
+
+    drawLight(6, 30, radToDeg(-radians * 2), lightColor, 150, 580, canvas);
 
     canvas.translate(width / 2, -120);
     canvas.rotate(radians);
 
     double radius6 = 380;
-    drawSun(mEdgeSize, radius6, -70, Color(0xFF93C3B5), canvas);
+    drawSun(mEdgeSize, radius6, -70, Color.fromARGB((255 * maskAlpha).toInt(), 147, 195, 181), canvas);
 
     double radius5 = 330;
-    drawSun(mEdgeSize, radius5, -50, Color(0xFFB9C583), canvas);
+    drawSun(mEdgeSize, radius5, -50, Color.fromARGB((255 * maskAlpha).toInt(), 185, 197, 131), canvas);
 
     double radius4 = 290;
-    drawSun(mEdgeSize, radius4, -45, Color(0xFFCEB860), canvas);
+    drawSun(mEdgeSize, radius4, -45, Color.fromARGB((255 * maskAlpha).toInt(), 206, 184, 96), canvas);
 
     double radius3 = 240;
-    drawSun(mEdgeSize, radius3, -25, Color(0xFFD6A44C), canvas);
+    drawSun(mEdgeSize, radius3, -25, Color.fromARGB((255 * maskAlpha).toInt(), 214, 164, 76), canvas);
 
     double radius2 = 190;
-    drawSun(mEdgeSize, radius2, -10, Color(0xFFD98E43), canvas);
+    drawSun(mEdgeSize, radius2, -10, Color.fromARGB((255 * maskAlpha).toInt(), 217, 142, 67), canvas);
 
     double radius1 = 150;
-    drawSun(mEdgeSize, radius1, 0, Color(0xFFD77B3B), canvas);
+    drawSun(mEdgeSize, radius1, 0, Color.fromARGB((255 * maskAlpha).toInt(), 215, 123, 59), canvas);
   }
 
   void drawSun(int edgeSize, double radius, double startAngle, Color color,

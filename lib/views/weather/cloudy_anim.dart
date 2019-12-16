@@ -9,7 +9,7 @@ class CloudyAnim extends StatefulWidget {
   CloudyAnim(this.maskAlpha);
 
   @override
-  _CloudyAnimState createState() => _CloudyAnimState(maskAlpha);
+  _CloudyAnimState createState() => _CloudyAnimState();
 }
 
 class _CloudyAnimState extends State<CloudyAnim> with TickerProviderStateMixin {
@@ -19,9 +19,7 @@ class _CloudyAnimState extends State<CloudyAnim> with TickerProviderStateMixin {
 
   List <Cloud> cloudy = List();
 
-  double maskAlpha;
-
-  _CloudyAnimState(this.maskAlpha);
+  _CloudyAnimState();
 
   @override
   void initState() {
@@ -77,7 +75,7 @@ class _CloudyAnimState extends State<CloudyAnim> with TickerProviderStateMixin {
     return Container(
       child: CustomPaint(
         size: Size(double.infinity, double.infinity),
-        painter: CloudyPainter(cloudy, maskAlpha),
+        painter: CloudyPainter(cloudy, widget.maskAlpha),
       ),
       decoration: BoxDecoration(color: Color(0xFF4B97D1)),
     );

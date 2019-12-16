@@ -76,6 +76,7 @@ class MainPageState extends State<MainPage> {
           if (district.weatherBean != null) {
             weatherBean = district.weatherBean;
             updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
+            scrollProgress = district.scrollProgress;
           }
         });
       }
@@ -282,6 +283,7 @@ class MainPageState extends State<MainPage> {
               setState(() {
                 scrollProgress = notification.metrics.pixels /
                     notification.metrics.maxScrollExtent;
+                district.scrollProgress = scrollProgress;
               });
               return true;
             },
@@ -303,7 +305,7 @@ class MainPageState extends State<MainPage> {
 
     layoutList.add(_getWeatherAnimWidget());
     layoutList.add(weatherDetailWidget);
-    layoutList.add(_titleLayout());
+    layoutList.add(_titleWidget());
 
     Widget mainLayout = Stack(
       children: layoutList,
@@ -313,19 +315,22 @@ class MainPageState extends State<MainPage> {
   }
 
   Widget _getWeatherAnimWidget() {
+    double progress = 1.0 - scrollProgress / 0.55;
+    double alpha = progress >= 0 ? progress : 0;
+
     Widget animWidget;
     if (weatherBean == null) {
-      animWidget = SunnyAnim();
+      animWidget = SunnyAnim(alpha);
     } else {
       switch (weatherBean.result.realtime.skycon) {
         case 'CLEAR_DAY':
-          animWidget = SunnyAnim();
+          animWidget = SunnyAnim(alpha);
           break;
         case 'CLEAR_NIGHT':
           animWidget = SunnyNightAnim();
           break;
         case 'PARTLY_CLOUDY_DAY':
-          animWidget = CloudyAnim(scrollProgress);
+          animWidget = CloudyAnim(alpha);
           break;
         case 'PARTLY_CLOUDY_NIGHT':
           animWidget = CloudyNightAnim();
@@ -338,14 +343,14 @@ class MainPageState extends State<MainPage> {
           }
           break;
         default:
-          animWidget = SunnyAnim();
+          animWidget = SunnyAnim(alpha);
       }
     }
 
     return animWidget;
   }
 
-  Widget _titleLayout() {
+  Widget _titleWidget() {
     return Padding(
       padding: EdgeInsets.only(top: statsHeight + paddingTop),
       child: SizedBox(
@@ -447,34 +452,6 @@ class MainPageState extends State<MainPage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _menusLayout() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        InkWell(
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
-            child: Text(
-              '分享',
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-          onTap: _share,
-        ),
-        InkWell(
-          child: Padding(
-            child: Text(
-              '设置',
-              style: TextStyle(fontSize: 16),
-            ),
-            padding: EdgeInsets.fromLTRB(15, 15, 60, 15),
-          ),
-          onTap: () => Navigator.of(context).pushNamed("setting"),
-        ),
-      ],
     );
   }
 
