@@ -9,6 +9,7 @@ import 'package:coolweather/utils/image_utils.dart';
 import 'package:coolweather/utils/translation_utils.dart';
 import 'package:coolweather/views/weather/cloudy_anim.dart';
 import 'package:coolweather/views/weather/cloudy_night_anim.dart';
+import 'package:coolweather/views/weather/empty_bg.dart';
 import 'package:coolweather/views/weather/overcast_anim.dart';
 import 'package:coolweather/views/weather/overcast_night_anim.dart';
 import 'package:coolweather/views/weather/sunny_anim.dart';
@@ -320,7 +321,7 @@ class MainPageState extends State<MainPage> {
 
     Widget animWidget;
     if (weatherBean == null) {
-      animWidget = SunnyAnim(alpha);
+      animWidget = EmptyBg();
     } else {
       switch (weatherBean.result.realtime.skycon) {
         case 'CLEAR_DAY':
@@ -343,7 +344,7 @@ class MainPageState extends State<MainPage> {
           }
           break;
         default:
-          animWidget = SunnyAnim(alpha);
+          animWidget = EmptyBg();
       }
     }
 
