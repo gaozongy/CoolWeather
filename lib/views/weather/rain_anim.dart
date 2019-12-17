@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 
 import 'raindrop.dart';
 
-class RainBg extends StatefulWidget {
+class RainAnim extends StatefulWidget {
   @override
-  _RainBgState createState() => _RainBgState();
+  _RainAnimState createState() => _RainAnimState();
 }
 
-class _RainBgState extends State<RainBg> with TickerProviderStateMixin {
+class _RainAnimState extends State<RainAnim> with TickerProviderStateMixin {
   AnimationController controller;
 
   var _area = Rect.fromLTRB(0, 0, 420, 700);
@@ -18,37 +18,18 @@ class _RainBgState extends State<RainBg> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    var testFields = Column(
-      children: <Widget>[
-        GestureDetector(
-          child: Container(
-            width: double.infinity,
-            height: 700,
-            child: Transform(
-              alignment: FractionalOffset.center,
-              transform: Matrix4.identity() //生成一个单位矩阵
-                ..setEntry(3, 2, 0.001) // 透视
-                ..rotateX(0.6), // changed
-              child: CustomPaint(
-                painter: RainPainter(_balls, _area),
-              ),
-            ),
-            decoration: BoxDecoration(color: Color.fromARGB(255, 16, 109, 153)),
-          ),
-          onTap: () {
-            controller.forward();
-          },
-          onDoubleTap: () {
-            controller.stop();
-          },
+    return Container(
+      child: Transform(
+        alignment: FractionalOffset.center,
+        transform: Matrix4.identity() //生成一个单位矩阵
+          ..setEntry(3, 2, 0.001) // 透视
+          ..rotateX(0.6), // changed
+        child: CustomPaint(
+          size: Size(double.infinity, double.infinity),
+          painter: RainPainter(_balls, _area),
         ),
-      ],
-    );
-
-    return Scaffold(
-      body: SafeArea(
-        child: testFields,
       ),
+      decoration: BoxDecoration(color: Color.fromARGB(255, 16, 109, 153)),
     );
   }
 
@@ -57,12 +38,14 @@ class _RainBgState extends State<RainBg> with TickerProviderStateMixin {
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: Duration(days: 365 * 999),
+      duration: Duration(days: 1),
     )..addListener(() {
         _render();
       });
 
     createBall();
+
+    controller.forward();
   }
 
   void createBall() {

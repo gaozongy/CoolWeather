@@ -12,6 +12,7 @@ import 'package:coolweather/views/weather/cloudy_night_anim.dart';
 import 'package:coolweather/views/weather/empty_bg.dart';
 import 'package:coolweather/views/weather/overcast_anim.dart';
 import 'package:coolweather/views/weather/overcast_night_anim.dart';
+import 'package:coolweather/views/weather/rain_anim.dart';
 import 'package:coolweather/views/weather/sunny_anim.dart';
 import 'package:coolweather/views/weather/sunny_night_anim.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
@@ -342,6 +343,9 @@ class MainPageState extends State<MainPage> {
           } else {
             animWidget = OvercastNightAnim(alpha);
           }
+          break;
+        case 'RAIN':
+          animWidget = RainAnim();
           break;
         default:
           animWidget = EmptyBg();
