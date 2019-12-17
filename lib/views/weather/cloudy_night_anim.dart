@@ -15,6 +15,10 @@ class Star {
 }
 
 class CloudyNightAnim extends StatefulWidget {
+  final double maskAlpha;
+
+  CloudyNightAnim(this.maskAlpha);
+
   @override
   _CloudyNightState createState() => _CloudyNightState();
 }
@@ -99,7 +103,7 @@ class _CloudyNightState extends State<CloudyNightAnim>
     return Container(
       child: CustomPaint(
         size: Size(double.infinity, double.infinity),
-        painter: CloudyPainter(cloudList, starList),
+        painter: CloudyPainter(cloudList, starList, widget.maskAlpha),
       ),
       decoration: BoxDecoration(color: Color(0xFF041322)),
     );
@@ -117,7 +121,9 @@ class CloudyPainter extends CustomPainter {
 
   List<Star> starList;
 
-  CloudyPainter(this.cloudList, this.starList);
+  double maskAlpha;
+
+  CloudyPainter(this.cloudList, this.starList, this.maskAlpha);
 
   Paint darkCloudPaint = new Paint()
     ..style = PaintingStyle.fill
@@ -131,8 +137,6 @@ class CloudyPainter extends CustomPainter {
     ..style = PaintingStyle.fill
     ..color = Color(0x8A396D8B);
 
-  Color c = Colors.white54;
-
   // 高清图再校准一下颜色
   Paint sunPaint = new Paint()
     ..style = PaintingStyle.fill
@@ -145,8 +149,12 @@ class CloudyPainter extends CustomPainter {
     double width = size.width;
     double height = size.height;
 
+    calculateColor();
+
     for (var star in starList) {
-      starPaint.color = star.color;
+      Color starColor = star.color;
+      starPaint.color = Color.fromARGB((starColor.alpha * maskAlpha).toInt(),
+          starColor.red, starColor.green, starColor.blue);
       canvas.drawCircle(Offset(star.x, star.y), 1.2, starPaint);
     }
 
@@ -192,6 +200,18 @@ class CloudyPainter extends CustomPainter {
             35 - cloudList.elementAt(5).dx, -110 + cloudList.elementAt(5).dy),
         160,
         lightCloudPaint);
+  }
+
+  void calculateColor() {
+    darkCloudPaint
+      ..color = Color.fromARGB((77 * maskAlpha).toInt(), 36, 83, 125);
+
+    cloudPaint..color = Color.fromARGB((98 * maskAlpha).toInt(), 42, 81, 129);
+
+    lightCloudPaint
+      ..color = Color.fromARGB((138 * maskAlpha).toInt(), 57, 109, 139);
+
+    sunPaint..color = Color.fromARGB((255 * maskAlpha).toInt(), 251, 255, 192);
   }
 
   @override

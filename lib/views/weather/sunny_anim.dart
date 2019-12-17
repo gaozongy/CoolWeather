@@ -53,7 +53,7 @@ class SunnyPainter extends CustomPainter {
 
   int mEdgeSize = 11;
 
-  double maskAlpha = 0;
+  double maskAlpha;
 
   SunnyPainter(this.radians, this.maskAlpha);
 

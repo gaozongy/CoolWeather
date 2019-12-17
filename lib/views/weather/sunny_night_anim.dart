@@ -156,7 +156,7 @@ Offset offset = Offset(0, 0);
 class SunnyNightPainter extends CustomPainter {
   double radians;
 
-  double maskAlpha = 0;
+  double maskAlpha;
 
   SunnyNightPainter(this.radians, this.maskAlpha);
 
