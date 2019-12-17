@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
 class SunnyNightAnim extends StatefulWidget {
+
+  final double maskAlpha;
+
+  SunnyNightAnim(this.maskAlpha);
+
   @override
   _SunnyNightAnimState createState() => _SunnyNightAnimState();
 }
@@ -30,8 +35,8 @@ class _SunnyNightAnimState extends State<SunnyNightAnim>
     return Container(
       child: CustomPaint(
           size: Size(double.infinity, double.infinity),
-          painter: SunnyNightPainter(radians)),
-      decoration: BoxDecoration(color: Color(0xFF051325)),
+          painter: SunnyNightPainter(radians, widget.maskAlpha)),
+      decoration: BoxDecoration(color: Color(0xFF061324)),
     );
   }
 
@@ -151,9 +156,9 @@ Offset offset = Offset(0, 0);
 class SunnyNightPainter extends CustomPainter {
   double radians;
 
-  Color bgColor = Color(0xFF061324);
+  double maskAlpha = 0;
 
-  SunnyNightPainter(this.radians);
+  SunnyNightPainter(this.radians, this.maskAlpha);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -163,7 +168,7 @@ class SunnyNightPainter extends CustomPainter {
     canvas.translate(-350, -130);
     canvas.rotate(radians);
 
-    canvas.drawColor(bgColor, BlendMode.color);
+    calculateColor();
 
     canvas.drawCircle(offset, 400, paint_1);
 
@@ -223,6 +228,31 @@ class SunnyNightPainter extends CustomPainter {
 
     canvas.drawArc(
         Rect.fromCircle(center: offset, radius: 1045), 1, 5, false, paint_20);
+  }
+
+  void calculateColor() {
+    int alpha = (255 * maskAlpha).toInt();
+
+    paint_1..color = Color.fromARGB(alpha, 141, 230, 224);
+    paint_2..color = Color.fromARGB(alpha, 208, 252, 251);
+    paint_3..color = Color.fromARGB(alpha, 115, 150, 152);
+    paint_4..color = Color.fromARGB(alpha, 116, 151, 153);
+    paint_5..color = Color.fromARGB(alpha, 200, 255, 249);
+    paint_6..color = Color.fromARGB(alpha, 132, 234, 223);
+    paint_7..color = Color.fromARGB(alpha, 202, 255, 249);
+    paint_8..color = Color.fromARGB(alpha, 255, 255, 255);
+    paint_9..color = Color.fromARGB(alpha, 202, 255, 249);
+    paint_10..color = Color.fromARGB(alpha, 148, 227, 224);
+    paint_11..color = Color.fromARGB(alpha, 255, 255, 255);
+    paint_12..color = Color.fromARGB(alpha, 132, 234, 223);
+    paint_13..color = Color.fromARGB(alpha, 115, 150, 152);
+    paint_14..color = Color.fromARGB(alpha, 115, 150, 152);
+    paint_15..color = Color.fromARGB(alpha, 202, 255, 249);
+    paint_16..color = Color.fromARGB(alpha, 202, 255, 249);
+    paint_17..color = Color.fromARGB(alpha, 115, 150, 152);
+    paint_18..color = Color.fromARGB(alpha, 131, 235, 224);
+    paint_19..color = Color.fromARGB(alpha, 255, 255, 255);
+    paint_20..color = Color.fromARGB(alpha, 115, 150, 152);
   }
 
   @override

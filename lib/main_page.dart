@@ -315,7 +315,7 @@ class MainPageState extends State<MainPage> {
   }
 
   Widget _getWeatherAnimWidget() {
-    double progress = 1.0 - scrollProgress / 0.55;
+    double progress = 1.0 - scrollProgress / 0.5;
     double alpha = progress >= 0 ? progress : 0;
 
     Widget animWidget;
@@ -327,7 +327,7 @@ class MainPageState extends State<MainPage> {
           animWidget = SunnyAnim(alpha);
           break;
         case 'CLEAR_NIGHT':
-          animWidget = SunnyNightAnim();
+          animWidget = SunnyNightAnim(alpha);
           break;
         case 'PARTLY_CLOUDY_DAY':
           animWidget = CloudyAnim(alpha);

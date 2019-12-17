@@ -64,8 +64,8 @@ class _CloudyAnimState extends State<CloudyAnim> with TickerProviderStateMixin {
   _render() {
     setState(() {
       cloudy.forEach((cloud) {
-        cloud.dy = animationY.value;
         cloud.dx = animationX.value;
+        cloud.dy = animationY.value;
       });
     });
   }

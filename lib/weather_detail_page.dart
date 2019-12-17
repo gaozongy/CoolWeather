@@ -36,7 +36,7 @@ class WeatherDetailPage extends StatefulWidget {
 
   final double height;
 
-  final needLocation;
+  final bool needLocation;
 
   WeatherDetailPage(this.district, this.setLocation, this.setWeatherData,
       this.height, this.needLocation);
