@@ -284,8 +284,8 @@ class MainPageState extends State<MainPage> {
               setState(() {
                 scrollProgress = notification.metrics.pixels /
                     notification.metrics.maxScrollExtent;
-                district.scrollProgress = scrollProgress;
               });
+              district.scrollProgress = scrollProgress;
               return true;
             },
             child: WeatherDetailPage(

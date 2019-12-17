@@ -77,22 +77,23 @@ class SunnyPainter extends CustomPainter {
     canvas.rotate(radians);
 
     double radius6 = 380;
-    drawSun(mEdgeSize, radius6, -70, Color.fromARGB((255 * maskAlpha).toInt(), 147, 195, 181), canvas);
+    int alpha = (255 * maskAlpha).toInt();
+    drawSun(mEdgeSize, radius6, -70, Color.fromARGB(alpha, 147, 195, 181), canvas);
 
     double radius5 = 330;
-    drawSun(mEdgeSize, radius5, -50, Color.fromARGB((255 * maskAlpha).toInt(), 185, 197, 131), canvas);
+    drawSun(mEdgeSize, radius5, -50, Color.fromARGB(alpha, 185, 197, 131), canvas);
 
     double radius4 = 290;
-    drawSun(mEdgeSize, radius4, -45, Color.fromARGB((255 * maskAlpha).toInt(), 206, 184, 96), canvas);
+    drawSun(mEdgeSize, radius4, -45, Color.fromARGB(alpha, 206, 184, 96), canvas);
 
     double radius3 = 240;
-    drawSun(mEdgeSize, radius3, -25, Color.fromARGB((255 * maskAlpha).toInt(), 214, 164, 76), canvas);
+    drawSun(mEdgeSize, radius3, -25, Color.fromARGB(alpha, 214, 164, 76), canvas);
 
     double radius2 = 190;
-    drawSun(mEdgeSize, radius2, -10, Color.fromARGB((255 * maskAlpha).toInt(), 217, 142, 67), canvas);
+    drawSun(mEdgeSize, radius2, -10, Color.fromARGB(alpha, 217, 142, 67), canvas);
 
     double radius1 = 150;
-    drawSun(mEdgeSize, radius1, 0, Color.fromARGB((255 * maskAlpha).toInt(), 215, 123, 59), canvas);
+    drawSun(mEdgeSize, radius1, 0, Color.fromARGB(alpha, 215, 123, 59), canvas);
   }
 
   void drawSun(int edgeSize, double radius, double startAngle, Color color,

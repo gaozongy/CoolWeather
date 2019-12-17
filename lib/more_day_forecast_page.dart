@@ -16,7 +16,7 @@ class MoreDayForecast extends StatelessWidget {
 
     return Material(
       child: Container(
-        color: Colors.blue,
+        color: Color(0xFF51B1E1),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
