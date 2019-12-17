@@ -337,16 +337,16 @@ class MainPageState extends State<MainPage> {
           break;
         case 'CLOUDY':
           if (DateUtils.isDay(weatherBean)) {
-            animWidget = OvercastAnim();
+            animWidget = OvercastAnim(alpha);
           } else {
-            animWidget = OvercastNightAnim();
+            animWidget = OvercastNightAnim(alpha);
           }
           break;
         default:
           animWidget = SunnyAnim(alpha);
       }
     }
-    animWidget = CloudyNightAnim(alpha);
+
     return animWidget;
   }
 

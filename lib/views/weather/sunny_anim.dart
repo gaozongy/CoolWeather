@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SunnyAnim extends StatefulWidget {
+
   final double maskAlpha;
 
   SunnyAnim(this.maskAlpha);

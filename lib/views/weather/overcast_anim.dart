@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'cloudy_paint.dart';
 
 class OvercastAnim extends StatefulWidget {
+  final double maskAlpha;
+
+  OvercastAnim(this.maskAlpha);
+
   @override
   _OvercastAnimState createState() => _OvercastAnimState();
 }
@@ -70,7 +74,7 @@ class _OvercastAnimState extends State<OvercastAnim>
     return Container(
       child: CustomPaint(
           size: Size(double.infinity, double.infinity),
-          painter: OvercastPainter(cloudy)),
+          painter: OvercastPainter(cloudy, widget.maskAlpha)),
       decoration: BoxDecoration(color: Color(0xFF93A4AE)),
     );
   }
@@ -85,20 +89,24 @@ class _OvercastAnimState extends State<OvercastAnim>
 class OvercastPainter extends CustomPainter {
   List<Cloud> cloudy;
 
-  Paint whiteCloudPaint = new Paint()
-    ..style = PaintingStyle.fill
-    ..color = Colors.white54;
+  double maskAlpha;
 
-  Paint greyCloudPaint = new Paint()
-    ..style = PaintingStyle.fill
-    ..color = Color(0xB382939E);
+  Paint whiteCloudPaint = new Paint()..style = PaintingStyle.fill;
 
-  OvercastPainter(this.cloudy);
+  Paint greyCloudPaint = new Paint()..style = PaintingStyle.fill;
+
+  OvercastPainter(this.cloudy, this.maskAlpha);
 
   @override
   void paint(Canvas canvas, Size size) {
     double width = size.width;
     double height = size.height;
+
+    whiteCloudPaint
+      ..color = Color.fromARGB((138 * maskAlpha).toInt(), 255, 255, 255);
+
+    greyCloudPaint
+      ..color = Color.fromARGB((179 * maskAlpha).toInt(), 130, 147, 158);
 
     canvas.drawCircle(
         Offset(

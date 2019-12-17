@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'cloudy_paint.dart';
 
 class OvercastNightAnim extends StatefulWidget {
+  final double maskAlpha;
+
+  OvercastNightAnim(this.maskAlpha);
+
   @override
   _OvercastNightAnimState createState() => _OvercastNightAnimState();
 }
@@ -70,7 +74,7 @@ class _OvercastNightAnimState extends State<OvercastNightAnim>
     return Container(
       child: CustomPaint(
           size: Size(double.infinity, double.infinity),
-          painter: OvercastPainter(cloudList)),
+          painter: OvercastPainter(cloudList, widget.maskAlpha)),
       decoration: BoxDecoration(color: Color(0xFF171E26)),
     );
   }
@@ -85,21 +89,22 @@ class _OvercastNightAnimState extends State<OvercastNightAnim>
 class OvercastPainter extends CustomPainter {
   List<Cloud> cloudList;
 
-  Paint whiteCloudPaint = new Paint()
-    ..style = PaintingStyle.fill
-    ..color = Color(0x994A616E);
-  Color c = Colors.white24;
+  double maskAlpha;
 
-  Paint greyCloudPaint = new Paint()
-    ..style = PaintingStyle.fill
-    ..color = Color(0x99162832);
+  Paint whiteCloudPaint = new Paint()..style = PaintingStyle.fill;
 
-  OvercastPainter(this.cloudList);
+  Paint greyCloudPaint = new Paint()..style = PaintingStyle.fill;
+
+  OvercastPainter(this.cloudList, this.maskAlpha);
 
   @override
   void paint(Canvas canvas, Size size) {
     double width = size.width;
     double height = size.height;
+
+    whiteCloudPaint..color = Color.fromARGB((153 * maskAlpha).toInt(), 74,97,110);
+
+    greyCloudPaint..color = Color.fromARGB((153 * maskAlpha).toInt(), 22,40,50);
 
     canvas.drawCircle(
         Offset(width - 60 - cloudList.elementAt(0).dx,
