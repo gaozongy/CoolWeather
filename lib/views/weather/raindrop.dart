@@ -26,22 +26,26 @@ class Raindrop {
 }
 
 class RainPainter extends CustomPainter {
-  List<Raindrop> _balls;
-  Rect _area;
-  Paint mPaint;
-  Paint bgPaint;
 
-  RainPainter(this._balls, this._area) {
-    mPaint = new Paint();
-    bgPaint = new Paint()..color = Color.fromARGB(255, 16, 109, 153);
-  }
+  List<Raindrop> _balls;
+
+  Rect _area;
+
+  double maskAlpha;
+
+  Paint mPaint = new Paint();
+
+  Paint bgPaint = new Paint()..color = Color.fromARGB(255, 16, 109, 153);
+
+  RainPainter(this._balls, this._area, this.maskAlpha);
 
   @override
   void paint(Canvas canvas, Size size) {
     canvas.drawRect(_area, bgPaint);
 
     _balls.forEach((ball) {
-      mPaint.color = ball.color;
+      mPaint.color = Color.fromARGB((ball.color.alpha * maskAlpha).toInt(),
+          ball.color.red, ball.color.green, ball.color.blue);
       mPaint.strokeWidth = ball.width;
       _drawBall(canvas, ball);
     });

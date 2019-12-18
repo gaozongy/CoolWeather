@@ -345,7 +345,7 @@ class MainPageState extends State<MainPage> {
           }
           break;
         case 'RAIN':
-          animWidget = RainAnim();
+          animWidget = RainAnim(alpha);
           break;
         default:
           animWidget = EmptyBg();

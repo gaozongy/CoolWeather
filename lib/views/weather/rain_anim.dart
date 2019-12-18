@@ -5,11 +5,17 @@ import 'package:flutter/material.dart';
 import 'raindrop.dart';
 
 class RainAnim extends StatefulWidget {
+
+  final double maskAlpha;
+
+  RainAnim(this.maskAlpha);
+
   @override
   _RainAnimState createState() => _RainAnimState();
 }
 
 class _RainAnimState extends State<RainAnim> with TickerProviderStateMixin {
+
   AnimationController controller;
 
   var _area = Rect.fromLTRB(0, 0, 420, 700);
@@ -26,7 +32,7 @@ class _RainAnimState extends State<RainAnim> with TickerProviderStateMixin {
           ..rotateX(0.6), // changed
         child: CustomPaint(
           size: Size(double.infinity, double.infinity),
-          painter: RainPainter(_balls, _area),
+          painter: RainPainter(_balls, _area, widget.maskAlpha),
         ),
       ),
       decoration: BoxDecoration(color: Color.fromARGB(255, 16, 109, 153)),
