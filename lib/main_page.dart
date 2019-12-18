@@ -60,6 +60,8 @@ class MainPageState extends State<MainPage> {
 
   double scrollProgress = 0;
 
+  static GlobalKey<RainAnimState> _globalKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -282,10 +284,17 @@ class MainPageState extends State<MainPage> {
         itemBuilder: (BuildContext context, int position) {
           return NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification notification) {
-              setState(() {
-                scrollProgress = notification.metrics.pixels /
-                    notification.metrics.maxScrollExtent;
-              });
+//              setState(() {
+//                scrollProgress = notification.metrics.pixels /
+//                    notification.metrics.maxScrollExtent;
+//              });
+
+              scrollProgress = notification.metrics.pixels /
+                  notification.metrics.maxScrollExtent;
+              double progress = 1.0 - scrollProgress / 0.5;
+              double alpha = progress >= 0 ? progress : 0;
+              _globalKey.currentState.setMaskAlpha(alpha);
+
               district.scrollProgress = scrollProgress;
               return true;
             },
@@ -345,13 +354,14 @@ class MainPageState extends State<MainPage> {
           }
           break;
         case 'RAIN':
-          animWidget = RainAnim(alpha);
+//          animWidget = RainAnim(alpha);
           break;
         default:
           animWidget = EmptyBg();
       }
     }
 
+    animWidget = RainAnim(key: _globalKey);
     return animWidget;
   }
 
