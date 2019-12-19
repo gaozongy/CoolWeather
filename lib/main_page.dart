@@ -59,8 +59,6 @@ class MainPageState extends State<MainPage> {
 
   bool needLocation = true;
 
-  double scrollProgress = 0;
-
   static GlobalKey<BaseAnimState> _globalKey = GlobalKey();
 
   @override
@@ -82,14 +80,9 @@ class MainPageState extends State<MainPage> {
             weatherBean = district.weatherBean;
             updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
           }
-
-          // todo
-          scrollProgress = district.scrollProgress;
-          double progress = 1.0 - scrollProgress / 0.5;
-          double alpha = progress >= 0 ? progress : 0;
-          _globalKey.currentState.setMaskAlpha(alpha);
         });
       }
+      changeAnimAlpha(district.scrollProgress);
     });
   }
 
@@ -290,18 +283,9 @@ class MainPageState extends State<MainPage> {
         itemBuilder: (BuildContext context, int position) {
           return NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification notification) {
-//              setState(() {
-//                scrollProgress = notification.metrics.pixels /
-//                    notification.metrics.maxScrollExtent;
-//              });
-
-              // todo
-              scrollProgress = notification.metrics.pixels /
+              double scrollProgress = notification.metrics.pixels /
                   notification.metrics.maxScrollExtent;
-              double progress = 1.0 - scrollProgress / 0.5;
-              double alpha = progress >= 0 ? progress : 0;
-              _globalKey.currentState.setMaskAlpha(alpha);
-
+              changeAnimAlpha(scrollProgress);
               district.scrollProgress = scrollProgress;
               return true;
             },
@@ -332,10 +316,13 @@ class MainPageState extends State<MainPage> {
     return mainLayout;
   }
 
-  Widget _getWeatherAnimWidget() {
+  void changeAnimAlpha(double scrollProgress){
     double progress = 1.0 - scrollProgress / 0.5;
     double alpha = progress >= 0 ? progress : 0;
+    _globalKey.currentState.setMaskAlpha(alpha);
+  }
 
+  Widget _getWeatherAnimWidget() {
     Widget animWidget;
     if (weatherBean == null) {
       animWidget = EmptyBg();
