@@ -3,17 +3,17 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'base_weather_state.dart';
+
 class SunnyAnim extends StatefulWidget {
 
-  final double maskAlpha;
-
-  SunnyAnim(this.maskAlpha);
+  SunnyAnim({Key key}) : super(key: key);
 
   @override
   _SunnyAnimState createState() => _SunnyAnimState();
 }
 
-class _SunnyAnimState extends State<SunnyAnim> with TickerProviderStateMixin {
+class _SunnyAnimState extends BaseAnimState<SunnyAnim> {
   AnimationController controller;
 
   double radians = 0;
@@ -37,7 +37,7 @@ class _SunnyAnimState extends State<SunnyAnim> with TickerProviderStateMixin {
     return Container(
       child: CustomPaint(
           size: Size(double.infinity, double.infinity),
-          painter: SunnyPainter(radians, widget.maskAlpha)),
+          painter: SunnyPainter(radians, maskAlpha)),
       decoration: BoxDecoration(color: Color(0xFF4A97D2)),
     );
   }
@@ -78,19 +78,24 @@ class SunnyPainter extends CustomPainter {
 
     double radius6 = 380;
     int alpha = (255 * maskAlpha).toInt();
-    drawSun(mEdgeSize, radius6, -70, Color.fromARGB(alpha, 147, 195, 181), canvas);
+    drawSun(
+        mEdgeSize, radius6, -70, Color.fromARGB(alpha, 147, 195, 181), canvas);
 
     double radius5 = 330;
-    drawSun(mEdgeSize, radius5, -50, Color.fromARGB(alpha, 185, 197, 131), canvas);
+    drawSun(
+        mEdgeSize, radius5, -50, Color.fromARGB(alpha, 185, 197, 131), canvas);
 
     double radius4 = 290;
-    drawSun(mEdgeSize, radius4, -45, Color.fromARGB(alpha, 206, 184, 96), canvas);
+    drawSun(
+        mEdgeSize, radius4, -45, Color.fromARGB(alpha, 206, 184, 96), canvas);
 
     double radius3 = 240;
-    drawSun(mEdgeSize, radius3, -25, Color.fromARGB(alpha, 214, 164, 76), canvas);
+    drawSun(
+        mEdgeSize, radius3, -25, Color.fromARGB(alpha, 214, 164, 76), canvas);
 
     double radius2 = 190;
-    drawSun(mEdgeSize, radius2, -10, Color.fromARGB(alpha, 217, 142, 67), canvas);
+    drawSun(
+        mEdgeSize, radius2, -10, Color.fromARGB(alpha, 217, 142, 67), canvas);
 
     double radius1 = 150;
     drawSun(mEdgeSize, radius1, 0, Color.fromARGB(alpha, 215, 123, 59), canvas);

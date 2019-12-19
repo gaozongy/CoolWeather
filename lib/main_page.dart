@@ -7,6 +7,7 @@ import 'package:amap_location/amap_location.dart';
 import 'package:coolweather/bean/weather_bean.dart';
 import 'package:coolweather/utils/image_utils.dart';
 import 'package:coolweather/utils/translation_utils.dart';
+import 'package:coolweather/views/weather/base_weather_state.dart';
 import 'package:coolweather/views/weather/cloudy_anim.dart';
 import 'package:coolweather/views/weather/cloudy_night_anim.dart';
 import 'package:coolweather/views/weather/empty_bg.dart';
@@ -60,7 +61,7 @@ class MainPageState extends State<MainPage> {
 
   double scrollProgress = 0;
 
-  static GlobalKey<RainAnimState> _globalKey = GlobalKey();
+  static GlobalKey<BaseAnimState> _globalKey = GlobalKey();
 
   @override
   void initState() {
@@ -80,8 +81,13 @@ class MainPageState extends State<MainPage> {
           if (district.weatherBean != null) {
             weatherBean = district.weatherBean;
             updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
-            scrollProgress = district.scrollProgress;
           }
+
+          // todo
+          scrollProgress = district.scrollProgress;
+          double progress = 1.0 - scrollProgress / 0.5;
+          double alpha = progress >= 0 ? progress : 0;
+          _globalKey.currentState.setMaskAlpha(alpha);
         });
       }
     });
@@ -289,6 +295,7 @@ class MainPageState extends State<MainPage> {
 //                    notification.metrics.maxScrollExtent;
 //              });
 
+              // todo
               scrollProgress = notification.metrics.pixels /
                   notification.metrics.maxScrollExtent;
               double progress = 1.0 - scrollProgress / 0.5;
@@ -335,33 +342,32 @@ class MainPageState extends State<MainPage> {
     } else {
       switch (weatherBean.result.realtime.skycon) {
         case 'CLEAR_DAY':
-          animWidget = SunnyAnim(alpha);
+          animWidget = SunnyAnim(key: _globalKey);
           break;
         case 'CLEAR_NIGHT':
-          animWidget = SunnyNightAnim(alpha);
+          animWidget = SunnyNightAnim(key: _globalKey);
           break;
         case 'PARTLY_CLOUDY_DAY':
-          animWidget = CloudyAnim(alpha);
+          animWidget = CloudyAnim(key: _globalKey);
           break;
         case 'PARTLY_CLOUDY_NIGHT':
-          animWidget = CloudyNightAnim(alpha);
+          animWidget = CloudyNightAnim(key: _globalKey);
           break;
         case 'CLOUDY':
           if (DateUtils.isDay(weatherBean)) {
-            animWidget = OvercastAnim(alpha);
+            animWidget = OvercastAnim(key: _globalKey);
           } else {
-            animWidget = OvercastNightAnim(alpha);
+            animWidget = OvercastNightAnim(key: _globalKey);
           }
           break;
         case 'RAIN':
-//          animWidget = RainAnim(alpha);
+          animWidget = RainAnim(key: _globalKey);
           break;
         default:
           animWidget = EmptyBg();
       }
     }
 
-    animWidget = RainAnim(key: _globalKey);
     return animWidget;
   }
 

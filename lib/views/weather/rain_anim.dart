@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import 'base_weather_state.dart';
 import 'raindrop.dart';
 
 class RainAnim extends StatefulWidget {
@@ -16,20 +17,12 @@ class RainAnim extends StatefulWidget {
   RainAnimState createState() => RainAnimState();
 }
 
-class RainAnimState extends State<RainAnim> with TickerProviderStateMixin {
+class RainAnimState extends BaseAnimState<RainAnim> {
   AnimationController controller;
 
   var _area = Rect.fromLTRB(0, 0, 420, 700);
 
   var _balls = <Raindrop>[];
-
-  double maskAlpha = 1;
-
-  void setMaskAlpha(double maskAlpha) {
-    setState(() {
-      this.maskAlpha = maskAlpha;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {

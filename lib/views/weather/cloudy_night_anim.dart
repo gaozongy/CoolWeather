@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'base_weather_state.dart';
 import 'cloudy_paint.dart';
 
 class Star {
@@ -15,16 +16,14 @@ class Star {
 }
 
 class CloudyNightAnim extends StatefulWidget {
-  final double maskAlpha;
 
-  CloudyNightAnim(this.maskAlpha);
+  CloudyNightAnim({Key key}) : super(key: key);
 
   @override
   _CloudyNightState createState() => _CloudyNightState();
 }
 
-class _CloudyNightState extends State<CloudyNightAnim>
-    with TickerProviderStateMixin {
+class _CloudyNightState extends BaseAnimState<CloudyNightAnim> {
   AnimationController controller;
   Animation<double> animationX;
   Animation<double> animationY;
@@ -103,7 +102,7 @@ class _CloudyNightState extends State<CloudyNightAnim>
     return Container(
       child: CustomPaint(
         size: Size(double.infinity, double.infinity),
-        painter: CloudyPainter(cloudList, starList, widget.maskAlpha),
+        painter: CloudyPainter(cloudList, starList, maskAlpha),
       ),
       decoration: BoxDecoration(color: Color(0xFF041322)),
     );

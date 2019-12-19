@@ -1,19 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'base_weather_state.dart';
 import 'cloudy_paint.dart';
 
 class OvercastAnim extends StatefulWidget {
-  final double maskAlpha;
 
-  OvercastAnim(this.maskAlpha);
+  OvercastAnim({Key key}) : super(key: key);
 
   @override
   _OvercastAnimState createState() => _OvercastAnimState();
 }
 
-class _OvercastAnimState extends State<OvercastAnim>
-    with TickerProviderStateMixin {
+class _OvercastAnimState extends BaseAnimState<OvercastAnim> {
   AnimationController controller;
   Animation<double> animationX;
   Animation<double> animationY;
@@ -74,7 +73,7 @@ class _OvercastAnimState extends State<OvercastAnim>
     return Container(
       child: CustomPaint(
           size: Size(double.infinity, double.infinity),
-          painter: OvercastPainter(cloudy, widget.maskAlpha)),
+          painter: OvercastPainter(cloudy, maskAlpha)),
       decoration: BoxDecoration(color: Color(0xFF93A4AE)),
     );
   }

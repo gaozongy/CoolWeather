@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 
+import 'base_weather_state.dart';
+
 class SunnyNightAnim extends StatefulWidget {
 
-  final double maskAlpha;
-
-  SunnyNightAnim(this.maskAlpha);
+  SunnyNightAnim({Key key}) : super(key: key);
 
   @override
   _SunnyNightAnimState createState() => _SunnyNightAnimState();
 }
 
-class _SunnyNightAnimState extends State<SunnyNightAnim>
-    with TickerProviderStateMixin {
+class _SunnyNightAnimState extends BaseAnimState<SunnyNightAnim> {
   AnimationController controller;
 
   double radians = 0;
@@ -35,7 +34,7 @@ class _SunnyNightAnimState extends State<SunnyNightAnim>
     return Container(
       child: CustomPaint(
           size: Size(double.infinity, double.infinity),
-          painter: SunnyNightPainter(radians, widget.maskAlpha)),
+          painter: SunnyNightPainter(radians, maskAlpha)),
       decoration: BoxDecoration(color: Color(0xFF061324)),
     );
   }

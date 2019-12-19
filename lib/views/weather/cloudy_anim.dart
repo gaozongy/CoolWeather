@@ -1,23 +1,22 @@
 import 'package:flutter/material.dart';
 
+import 'base_weather_state.dart';
 import 'cloudy_paint.dart';
 
 class CloudyAnim extends StatefulWidget {
 
-  final double maskAlpha;
-
-  CloudyAnim(this.maskAlpha);
+  CloudyAnim({Key key}) : super(key: key);
 
   @override
   _CloudyAnimState createState() => _CloudyAnimState();
 }
 
-class _CloudyAnimState extends State<CloudyAnim> with TickerProviderStateMixin {
+class _CloudyAnimState extends BaseAnimState<CloudyAnim> {
   AnimationController controller;
   Animation<double> animationX;
   Animation<double> animationY;
 
-  List <Cloud> cloudy = List();
+  List<Cloud> cloudy = List();
 
   _CloudyAnimState();
 
@@ -75,7 +74,7 @@ class _CloudyAnimState extends State<CloudyAnim> with TickerProviderStateMixin {
     return Container(
       child: CustomPaint(
         size: Size(double.infinity, double.infinity),
-        painter: CloudyPainter(cloudy, widget.maskAlpha),
+        painter: CloudyPainter(cloudy, maskAlpha),
       ),
       decoration: BoxDecoration(color: Color(0xFF4B97D1)),
     );

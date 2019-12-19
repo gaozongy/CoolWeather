@@ -1,19 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'base_weather_state.dart';
 import 'cloudy_paint.dart';
 
 class OvercastNightAnim extends StatefulWidget {
-  final double maskAlpha;
 
-  OvercastNightAnim(this.maskAlpha);
+  OvercastNightAnim({Key key}) : super(key: key);
 
   @override
   _OvercastNightAnimState createState() => _OvercastNightAnimState();
 }
 
-class _OvercastNightAnimState extends State<OvercastNightAnim>
-    with TickerProviderStateMixin {
+class _OvercastNightAnimState extends BaseAnimState<OvercastNightAnim> {
   AnimationController controller;
   Animation<double> animationX;
   Animation<double> animationY;
@@ -74,7 +73,7 @@ class _OvercastNightAnimState extends State<OvercastNightAnim>
     return Container(
       child: CustomPaint(
           size: Size(double.infinity, double.infinity),
-          painter: OvercastPainter(cloudList, widget.maskAlpha)),
+          painter: OvercastPainter(cloudList, maskAlpha)),
       decoration: BoxDecoration(color: Color(0xFF171E26)),
     );
   }
@@ -102,9 +101,11 @@ class OvercastPainter extends CustomPainter {
     double width = size.width;
     double height = size.height;
 
-    whiteCloudPaint..color = Color.fromARGB((153 * maskAlpha).toInt(), 74,97,110);
+    whiteCloudPaint
+      ..color = Color.fromARGB((153 * maskAlpha).toInt(), 74, 97, 110);
 
-    greyCloudPaint..color = Color.fromARGB((153 * maskAlpha).toInt(), 22,40,50);
+    greyCloudPaint
+      ..color = Color.fromARGB((153 * maskAlpha).toInt(), 22, 40, 50);
 
     canvas.drawCircle(
         Offset(width - 60 - cloudList.elementAt(0).dx,
