@@ -6,6 +6,7 @@ import 'dart:ui';
 import 'package:amap_location/amap_location.dart';
 import 'package:coolweather/bean/weather_bean.dart';
 import 'package:coolweather/utils/image_utils.dart';
+import 'package:coolweather/utils/log_utils.dart';
 import 'package:coolweather/utils/translation_utils.dart';
 import 'package:coolweather/views/weather/base_weather_state.dart';
 import 'package:coolweather/views/weather/cloudy_anim.dart';
@@ -82,6 +83,8 @@ class MainPageState extends State<MainPage> {
           }
         });
       }
+
+      Log.d("_globalKey:" + _globalKey.currentWidget.toString());
       changeAnimAlpha(district.scrollProgress);
     });
   }
@@ -316,7 +319,7 @@ class MainPageState extends State<MainPage> {
     return mainLayout;
   }
 
-  void changeAnimAlpha(double scrollProgress){
+  void changeAnimAlpha(double scrollProgress) {
     double progress = 1.0 - scrollProgress / 0.5;
     double alpha = progress >= 0 ? progress : 0;
     _globalKey.currentState.setMaskAlpha(alpha);
@@ -355,6 +358,10 @@ class MainPageState extends State<MainPage> {
       }
     }
 
+    Log.d("animWidget:" +
+        animWidget.toString() +
+        "  _globalKey:" +
+        _globalKey.currentWidget.toString());
     return animWidget;
   }
 
