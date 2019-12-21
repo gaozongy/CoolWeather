@@ -63,33 +63,40 @@ class RainAnimState extends BaseAnimState<RainAnim> {
     Color color;
     if (length < 30) {
       width = 1.15;
-      color = Color(0x2DE1F5FE);
+      color = randomColor(Color(0x2DE1F5FE));
       vY = 8;
     } else if (length < 35) {
       width = 1.2;
-      color = Color(0x4BE1F5FE);
+      color = randomColor(Color(0x4BE1F5FE));
       vY = 9;
     } else if (length < 40) {
       width = 1.35;
-      color = Color(0x69B3E5FC);
+      color = randomColor(Color(0x69B3E5FC));
       vY = 10;
     } else if (length < 45) {
       width = 1.4;
-      color = Color(0x878CD0F4);
+      color = randomColor(Color(0x8781D4FA));
       vY = 11;
     } else if (length < 50) {
       width = 1.55;
-      color = Color(0xA585CCF1);
+      color = randomColor(Color(0xA581D4FA));
       vY = 12;
     } else if (length < 55) {
       width = 1.7;
-      color = randomColor(Color(0xC3B3E6FF));
-      vY = 14;
+      color = randomColor(Color(0xC34FC3F7));
+      //       color = Color(0x87);
+      //      vY = 9;
+      //    } else if (length < 35) {
+      //      color = Color(0xA5);
+      //      vY = 10;
+      //    } else if (length < 40) {
+      //      color = Color(0xC3);
+      vY = 16;
     } else if (length < 62) {
       width = 1.85;
       Color defaultColor = Color(0xE14FC3F7);
       color = randomColor(defaultColor);
-      vY = 16;
+      vY = 18;
       if (color.value != defaultColor.value && Random().nextInt(3) == 1) {
         width = 5;
       }
@@ -97,7 +104,7 @@ class RainAnimState extends BaseAnimState<RainAnim> {
       width = 2;
       Color defaultColor = Color(0xFF29B6F6);
       color = randomColor(defaultColor);
-      vY = 28;
+      vY = 24;
       if (color.value != defaultColor.value && Random().nextInt(3) == 1) {
         width = 5;
       }
@@ -116,9 +123,9 @@ class RainAnimState extends BaseAnimState<RainAnim> {
     Color color;
     int num = Random().nextInt(20);
     if (num <= 3) {
-      color = Color(0xEEEDFFFF);
+      color = Color.fromARGB(defaultColor.alpha, 237, 255, 255);
     } else if (num <= 5) {
-      color = Color(0xEE9FBD67);
+      color = Color.fromARGB(defaultColor.alpha, 159, 189, 103);
     } else {
       color = defaultColor;
     }
