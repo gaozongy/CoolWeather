@@ -6,11 +6,6 @@ import 'base_weather_state.dart';
 import 'raindrop.dart';
 
 class RainAnim extends StatefulWidget {
-
-//  final double maskAlpha;
-//
-//  RainAnim(this.maskAlpha);
-
   RainAnim({Key key}) : super(key: key);
 
   @override
@@ -57,90 +52,55 @@ class RainAnimState extends BaseAnimState<RainAnim> {
   }
 
   void createBall() {
-    if (_balls.length > 80) {
+    if (_balls.length > 60) {
       return;
     }
 
     double vY;
-    double length = Random().nextInt(40).toDouble() + 10;
-    double width = Random().nextInt(3).toDouble() + 1;
+    double length = Random().nextInt(50).toDouble() + 15;
+    double width;
 
-    // 5 5 5 5 5 5 5 5
     Color color;
-    if (length < 15) {
-      if (width > 2) {
-        width = 2;
-      }
+    if (length < 30) {
+      width = 1.15;
       color = Color(0x2DE1F5FE);
-      vY = 6;
-    } else if (length < 25) {
-      if (width > 2) {
-        width = 2;
-      }
-      color = Color(0x4BE1F5FE);
-      vY = 7;
-    } else if (length < 25) {
-      if (width > 2) {
-        width = 2;
-      }
-      color = Color(0x69B3E5FC);
       vY = 8;
-    } else if (length < 30) {
-      if (width > 2) {
-        width = 2;
-      }
-      color = Color(0x8781D4FA);
-      vY = 9;
     } else if (length < 35) {
-      color = Color(0xA581D4FA);
-      vY = 10;
+      width = 1.2;
+      color = Color(0x4BE1F5FE);
+      vY = 9;
     } else if (length < 40) {
-      color = Color(0xC34FC3F7);
-      vY = 11;
-
-      int num3 = Random().nextInt(5);
-      if (num3 == 1) {
-        width = width + 1;
-      }
+      width = 1.35;
+      color = Color(0x69B3E5FC);
+      vY = 10;
     } else if (length < 45) {
-      color = Color(0xE14FC3F7);
-      if (width >= 2) {
-        int num = Random().nextInt(5);
-        if (num <= 1) {
-          color = Color(0xE1EDFFFF);
-        } else if (num == 2) {
-          color = Color(0xE19FBD67);
-        }
-      }
-
-      int num2 = Random().nextInt(3);
-      if (num2 == 1) {
-        length = length + 20;
-      }
-      int num3 = Random().nextInt(5);
-      if (num3 == 1) {
-        width = width + 1;
-      }
+      width = 1.4;
+      color = Color(0x878CD0F4);
+      vY = 11;
+    } else if (length < 50) {
+      width = 1.55;
+      color = Color(0xA585CCF1);
       vY = 12;
-    } else {
-      color = Color(0xFF29B6F6);
-      if (width >= 2) {
-        int num = Random().nextInt(5);
-        if (num <= 1) {
-          color = Color(0xFFEDFFFF);
-        } else if (num == 2) {
-          color = Color(0xFF9FBD67);
-        }
-      }
-      int num2 = Random().nextInt(3);
-      if (num2 == 1) {
-        length = length + 30;
-      }
-      int num3 = Random().nextInt(5);
-      if (num3 == 1) {
-        width = width + 2;
-      }
+    } else if (length < 55) {
+      width = 1.7;
+      color = randomColor(Color(0xC3B3E6FF));
       vY = 14;
+    } else if (length < 62) {
+      width = 1.85;
+      Color defaultColor = Color(0xE14FC3F7);
+      color = randomColor(defaultColor);
+      vY = 16;
+      if (color.value != defaultColor.value && Random().nextInt(3) == 1) {
+        width = 5;
+      }
+    } else {
+      width = 2;
+      Color defaultColor = Color(0xFF29B6F6);
+      color = randomColor(defaultColor);
+      vY = 28;
+      if (color.value != defaultColor.value && Random().nextInt(3) == 1) {
+        width = 5;
+      }
     }
 
     _balls.add(Raindrop(
@@ -150,6 +110,19 @@ class RainAnimState extends BaseAnimState<RainAnim> {
         width: width,
         vY: vY,
         length: length));
+  }
+
+  Color randomColor(Color defaultColor) {
+    Color color;
+    int num = Random().nextInt(20);
+    if (num <= 3) {
+      color = Color(0xEEEDFFFF);
+    } else if (num <= 5) {
+      color = Color(0xEE9FBD67);
+    } else {
+      color = defaultColor;
+    }
+    return color;
   }
 
   @override
