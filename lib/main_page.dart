@@ -84,7 +84,6 @@ class MainPageState extends State<MainPage> {
         });
       }
 
-      Log.d("_globalKey:" + _globalKey.currentWidget.toString());
       changeAnimAlpha(district.scrollProgress);
     });
   }
@@ -351,17 +350,15 @@ class MainPageState extends State<MainPage> {
           }
           break;
         case 'RAIN':
-          animWidget = RainAnim(key: _globalKey);
+          animWidget = RainAnim(
+              weatherBean != null ? DateUtils.isDay(weatherBean) : true,
+              key: _globalKey);
           break;
         default:
           animWidget = EmptyBg();
       }
     }
 
-    Log.d("animWidget:" +
-        animWidget.toString() +
-        "  _globalKey:" +
-        _globalKey.currentWidget.toString());
     return animWidget;
   }
 

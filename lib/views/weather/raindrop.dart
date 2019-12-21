@@ -26,21 +26,25 @@ class Raindrop {
 }
 
 class RainPainter extends CustomPainter {
-
   List<Raindrop> _balls;
 
   Rect _area;
 
   double maskAlpha;
 
+  bool isDay;
+
   Paint mPaint = new Paint();
 
-  Paint bgPaint = new Paint()..color = Color.fromARGB(255, 16, 109, 153);
-
-  RainPainter(this._balls, this._area, this.maskAlpha);
+  RainPainter(this._balls, this._area, this.maskAlpha, this.isDay);
 
   @override
   void paint(Canvas canvas, Size size) {
+    Paint bgPaint = new Paint()
+      ..color = isDay
+          ? Color.fromARGB(255, 16, 109, 153)
+          : Color.fromARGB(255, 0, 34, 68);
+
     canvas.drawRect(_area, bgPaint);
 
     _balls.forEach((ball) {
