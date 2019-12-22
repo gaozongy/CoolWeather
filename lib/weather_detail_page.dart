@@ -328,44 +328,52 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
     return SizedBox(
       height: 100,
       width: screenWidth,
-      child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: hourly.skycon.length,
-          itemBuilder: (BuildContext context, int position) {
-            ImageIcon weatherIcon =
-                _getWeatherIcon(hourly.skycon.elementAt(position).value);
-            String desc;
-            double temp = hourly.temperature.elementAt(position).value;
-            if (temp == -1001) {
-              desc = '日出';
-            } else if (temp == 1001) {
-              desc = '日落';
-            } else {
-              desc = temp.toStringAsFixed(0) + '°';
-            }
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification notification) {
+          // 返回true，阻止滚动事件继续向上冒泡，避免和主界面的上下滑动产生冲突
+          return true;
+        },
+        child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: hourly.skycon.length,
+            itemBuilder: (BuildContext context, int position) {
+              ImageIcon weatherIcon =
+                  _getWeatherIcon(hourly.skycon.elementAt(position).value);
+              String desc;
+              double temp = hourly.temperature.elementAt(position).value;
+              if (temp == -1001) {
+                desc = '日出';
+              } else if (temp == 1001) {
+                desc = '日落';
+              } else {
+                desc = temp.toStringAsFixed(0) + '°';
+              }
 
-            return SizedBox(
-              width: screenWidth / 6.5,
-              child: Padding(
-                padding: EdgeInsets.only(top: 5, bottom: 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                        DateUtils.getFormatTimeHHmm(
-                            hourly.skycon.elementAt(position).datetime),
-                        style: TextStyle(color: Colors.white54, fontSize: 14)),
-                    Padding(
-                      padding: EdgeInsets.only(top: 7, bottom: 7),
-                      child: weatherIcon,
-                    ),
-                    Text(desc,
-                        style: TextStyle(color: Colors.white54, fontSize: 14)),
-                  ],
+              return SizedBox(
+                width: screenWidth / 6.5,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 5, bottom: 10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                          DateUtils.getFormatTimeHHmm(
+                              hourly.skycon.elementAt(position).datetime),
+                          style:
+                              TextStyle(color: Colors.white54, fontSize: 14)),
+                      Padding(
+                        padding: EdgeInsets.only(top: 7, bottom: 7),
+                        child: weatherIcon,
+                      ),
+                      Text(desc,
+                          style:
+                              TextStyle(color: Colors.white54, fontSize: 14)),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }),
+              );
+            }),
+      ),
     );
 
 //    //  使用SingleChildScrollView
