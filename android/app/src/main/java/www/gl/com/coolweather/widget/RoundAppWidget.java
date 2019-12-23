@@ -8,6 +8,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
@@ -29,6 +37,7 @@ import www.gl.com.coolweather.MainActivity;
 import www.gl.com.coolweather.R;
 import www.gl.com.coolweather.bean.Daily;
 import www.gl.com.coolweather.bean.Realtime;
+import www.gl.com.coolweather.bean.Result;
 import www.gl.com.coolweather.bean.Skycon;
 import www.gl.com.coolweather.bean.Temperature;
 import www.gl.com.coolweather.bean.WeatherBean;
@@ -37,8 +46,8 @@ import www.gl.com.coolweather.utils.DateUtils;
 import www.gl.com.coolweather.utils.ImageUtils;
 import www.gl.com.coolweather.utils.TranslationUtils;
 
-// TODO: 2019/11/3 两个 Widget 存在大量重复代码
-public class TransparentAppWidget extends AppWidgetProvider {
+
+public class RoundAppWidget extends AppWidgetProvider {
 
     private static final String ACTION_UPDATE = "action_update";
 
@@ -119,8 +128,8 @@ public class TransparentAppWidget extends AppWidgetProvider {
     }
 
     void updateAppWidget(int status, Context context, String district, WeatherBean weatherBean) {
-        ComponentName componentName = new ComponentName(context, TransparentAppWidget.class);
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.app_widget_transparent);
+        ComponentName componentName = new ComponentName(context, RoundAppWidget.class);
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.app_widget_round);
 
         // 打开APP首页的Intent
         Intent launchIntent = new Intent(context, MainActivity.class);
@@ -129,7 +138,7 @@ public class TransparentAppWidget extends AppWidgetProvider {
 
         // 刷新的Intent
         Intent updateIntent = new Intent(ACTION_UPDATE);
-        updateIntent.setClass(context, TransparentAppWidget.class);
+        updateIntent.setClass(context, RoundAppWidget.class);
         PendingIntent updatePendingIntent = PendingIntent.getBroadcast(context, 0, updateIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         if (status == NO_LOCATION) {
@@ -165,7 +174,6 @@ public class TransparentAppWidget extends AppWidgetProvider {
             remoteViews.removeAllViews(R.id.widget_update_anim_fl);
             remoteViews.addView(R.id.widget_update_anim_fl, animViewDefault);
         }
-
         AppWidgetManager.getInstance(context).updateAppWidget(componentName, remoteViews);
     }
 
@@ -218,12 +226,48 @@ public class TransparentAppWidget extends AppWidgetProvider {
             remoteViews.setTextViewText(R.id.widget_forecast_temperature_3_iv, toInt(temperature3.max)
                     + " / " + toInt(temperature3.min) + "°");
         }
+
+        // 天气描述
+        String weather = weatherBean.result.realtime.skycon;
+        // 降雨（雪）强度
+        double intensity = weatherBean.result.realtime.precipitation.local.intensity;
+        // 是否是白天
+        Result result = weatherBean.result;
+        String currentDate = DateUtils.getFormatDate(new Date(), DateUtils.yyyyMMdd) + " ";
+        Date sunriseDate = DateUtils.getDate(currentDate + result.daily.astro.get(0).sunrise.time, DateUtils.yyyyMMddHHmm);
+        Date sunsetDate = DateUtils.getDate(currentDate + result.daily.astro.get(0).sunset.time, DateUtils.yyyyMMddHHmm);
+        Date date = new Date();
+        boolean isDay = date.compareTo(sunriseDate) >= 0 && date.compareTo(sunsetDate) < 0;
+
+        // 设置背景
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), ImageUtils.getBgResourceId(weather, intensity, isDay));
+        remoteViews.setImageViewBitmap(R.id.round_widget_iv, toRoundCornerImage(bitmap, 70));
     }
 
     int toInt(double value) {
         return (int) (value + 0.5);
     }
-}
 
-//        SharedPreferences sharedPreferences = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE);
-//        String locationDistrictBean = sharedPreferences.getString("flutter.location_district", "");
+    /**
+     * 获取圆角位图的方法
+     *
+     * @param bitmap 需要转化成圆角的位图
+     * @param pixels 圆角的度数，数值越大，圆角越大
+     * @return 处理后的圆角位图
+     */
+    public static Bitmap toRoundCornerImage(Bitmap bitmap, int pixels) {
+        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
+        final int color = 0xff424242;
+        final Paint paint = new Paint();
+        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        final RectF rectF = new RectF(rect);
+        paint.setAntiAlias(true);
+        canvas.drawARGB(0, 0, 0, 0);
+        paint.setColor(color);
+        canvas.drawRoundRect(rectF, (float) pixels, (float) pixels, paint);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        canvas.drawBitmap(bitmap, rect, rect, paint);
+        return output;
+    }
+}

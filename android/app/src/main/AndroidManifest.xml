@@ -64,7 +64,17 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/app_transparent_widget_info" />
+                android:resource="@xml/app_widget_info_transparent" />
+        </receiver>
+
+        <receiver android:name=".widget.RoundAppWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/app_widget_info_round" />
         </receiver>
 
         <service android:name="com.amap.api.location.APSService" />
