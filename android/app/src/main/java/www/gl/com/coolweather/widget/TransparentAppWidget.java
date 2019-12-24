@@ -124,13 +124,13 @@ public class TransparentAppWidget extends AppWidgetProvider {
 
         // 打开APP首页的Intent
         Intent launchIntent = new Intent(context, MainActivity.class);
-        PendingIntent launchPendingIntent = PendingIntent.getActivity(context, 0, launchIntent,
-                PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent launchPendingIntent = PendingIntent.getActivity(context, 1, launchIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         // 刷新的Intent
         Intent updateIntent = new Intent(ACTION_UPDATE);
         updateIntent.setClass(context, TransparentAppWidget.class);
-        PendingIntent updatePendingIntent = PendingIntent.getBroadcast(context, 0, updateIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent updatePendingIntent = PendingIntent.getBroadcast(context, 0, updateIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (status == NO_LOCATION) {
             remoteViews.setTextViewText(R.id.widget_district_tv, district);
