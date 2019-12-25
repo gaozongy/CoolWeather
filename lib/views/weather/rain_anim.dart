@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'base_weather_state.dart';
-import 'raindrop.dart';
 
 class RainAnim extends StatefulWidget {
   final bool isDay;
@@ -19,7 +18,7 @@ class RainAnimState extends BaseAnimState<RainAnim> {
 
   var _area = Rect.fromLTRB(0, 0, 420, 700);
 
-  var _balls = <Raindrop>[];
+  List<Raindrop> raindropList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +30,7 @@ class RainAnimState extends BaseAnimState<RainAnim> {
           ..rotateX(0.6), // changed
         child: CustomPaint(
           size: Size(double.infinity, double.infinity),
-          painter: RainPainter(_balls, _area, maskAlpha, widget.isDay),
+          painter: RainPainter(raindropList, _area, maskAlpha, widget.isDay),
         ),
       ),
       decoration: BoxDecoration(
@@ -44,20 +43,27 @@ class RainAnimState extends BaseAnimState<RainAnim> {
   @override
   void initState() {
     super.initState();
+    initController();
+  }
+
+  void initController() {
     controller = AnimationController(
       vsync: this,
       duration: Duration(days: 1),
     )..addListener(() {
-        _render();
+        createRaindrop();
+        raindropList.forEach((ball) {
+          setState(() {
+            updateBall(ball);
+          });
+        });
       });
-
-    createBall();
 
     controller.forward();
   }
 
-  void createBall() {
-    if (_balls.length > 60) {
+  void createRaindrop() {
+    if (raindropList.length > 60) {
       return;
     }
 
@@ -108,7 +114,7 @@ class RainAnimState extends BaseAnimState<RainAnim> {
       }
     }
 
-    _balls.add(Raindrop(
+    raindropList.add(Raindrop(
         color: color,
         x: _randPosition(),
         y: 0,
@@ -130,22 +136,6 @@ class RainAnimState extends BaseAnimState<RainAnim> {
     return color;
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    controller.dispose();
-  }
-
-  _render() {
-    createBall();
-
-    setState(() {
-      _balls.forEach((ball) {
-        updateBall(ball);
-      });
-    });
-  }
-
   void updateBall(Raindrop _ball) {
     _ball.y += _ball.vY;
 
@@ -156,14 +146,71 @@ class RainAnimState extends BaseAnimState<RainAnim> {
     }
   }
 
-  double _randPosition([int seed]) {
-    Random random;
-    if (seed != null) {
-      random = new Random(seed);
-    } else {
-      random = new Random();
-    }
-
-    return random.nextInt(410).toDouble();
+  double _randPosition() {
+    return new Random().nextInt(410).toDouble();
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
+  }
+}
+
+class RainPainter extends CustomPainter {
+  List<Raindrop> raindropList;
+
+  Rect area;
+
+  double maskAlpha;
+
+  bool isDay;
+
+  Paint mPaint = new Paint();
+
+  RainPainter(this.raindropList, this.area, this.maskAlpha, this.isDay);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint bgPaint = new Paint()
+      ..color = isDay
+          ? Color.fromARGB(255, 16, 109, 153)
+          : Color.fromARGB(255, 0, 34, 68);
+
+    canvas.drawRect(area, bgPaint);
+
+    raindropList.forEach((ball) {
+      mPaint.color = Color.fromARGB((ball.color.alpha * maskAlpha).toInt(),
+          ball.color.red, ball.color.green, ball.color.blue);
+      mPaint.strokeWidth = ball.width;
+      _drawBall(canvas, ball);
+    });
+  }
+
+  _drawBall(Canvas canvas, Raindrop ball) {
+    canvas.drawLine(
+        Offset(ball.x, ball.y), Offset(ball.x, ball.y + ball.length), mPaint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+class Raindrop {
+  double vY;
+  double x;
+  double y;
+  double width;
+  Color color;
+  double length;
+
+  Raindrop(
+      {this.vY = 0,
+      this.x = 0,
+      this.y = 0,
+      this.width = 0,
+      this.color,
+      this.length});
 }
