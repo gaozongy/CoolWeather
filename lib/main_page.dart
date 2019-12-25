@@ -6,7 +6,6 @@ import 'dart:ui';
 import 'package:amap_location/amap_location.dart';
 import 'package:coolweather/bean/weather_bean.dart';
 import 'package:coolweather/utils/image_utils.dart';
-import 'package:coolweather/utils/log_utils.dart';
 import 'package:coolweather/utils/translation_utils.dart';
 import 'package:coolweather/views/weather/base_weather_state.dart';
 import 'package:coolweather/views/weather/cloudy_anim.dart';
