@@ -1,4 +1,5 @@
 import 'package:coolweather/main_page.dart';
+import 'package:coolweather/test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +38,8 @@ void main() {
       ),
       initialRoute: "/",
       routes: {
-        "/": (context) => MainPage(),
+        "/": (context) => TestPage(),
+//        "/": (context) => MainPage(),
         "more_day_forecast":(context) => MoreDayForecast(),
         "focus_district_list": (context) => FocusDistrictListPage(),
         "select_district": (context) => AddDistrictPage(),

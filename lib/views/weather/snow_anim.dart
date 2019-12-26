@@ -57,41 +57,51 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
   }
 
   void createRaindrop() {
-    if (snowflakeList.length > 80) {
+    if (snowflakeList.length > 160) {
       return;
     }
 
-    double vY;
-    double radius = Random().nextInt(16).toDouble() + 4;
+    double vY = 0;
+    double radius;
+    double random = Random().nextDouble() * 6;
 
     Color color;
-    if (radius < 6) {
-      color = randomColor(Color(0x2DE1F5FE));
-      vY = 2.5;
-    } else if (radius < 8) {
-      color = randomColor(Color(0x4BE1F5FE));
-      vY = 2.75;
-    } else if (radius < 10) {
-      color = randomColor(Color(0x69B3E5FC));
-      vY = 3;
-    } else if (radius < 12) {
-      color = randomColor(Color(0x8781D4FA));
-      vY = 3.25;
-    } else if (radius < 14) {
-      color = randomColor(Color(0xA581D4FA));
-      vY = 3.5;
-    } else if (radius < 16) {
-      color = randomColor(Color(0xC34FC3F7));
-      vY = 3.75;
-    } else if (radius < 18) {
-      Color defaultColor = Color(0xE14FC3F7);
-      color = randomColor(defaultColor);
-      vY = 4;
-    } else {
-      Color defaultColor = Color(0xFF29B6F6);
-      color = randomColor(defaultColor);
-      vY = 4.25;
+    if (random < 1) {
+      vY = 1.6;
+      radius = 2;
+      color = randomColor(Color(0xFF264562));
+    } else if (random < 2) {
+      vY = 1.7;
+      radius = 2.5;
+      color = randomColor(Color(0xFF305371));
+    } else if (random < 3) {
+      vY = 1.8;
+      radius = 3;
+      color = randomColor(Color(0xFF375E7F));
+    } else if (random < 4.5) {
+      vY = 1.9;
+      radius = 3.5;
+      color = randomColor(Color(0xFF5983AB));
+    } else if (random < 5.9) {
+      vY = 2.0;
+      radius = 4;
+      color = randomColor(Color(0xFF608BB5));
+    } else if (random < 6) {
+      vY = 2.1;
+      radius = 4.5;
+      color = randomColor(Color(0xFF6B96C0));
     }
+//    else if (random < 7) {
+//      vY = 2.1;
+//      radius = 5;
+//      Color defaultColor = Color(0xE181ABD5);
+//      color = randomColor(defaultColor);
+//    } else {
+//      vY = 2.2;
+//      radius = 5.2;
+//      Color defaultColor = Color(0xFF81ABD5);
+//      color = randomColor(defaultColor);
+//    }
 
     snowflakeList.add(Snowflake(
       color: color,
@@ -104,11 +114,9 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
 
   Color randomColor(Color defaultColor) {
     Color color;
-    int num = Random().nextInt(20);
-    if (num <= 3) {
-      color = Color.fromARGB(defaultColor.alpha, 237, 255, 255);
-    } else if (num <= 5) {
-      color = Color.fromARGB(defaultColor.alpha, 159, 189, 103);
+    double num = Random().nextDouble();
+    if (num <= 0.05) {
+      color = Color.fromARGB(defaultColor.alpha, 86, 177, 160);
     } else {
       color = defaultColor;
     }
@@ -166,25 +174,25 @@ class RainPainter extends CustomPainter {
   }
 
   _drawSnowflake(Canvas canvas, Snowflake snowflake) {
-    if (snowflake.radius >= 16) {
-      num radians = pi / 6;
-      Path path = Path();
-      path.moveTo(snowflake.x, snowflake.y - snowflake.radius);
-      path.lineTo(snowflake.x + cos(radians) * snowflake.radius,
-          snowflake.y - sin(radians) * snowflake.radius);
-      path.lineTo(snowflake.x + cos(radians) * snowflake.radius,
-          snowflake.y + sin(radians) * snowflake.radius);
-      path.lineTo(snowflake.x, snowflake.y + snowflake.radius);
-      path.lineTo(snowflake.x - cos(radians) * snowflake.radius,
-          snowflake.y + sin(radians) * snowflake.radius);
-      path.lineTo(snowflake.x - cos(radians) * snowflake.radius,
-          snowflake.y - sin(radians) * snowflake.radius);
-      path.close();
-      canvas.drawPath(path, mPaint);
-    } else {
-      canvas.drawCircle(
-          Offset(snowflake.x, snowflake.y), snowflake.radius, mPaint);
-    }
+//    if (snowflake.radius >= 11.5) {
+//      num radians = pi / 6;
+//      Path path = Path();
+//      path.moveTo(snowflake.x, snowflake.y - snowflake.radius);
+//      path.lineTo(snowflake.x + cos(radians) * snowflake.radius,
+//          snowflake.y - sin(radians) * snowflake.radius);
+//      path.lineTo(snowflake.x + cos(radians) * snowflake.radius,
+//          snowflake.y + sin(radians) * snowflake.radius);
+//      path.lineTo(snowflake.x, snowflake.y + snowflake.radius);
+//      path.lineTo(snowflake.x - cos(radians) * snowflake.radius,
+//          snowflake.y + sin(radians) * snowflake.radius);
+//      path.lineTo(snowflake.x - cos(radians) * snowflake.radius,
+//          snowflake.y - sin(radians) * snowflake.radius);
+//      path.close();
+//      canvas.drawPath(path, mPaint);
+//    } else {
+    canvas.drawCircle(
+        Offset(snowflake.x, snowflake.y), snowflake.radius, mPaint);
+//    }
   }
 
   @override
