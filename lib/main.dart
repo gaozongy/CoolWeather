@@ -38,8 +38,8 @@ void main() {
       ),
       initialRoute: "/",
       routes: {
-        "/": (context) => TestPage(),
-//        "/": (context) => MainPage(),
+//        "/": (context) => TestPage(),
+        "/": (context) => MainPage(),
         "more_day_forecast":(context) => MoreDayForecast(),
         "focus_district_list": (context) => FocusDistrictListPage(),
         "select_district": (context) => AddDistrictPage(),

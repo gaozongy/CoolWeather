@@ -14,6 +14,7 @@ import 'package:coolweather/views/weather/empty_bg.dart';
 import 'package:coolweather/views/weather/overcast_anim.dart';
 import 'package:coolweather/views/weather/overcast_night_anim.dart';
 import 'package:coolweather/views/weather/rain_anim.dart';
+import 'package:coolweather/views/weather/snow_anim.dart';
 import 'package:coolweather/views/weather/sunny_anim.dart';
 import 'package:coolweather/views/weather/sunny_night_anim.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
@@ -357,7 +358,7 @@ class MainPageState extends State<MainPage> {
           animWidget = EmptyBg();
       }
     }
-
+    animWidget = SnowAnim(false, key: _globalKey);
     return animWidget;
   }
 
