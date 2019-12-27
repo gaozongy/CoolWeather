@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:coolweather/utils/screen_utils.dart';
 import 'package:flutter/material.dart';
 
 import 'base_weather_state.dart';
@@ -16,12 +17,17 @@ class RainAnim extends StatefulWidget {
 class RainAnimState extends BaseAnimState<RainAnim> {
   AnimationController controller;
 
-  var _area = Rect.fromLTRB(0, 0, 420, 700);
+  double screenWidth;
+
+  double screenHeight;
 
   List<Raindrop> raindropList = [];
 
   @override
   Widget build(BuildContext context) {
+    screenWidth = ScreenUtils.getScreenWidth(context);
+    screenHeight = ScreenUtils.getScreenHeight(context);
+
     return Container(
       child: Transform(
         alignment: FractionalOffset.center,
@@ -30,7 +36,7 @@ class RainAnimState extends BaseAnimState<RainAnim> {
           ..rotateX(0.6), // changed
         child: CustomPaint(
           size: Size(double.infinity, double.infinity),
-          painter: RainPainter(raindropList, _area, maskAlpha, widget.isDay),
+          painter: RainPainter(raindropList, maskAlpha, widget.isDay),
         ),
       ),
       decoration: BoxDecoration(
@@ -114,13 +120,7 @@ class RainAnimState extends BaseAnimState<RainAnim> {
       }
     }
 
-    raindropList.add(Raindrop(
-        color: color,
-        x: _randPosition(),
-        y: 0,
-        width: width,
-        vY: vY,
-        length: length));
+    raindropList.add(Raindrop(_randPosition(), 0, width, length, color, vY));
   }
 
   Color randomColor(Color defaultColor) {
@@ -140,14 +140,14 @@ class RainAnimState extends BaseAnimState<RainAnim> {
     _ball.y += _ball.vY;
 
     // 限定下边界
-    if (_ball.y > _area.bottom) {
+    if (_ball.y > screenHeight) {
       _ball.x = _randPosition();
       _ball.y = 0;
     }
   }
 
   double _randPosition() {
-    return new Random().nextInt(410).toDouble();
+    return Random().nextDouble() * screenWidth.toInt();
   }
 
   @override
@@ -160,24 +160,20 @@ class RainAnimState extends BaseAnimState<RainAnim> {
 class RainPainter extends CustomPainter {
   List<Raindrop> raindropList;
 
-  Rect area;
-
   double maskAlpha;
 
   bool isDay;
 
   Paint mPaint = new Paint();
 
-  RainPainter(this.raindropList, this.area, this.maskAlpha, this.isDay);
+  RainPainter(this.raindropList, this.maskAlpha, this.isDay);
 
   @override
   void paint(Canvas canvas, Size size) {
-    Paint bgPaint = new Paint()
-      ..color = isDay
-          ? Color.fromARGB(255, 16, 109, 153)
-          : Color.fromARGB(255, 0, 34, 68);
-
-    canvas.drawRect(area, bgPaint);
+    Color color = isDay
+        ? Color.fromARGB(255, 16, 109, 153)
+        : Color.fromARGB(255, 0, 34, 68);
+    canvas.drawColor(color, BlendMode.color);
 
     raindropList.forEach((ball) {
       mPaint.color = Color.fromARGB((ball.color.alpha * maskAlpha).toInt(),
@@ -199,18 +195,12 @@ class RainPainter extends CustomPainter {
 }
 
 class Raindrop {
-  double vY;
   double x;
   double y;
   double width;
-  Color color;
   double length;
+  Color color;
+  double vY;
 
-  Raindrop(
-      {this.vY = 0,
-      this.x = 0,
-      this.y = 0,
-      this.width = 0,
-      this.color,
-      this.length});
+  Raindrop(this.x, this.y, this.width, this.length, this.color, this.vY);
 }

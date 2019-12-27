@@ -354,11 +354,14 @@ class MainPageState extends State<MainPage> {
               weatherBean != null ? DateUtils.isDay(weatherBean) : true,
               key: _globalKey);
           break;
+        case 'SNOW':
+          animWidget = SnowAnim(false, key: _globalKey);
+          break;
         default:
           animWidget = EmptyBg();
       }
     }
-    animWidget = SnowAnim(false, key: _globalKey);
+
     return animWidget;
   }
 

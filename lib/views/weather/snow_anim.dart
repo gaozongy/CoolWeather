@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:coolweather/utils/screen_utils.dart';
 import 'package:flutter/material.dart';
 
 import 'base_weather_state.dart';
@@ -17,7 +18,9 @@ class SnowAnim extends StatefulWidget {
 class SnowAnimState extends BaseAnimState<SnowAnim> {
   AnimationController controller;
 
-  var _area = Rect.fromLTRB(0, 0, 420, 700);
+  double screenWidth;
+
+  double screenHeight;
 
   List<Snowflake> snowflakeList = [];
 
@@ -25,10 +28,13 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
 
   @override
   Widget build(BuildContext context) {
+    screenWidth = ScreenUtils.getScreenWidth(context);
+    screenHeight = ScreenUtils.getScreenHeight(context);
+
     return Container(
       child: CustomPaint(
         size: Size(double.infinity, double.infinity),
-        painter: RainPainter(snowflakeList, _area, maskAlpha, widget.isDay),
+        painter: RainPainter(snowflakeList, maskAlpha, widget.isDay),
       ),
       decoration: BoxDecoration(
           color: widget.isDay
@@ -137,16 +143,8 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
       color = randomColor(defaultColor);
     }
 
-    snowflakeList.add(Snowflake(
-        x: _randPosition(),
-        y: 0,
-        radius: radius,
-        oldRadius: radius,
-        vX: vX,
-        vY: vY,
-        vRadius: Random().nextDouble() / 20,
-        color: color,
-        rotateRadians: Random().nextDouble()));
+    snowflakeList.add(Snowflake(_randPosition(), 0, radius, vX, vY,
+        Random().nextDouble() / 20, color, Random().nextDouble()));
   }
 
   Color randomColor(Color defaultColor) {
@@ -169,9 +167,7 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
     }
 
     // 限定下边界
-    if (snowflake.y > _area.bottom ||
-        snowflake.x < _area.left ||
-        snowflake.x > _area.right) {
+    if (snowflake.y > screenHeight) {
       snowflake.x = _randPosition();
       snowflake.y = 0;
       snowflake.radius = snowflake.oldRadius;
@@ -183,7 +179,7 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
   }
 
   double _randPosition() {
-    return new Random().nextInt(410).toDouble();
+    return Random().nextDouble() * screenWidth.toInt();
   }
 
   @override
@@ -197,24 +193,21 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
 class RainPainter extends CustomPainter {
   List<Snowflake> snowflakeList;
 
-  Rect area;
-
   double maskAlpha;
 
   bool isDay;
 
   Paint mPaint = new Paint()..style = PaintingStyle.fill;
 
-  RainPainter(this.snowflakeList, this.area, this.maskAlpha, this.isDay);
+  RainPainter(this.snowflakeList, this.maskAlpha, this.isDay);
 
   @override
   void paint(Canvas canvas, Size size) {
-    Paint bgPaint = new Paint()
-      ..color = isDay
-          ? Color.fromARGB(255, 16, 109, 153)
-          : Color.fromARGB(255, 19, 47, 69);
-
-    canvas.drawRect(area, bgPaint);
+    canvas.drawColor(
+        isDay
+            ? Color.fromARGB(255, 16, 109, 153)
+            : Color.fromARGB(255, 19, 47, 69),
+        BlendMode.color);
 
     snowflakeList.forEach((snowflake) {
       mPaint.color = Color.fromARGB((snowflake.color.alpha * maskAlpha).toInt(),
@@ -302,16 +295,9 @@ class Snowflake {
   bool isHexagon;
   double rotateRadians;
 
-  Snowflake(
-      {this.x = 0,
-      this.y = 0,
-      this.radius = 0,
-      this.oldRadius = 0,
-      this.vX = 0,
-      this.vY = 0,
-      this.vRadius = 0,
-      this.color,
-      this.rotateRadians = 0}) {
+  Snowflake(this.x, this.y, this.radius, this.vX, this.vY, this.vRadius,
+      this.color, this.rotateRadians) {
+    this.oldRadius = radius;
     this.isHexagon = oldRadius >= 5;
   }
 }
