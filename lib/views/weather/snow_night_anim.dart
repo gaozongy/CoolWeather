@@ -6,14 +6,15 @@ import 'package:flutter/material.dart';
 
 import 'base_weather_state.dart';
 
-class SnowAnim extends StatefulWidget {
-  SnowAnim({Key key}) : super(key: key);
+class SnowNightAnim extends StatefulWidget {
+
+  SnowNightAnim({Key key}) : super(key: key);
 
   @override
-  SnowAnimState createState() => SnowAnimState();
+  SnowNightAnimState createState() => SnowNightAnimState();
 }
 
-class SnowAnimState extends BaseAnimState<SnowAnim> {
+class SnowNightAnimState extends BaseAnimState<SnowNightAnim> {
   AnimationController controller;
 
   double screenWidth;
@@ -32,10 +33,10 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
     return Container(
         child: CustomPaint(
           size: Size(double.infinity, double.infinity),
-          painter: RainPainter(snowflakeList, maskAlpha),
+          painter: SnowNightPainter(snowflakeList, maskAlpha),
         ),
         decoration: BoxDecoration(
-          color: Color(0xFF3081CD),
+          color:  Color(0xFF132F45),
         ));
   }
 
@@ -88,11 +89,11 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
     if (random < 0.9) {
       vY = 1.8;
       radius = 2;
-      color = randomColor(Color(0xFF4D9DE8));
+      color = randomColor(Color(0xFF264562));
     } else if (random < 1.8) {
       vY = 1.9;
       radius = 2.5;
-      color = randomColor(Color(0xFF6EB9FF));
+      color = randomColor(Color(0xFF305371));
 
       if (Random().nextInt(3) == 0) {
         randomVx = Random().nextDouble() * 4;
@@ -102,7 +103,7 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
     } else if (random < 2.6) {
       vY = 2.0;
       radius = 3;
-      color = randomColor(Color(0xFFB0E8FF));
+      color = randomColor(Color(0xFF375E7F));
 
       if (Random().nextInt(3) == 0) {
         randomVx = Random().nextDouble() * 4;
@@ -112,7 +113,7 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
     } else if (random < 3.4) {
       vY = 2.1;
       radius = 3.5;
-      color = randomColor(Color(0xFFC4F1FF));
+      color = randomColor(Color(0xFF608BB4));
 
       if (Random().nextInt(4) == 0) {
         randomVx = Random().nextDouble() * 4;
@@ -122,7 +123,7 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
     } else if (random < 4.2) {
       vY = 2.2;
       radius = 4;
-      color = randomColor(Color(0xFFD8F9FF));
+      color = randomColor(Color(0xFF648FB7));
 
       if (Random().nextInt(5) == 0) {
         randomVx = Random().nextDouble() * 6;
@@ -132,7 +133,7 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
     } else if (random < 4.4) {
       vY = 2.3;
       radius = (Random().nextInt(2) + 3).toDouble();
-      color = randomColor(Color(0xFFE4FCFF));
+      color = randomColor(Color(0xFF729DC6));
 
       if (Random().nextInt(6) == 0) {
         randomVx = Random().nextDouble() * 6;
@@ -142,12 +143,12 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
     } else if (random < 4.5) {
       vY = 2.4;
       radius = (Random().nextInt(5) + 5).toDouble();
-      Color defaultColor = Color(0xFFFFFFFF);
+      Color defaultColor = Color(0xFF81AAD4);
       color = randomColor(defaultColor);
     } else {
       vY = 2.5;
       radius = (Random().nextInt(5) + 10).toDouble();
-      Color defaultColor = Color(0xFFFFFFFF);
+      Color defaultColor = Color(0xFF81AAD4);
       color = randomColor(defaultColor);
     }
 
@@ -159,7 +160,7 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
     Color color;
     double num = Random().nextDouble();
     if (num <= 0.05) {
-      color = Color.fromARGB(defaultColor.alpha, 17, 210, 72);
+      color = Color.fromARGB(defaultColor.alpha, 89, 182, 161);
     } else {
       color = defaultColor;
     }
@@ -198,14 +199,14 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
   }
 }
 
-class RainPainter extends CustomPainter {
+class SnowNightPainter extends CustomPainter {
   List<Snowflake> snowflakeList;
 
   double maskAlpha;
 
   Paint mPaint = new Paint()..style = PaintingStyle.fill;
 
-  RainPainter(this.snowflakeList, this.maskAlpha);
+  SnowNightPainter(this.snowflakeList, this.maskAlpha);
 
   @override
   void paint(Canvas canvas, Size size) {

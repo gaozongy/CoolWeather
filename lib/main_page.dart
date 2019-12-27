@@ -15,6 +15,7 @@ import 'package:coolweather/views/weather/overcast_anim.dart';
 import 'package:coolweather/views/weather/overcast_night_anim.dart';
 import 'package:coolweather/views/weather/rain_anim.dart';
 import 'package:coolweather/views/weather/snow_anim.dart';
+import 'package:coolweather/views/weather/snow_night_anim.dart';
 import 'package:coolweather/views/weather/sunny_anim.dart';
 import 'package:coolweather/views/weather/sunny_night_anim.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
@@ -355,7 +356,11 @@ class MainPageState extends State<MainPage> {
               key: _globalKey);
           break;
         case 'SNOW':
-          animWidget = SnowAnim(false, key: _globalKey);
+          if (weatherBean != null) {
+            animWidget = DateUtils.isDay(weatherBean)
+                ? SnowAnim(key: _globalKey)
+                : SnowNightAnim(key: _globalKey);
+          }
           break;
         default:
           animWidget = EmptyBg();
