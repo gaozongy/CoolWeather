@@ -203,12 +203,6 @@ class RainPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    canvas.drawColor(
-        isDay
-            ? Color.fromARGB(255, 16, 109, 153)
-            : Color.fromARGB(255, 19, 47, 69),
-        BlendMode.color);
-
     snowflakeList.forEach((snowflake) {
       mPaint.color = Color.fromARGB((snowflake.color.alpha * maskAlpha).toInt(),
           snowflake.color.red, snowflake.color.green, snowflake.color.blue);

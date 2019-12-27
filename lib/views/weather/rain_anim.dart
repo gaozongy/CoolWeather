@@ -170,11 +170,6 @@ class RainPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    Color color = isDay
-        ? Color.fromARGB(255, 16, 109, 153)
-        : Color.fromARGB(255, 0, 34, 68);
-    canvas.drawColor(color, BlendMode.color);
-
     raindropList.forEach((ball) {
       mPaint.color = Color.fromARGB((ball.color.alpha * maskAlpha).toInt(),
           ball.color.red, ball.color.green, ball.color.blue);
