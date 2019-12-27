@@ -246,7 +246,6 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
         "https://restapi.amap.com/v3/config/district?key=38366adde7d7ec1e94d652f9e90f78ce&subdistrict=0&extensions=base&keywords=" +
             keyword;
 
-
     HttpClient httpClient = new HttpClient();
     try {
       HttpClientRequest request = await httpClient.getUrl(Uri.parse(url));
