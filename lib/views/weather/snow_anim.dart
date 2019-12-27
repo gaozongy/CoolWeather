@@ -32,15 +32,15 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
     screenHeight = ScreenUtils.getScreenHeight(context);
 
     return Container(
-      child: CustomPaint(
-        size: Size(double.infinity, double.infinity),
-        painter: RainPainter(snowflakeList, maskAlpha, widget.isDay),
-      ),
-      decoration: BoxDecoration(
+        child: CustomPaint(
+          size: Size(double.infinity, double.infinity),
+          painter: RainPainter(snowflakeList, maskAlpha, widget.isDay),
+        ),
+        decoration: BoxDecoration(
           color: widget.isDay
               ? Color.fromARGB(255, 16, 109, 153)
-              : Color.fromARGB(255, 19, 47, 69)),
-    );
+              : Color(0xFF132F45),
+        ));
   }
 
   @override
@@ -76,7 +76,7 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
   }
 
   void createRaindrop() {
-    if (snowflakeList.length > 120) {
+    if (snowflakeList.length > 150) {
       return;
     }
 
@@ -111,35 +111,47 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
       if (Random().nextInt(3) == 0) {
         randomVx = Random().nextDouble() * 4;
         vX = randomVx < 2 ? randomVx : 2 - randomVx;
-        vY = 5;
+        vY = 6;
       }
     } else if (random < 3.4) {
       vY = 2.1;
       radius = 3.5;
-      color = randomColor(Color(0xFF5983AB));
+      color = randomColor(Color(0xFF608BB4));
 
       if (Random().nextInt(4) == 0) {
         randomVx = Random().nextDouble() * 4;
         vX = randomVx < 2 ? randomVx : 2 - randomVx;
-        vY = 5;
+        vY = 6;
       }
     } else if (random < 4.2) {
       vY = 2.2;
       radius = 4;
-      color = randomColor(Color(0xFF608BB5));
+      color = randomColor(Color(0xFF648FB7));
+
+      if (Random().nextInt(5) == 0) {
+        randomVx = Random().nextDouble() * 6;
+        vX = randomVx < 3 ? randomVx : 3 - randomVx;
+        vY = 6;
+      }
     } else if (random < 4.4) {
       vY = 2.3;
       radius = (Random().nextInt(2) + 3).toDouble();
-      color = randomColor(Color(0xFF6F9BC2));
+      color = randomColor(Color(0xFF729DC6));
+
+      if (Random().nextInt(6) == 0) {
+        randomVx = Random().nextDouble() * 6;
+        vX = randomVx < 3 ? randomVx : 3 - randomVx;
+        vY = 6;
+      }
     } else if (random < 4.5) {
       vY = 2.4;
       radius = (Random().nextInt(5) + 5).toDouble();
-      Color defaultColor = Color(0xFF81ABD5);
+      Color defaultColor = Color(0xFF81AAD4);
       color = randomColor(defaultColor);
     } else {
       vY = 2.5;
       radius = (Random().nextInt(5) + 10).toDouble();
-      Color defaultColor = Color(0xFF81ABD5);
+      Color defaultColor = Color(0xFF81AAD4);
       color = randomColor(defaultColor);
     }
 
@@ -151,7 +163,7 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
     Color color;
     double num = Random().nextDouble();
     if (num <= 0.05) {
-      color = Color.fromARGB(defaultColor.alpha, 86, 177, 159);
+      color = Color.fromARGB(defaultColor.alpha, 89, 182, 161);
     } else {
       color = defaultColor;
     }
