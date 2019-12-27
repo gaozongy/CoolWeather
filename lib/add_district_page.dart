@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:coolweather/bean/focus_district_list_bean.dart';
+import 'package:coolweather/utils/log_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -235,12 +236,9 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
       isLoading = true;
     });
 
-    String parameter = '&keywords=' +
-        keyword +
-        '&type=190103|190104|190105|190106|190107|190108|190109';
     String url =
-        'https://restapi.amap.com/v3/assistant/inputtips?key=38366adde7d7ec1e94d652f9e90f78ce' +
-            parameter;
+        "https://restapi.amap.com/v3/config/district?key=38366adde7d7ec1e94d652f9e90f78ce&subdistrict=0&extensions=base&keywords=" +
+            keyword;
 
     HttpClient httpClient = new HttpClient();
     try {
@@ -249,20 +247,20 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
       if (response.statusCode == HttpStatus.ok) {
         String json = await response.transform(utf8.decoder).join();
         Map map = jsonDecode(json);
-        List list = map['tips'];
+        List list = map['districts'];
         List<District> cityList = [];
         list.forEach((district) {
-          var location = district['location'];
-          if (location is String) {
-            List<String> strList = location.split(',');
-            cityList.add(District(
-                district["id"],
-                district["adcode"],
-                district["name"],
-                double.parse(strList[1]),
-                double.parse(strList[0]),
-                addressDesc: district["district"]));
-          }
+          var location = district['center'];
+          List<String> strList = location.split(',');
+          var cityCode = district["citycode"];
+
+          cityList.add(District(
+              cityCode is String ? cityCode : "",
+              district["adcode"],
+              district["name"],
+              double.parse(strList[1]),
+              double.parse(strList[0]),
+              addressDesc: ""));
         });
 
         setState(() {
