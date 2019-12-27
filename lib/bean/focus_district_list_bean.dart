@@ -25,12 +25,17 @@ class District {
   double latitude;
   double longitude;
   bool isLocation;
+  String level;
 
   WeatherBean weatherBean;
   double scrollProgress;
 
   District(this.cityCode, this.adCode, this.name, this.latitude, this.longitude,
-      {this.addressDesc = "", this.isLocation = false,  this.weatherBean, this.scrollProgress = 0});
+      {this.addressDesc = "",
+      this.isLocation = false,
+      this.weatherBean,
+      this.scrollProgress = 0,
+      this.level});
 
   factory District.fromJson(Map<String, dynamic> json) =>
       _$DistrictFromJson(json);

@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:coolweather/bean/focus_district_list_bean.dart';
-import 'package:coolweather/utils/log_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -225,7 +225,13 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
       ),
       onTap: () {
         if (!hasAdded) {
-          saveFocusCity(district);
+          if(district.level != "country" && district.level != "province") {
+            saveFocusCity(district);
+          } else {
+            Fluttertoast.showToast(
+              msg: "当前选择的行政区域范围太大啦～",
+            );
+          }
         }
       },
     );
@@ -260,7 +266,8 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
               district["name"],
               double.parse(strList[1]),
               double.parse(strList[0]),
-              addressDesc: ""));
+              addressDesc: "",
+              level: district["level"]));
         });
 
         setState(() {
