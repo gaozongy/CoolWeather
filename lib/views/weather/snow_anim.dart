@@ -81,13 +81,15 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
 
     double randomVy = Random().nextDouble() * 1.6;
     vX = randomVy < 0.8 ? randomVy : 0.8 - randomVy;
-
+    // 0.9 1.8 2.6 3.4 4.2 4.4 4.5 4.6
+    // 0.9 0.9 0.8 0.8 0.8 0.2 0.1 0.1
+    // 0.8 0.8 0.8 0.8 1.0 0.2 0.1 0.1
     Color color;
-    if (random < 0.8) {
+    if (random < 0.9) {
       vY = 1.8;
       radius = 2;
       color = randomColor(Color(0xFF264562));
-    } else if (random < 1.6) {
+    } else if (random < 1.8) {
       vY = 1.9;
       radius = 2.5;
       color = randomColor(Color(0xFF305371));
@@ -97,7 +99,7 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
         vX = randomVy < 2 ? randomVy : 2 - randomVy;
         vY = 5;
       }
-    } else if (random < 2.4) {
+    } else if (random < 2.6) {
       vY = 2.0;
       radius = 3;
       color = randomColor(Color(0xFF375E7F));
@@ -107,7 +109,7 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
         vX = randomVy < 2 ? randomVy : 2 - randomVy;
         vY = 5;
       }
-    } else if (random < 3.2) {
+    } else if (random < 3.4) {
       vY = 2.1;
       radius = 3.5;
       color = randomColor(Color(0xFF5983AB));
@@ -123,12 +125,12 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
       color = randomColor(Color(0xFF608BB5));
     } else if (random < 4.4) {
       vY = 2.3;
-      radius = 4.5;
+      radius = (Random().nextInt(2) + 3).toDouble();
       color = randomColor(Color(0xFF6F9BC2));
     } else if (random < 4.5) {
       vY = 2.4;
       radius = (Random().nextInt(5) + 5).toDouble();
-      Color defaultColor = Color(0xE181ABD5);
+      Color defaultColor = Color(0xFF81ABD5);
       color = randomColor(defaultColor);
     } else {
       vY = 2.5;
@@ -138,15 +140,15 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
     }
 
     snowflakeList.add(Snowflake(
-      color: color,
-      x: _randPosition(),
-      y: 0,
-      radius: radius,
-      oldRadius: radius,
-      vX: vX,
-      vY: vY,
-      vRadius: Random().nextDouble() / 20,
-    ));
+        color: color,
+        x: _randPosition(),
+        y: 0,
+        radius: radius,
+        oldRadius: radius,
+        vX: vX,
+        vY: vY,
+        vRadius: Random().nextDouble() / 20,
+        rotate: Random().nextDouble()));
   }
 
   Color randomColor(Color defaultColor) {
@@ -238,7 +240,9 @@ class RainPainter extends CustomPainter {
       path.lineTo(snowflake.x - cos(radians) * snowflake.radius,
           snowflake.y - sin(radians) * snowflake.radius);
       path.close();
+      canvas.rotate(snowflake.rotate);
       canvas.drawPath(path, mPaint);
+      canvas.rotate(-snowflake.rotate);
     } else {
       canvas.drawCircle(
           Offset(snowflake.x, snowflake.y), snowflake.radius, mPaint);
@@ -261,6 +265,7 @@ class Snowflake {
   double vRadius;
   Color color;
   bool isHexagon;
+  double rotate;
 
   Snowflake(
       {this.x = 0,
@@ -270,7 +275,8 @@ class Snowflake {
       this.vX = 0,
       this.vY = 0,
       this.vRadius = 0,
-      this.color}) {
+      this.color,
+      this.rotate = 0}) {
     this.isHexagon = oldRadius >= 5;
   }
 }
