@@ -70,21 +70,19 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
   }
 
   void createRaindrop() {
-    if (snowflakeList.length > 100) {
+    if (snowflakeList.length > 120) {
       return;
     }
 
-    double vX = 0;
-    double vY = 0;
+    double vX;
+    double vY;
     double radius;
-    double random = Random().nextDouble() * 4.6;
-
-    double randomVy = Random().nextDouble() * 1.6;
-    vX = randomVy < 0.8 ? randomVy : 0.8 - randomVy;
-    // 0.9 1.8 2.6 3.4 4.2 4.4 4.5 4.6
-    // 0.9 0.9 0.8 0.8 0.8 0.2 0.1 0.1
-    // 0.8 0.8 0.8 0.8 1.0 0.2 0.1 0.1
     Color color;
+
+    double randomVx = Random().nextDouble() * 1.6;
+    vX = randomVx < 0.8 ? randomVx : 0.8 - randomVx;
+
+    double random = Random().nextDouble() * 4.6;
     if (random < 0.9) {
       vY = 1.8;
       radius = 2;
@@ -95,8 +93,8 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
       color = randomColor(Color(0xFF305371));
 
       if (Random().nextInt(3) == 0) {
-        randomVy = Random().nextDouble() * 4;
-        vX = randomVy < 2 ? randomVy : 2 - randomVy;
+        randomVx = Random().nextDouble() * 4;
+        vX = randomVx < 2 ? randomVx : 2 - randomVx;
         vY = 5;
       }
     } else if (random < 2.6) {
@@ -105,8 +103,8 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
       color = randomColor(Color(0xFF375E7F));
 
       if (Random().nextInt(3) == 0) {
-        randomVy = Random().nextDouble() * 4;
-        vX = randomVy < 2 ? randomVy : 2 - randomVy;
+        randomVx = Random().nextDouble() * 4;
+        vX = randomVx < 2 ? randomVx : 2 - randomVx;
         vY = 5;
       }
     } else if (random < 3.4) {
@@ -115,8 +113,8 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
       color = randomColor(Color(0xFF5983AB));
 
       if (Random().nextInt(4) == 0) {
-        randomVy = Random().nextDouble() * 4;
-        vX = randomVy < 2 ? randomVy : 2 - randomVy;
+        randomVx = Random().nextDouble() * 4;
+        vX = randomVx < 2 ? randomVx : 2 - randomVx;
         vY = 5;
       }
     } else if (random < 4.2) {
@@ -140,7 +138,6 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
     }
 
     snowflakeList.add(Snowflake(
-        color: color,
         x: _randPosition(),
         y: 0,
         radius: radius,
@@ -148,7 +145,8 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
         vX: vX,
         vY: vY,
         vRadius: Random().nextDouble() / 20,
-        rotate: Random().nextDouble()));
+        color: color,
+        rotateRadians: Random().nextDouble()));
   }
 
   Color randomColor(Color defaultColor) {
@@ -229,24 +227,61 @@ class RainPainter extends CustomPainter {
     if (snowflake.isHexagon) {
       num radians = pi / 6;
       Path path = Path();
-      path.moveTo(snowflake.x, snowflake.y - snowflake.radius);
-      path.lineTo(snowflake.x + cos(radians) * snowflake.radius,
-          snowflake.y - sin(radians) * snowflake.radius);
-      path.lineTo(snowflake.x + cos(radians) * snowflake.radius,
-          snowflake.y + sin(radians) * snowflake.radius);
-      path.lineTo(snowflake.x, snowflake.y + snowflake.radius);
-      path.lineTo(snowflake.x - cos(radians) * snowflake.radius,
-          snowflake.y + sin(radians) * snowflake.radius);
-      path.lineTo(snowflake.x - cos(radians) * snowflake.radius,
-          snowflake.y - sin(radians) * snowflake.radius);
+
+      List<double> point0 = rotatePoint(snowflake.x, snowflake.y, snowflake.x,
+          snowflake.y - snowflake.radius, snowflake.rotateRadians);
+      path.moveTo(point0.elementAt(0), point0.elementAt(1));
+
+      List<double> point1 = rotatePoint(
+          snowflake.x,
+          snowflake.y,
+          snowflake.x + cos(radians) * snowflake.radius,
+          snowflake.y - sin(radians) * snowflake.radius,
+          snowflake.rotateRadians);
+      path.lineTo(point1.elementAt(0), point1.elementAt(1));
+
+      List<double> point2 = rotatePoint(
+          snowflake.x,
+          snowflake.y,
+          snowflake.x + cos(radians) * snowflake.radius,
+          snowflake.y + sin(radians) * snowflake.radius,
+          snowflake.rotateRadians);
+      path.lineTo(point2.elementAt(0), point2.elementAt(1));
+
+      List<double> point3 = rotatePoint(snowflake.x, snowflake.y, snowflake.x,
+          snowflake.y + snowflake.radius, snowflake.rotateRadians);
+      path.lineTo(point3.elementAt(0), point3.elementAt(1));
+
+      List<double> point4 = rotatePoint(
+          snowflake.x,
+          snowflake.y,
+          snowflake.x - cos(radians) * snowflake.radius,
+          snowflake.y + sin(radians) * snowflake.radius,
+          snowflake.rotateRadians);
+      path.lineTo(point4.elementAt(0), point4.elementAt(1));
+
+      List<double> point5 = rotatePoint(
+          snowflake.x,
+          snowflake.y,
+          snowflake.x - cos(radians) * snowflake.radius,
+          snowflake.y - sin(radians) * snowflake.radius,
+          snowflake.rotateRadians);
+      path.lineTo(point5.elementAt(0), point5.elementAt(1));
+
       path.close();
-      canvas.rotate(snowflake.rotate);
       canvas.drawPath(path, mPaint);
-      canvas.rotate(-snowflake.rotate);
     } else {
       canvas.drawCircle(
           Offset(snowflake.x, snowflake.y), snowflake.radius, mPaint);
     }
+  }
+
+  /// 计算任意点(x1,y1)，绕点(x0,y0)逆时针旋转radians弧度后的新坐标(x2,y2)
+  List<double> rotatePoint(
+      double x0, double y0, double x1, double y1, double radians) {
+    double x2 = (x1 - x0) * cos(radians) - (y1 - y0) * sin(radians) + x0;
+    double y2 = (x1 - x0) * sin(radians) + (y1 - y0) * cos(radians) + y0;
+    return [x2, y2];
   }
 
   @override
@@ -265,7 +300,7 @@ class Snowflake {
   double vRadius;
   Color color;
   bool isHexagon;
-  double rotate;
+  double rotateRadians;
 
   Snowflake(
       {this.x = 0,
@@ -276,7 +311,7 @@ class Snowflake {
       this.vY = 0,
       this.vRadius = 0,
       this.color,
-      this.rotate = 0}) {
+      this.rotateRadians = 0}) {
     this.isHexagon = oldRadius >= 5;
   }
 }
