@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'base_weather_state.dart';
 
 class SnowNightAnim extends StatefulWidget {
-
   SnowNightAnim({Key key}) : super(key: key);
 
   @override
   SnowNightAnimState createState() => SnowNightAnimState();
 }
 
-class SnowNightAnimState extends BaseAnimState<SnowNightAnim> {
+class SnowNightAnimState extends BaseAnimState<SnowNightAnim>
+    with WidgetsBindingObserver {
   AnimationController controller;
 
   double screenWidth;
@@ -24,6 +24,8 @@ class SnowNightAnimState extends BaseAnimState<SnowNightAnim> {
   List<Snowflake> snowflakeList = [];
 
   Timer timer;
+
+  bool resumed = true;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class SnowNightAnimState extends BaseAnimState<SnowNightAnim> {
           painter: SnowNightPainter(snowflakeList, maskAlpha),
         ),
         decoration: BoxDecoration(
-          color:  Color(0xFF132F45),
+          color: Color(0xFF132F45),
         ));
   }
 
@@ -44,14 +46,33 @@ class SnowNightAnimState extends BaseAnimState<SnowNightAnim> {
   void initState() {
     super.initState();
 
+    WidgetsBinding.instance.addObserver(this);
     createRaindropTimer();
     initController();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        resumed = true;
+        break;
+      case AppLifecycleState.inactive:
+        resumed = false;
+        break;
+      case AppLifecycleState.paused:
+        resumed = false;
+        break;
+      case AppLifecycleState.suspending:
+        resumed = false;
+        break;
+    }
   }
 
   void createRaindropTimer() {
     Duration duration = Duration(milliseconds: 100);
     timer = Timer.periodic(duration, (timer) {
-      if (Random().nextDouble() >= 0.5) {
+      if (Random().nextDouble() >= 0.5 && resumed) {
         createRaindrop();
       }
     });
@@ -74,6 +95,7 @@ class SnowNightAnimState extends BaseAnimState<SnowNightAnim> {
 
   void createRaindrop() {
     if (snowflakeList.length > 150) {
+      timer.cancel();
       return;
     }
 
@@ -196,6 +218,7 @@ class SnowNightAnimState extends BaseAnimState<SnowNightAnim> {
     super.dispose();
     controller.dispose();
     timer.cancel();
+    WidgetsBinding.instance.removeObserver(this);
   }
 }
 

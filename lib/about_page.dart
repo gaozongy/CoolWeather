@@ -76,11 +76,11 @@ class AboutPageState extends State<AboutPage> {
                       Padding(
                         padding: EdgeInsets.only(top: 5),
                         child: Text(
-                          '1.新增8种天气动画背景，缺少的天气动画背景会在后续版本中逐步添加\n'
-                          '2.完善“添加关注城市”页数据刷新逻辑\n'
-                          '3.完善主界面菜单栏弹出动画\n'
-                          '4.修复主界面状态栏从其他界面回来时字体会变成黑色的问题\n'
-                          '5.修复了一些已知的小bug\n',
+                          '1.新增降雪天气动画背景，剩余的天气动画作者会抓紧完成\n'
+                          '2.新增大圆角桌面小部件，适配三星One UI\n'
+                          '3.解决“添加关注城市”页搜索不到某些城市的问题\n'
+                          '4.解决某些时候点击桌面小部件无法打开APP的问题\n'
+                          '5.修复了其他一些已知的小bug\n',
                           softWrap: true,
                           style: TextStyle(fontSize: 13),
                         ),

@@ -13,7 +13,8 @@ class SnowAnim extends StatefulWidget {
   SnowAnimState createState() => SnowAnimState();
 }
 
-class SnowAnimState extends BaseAnimState<SnowAnim> {
+class SnowAnimState extends BaseAnimState<SnowAnim>
+    with WidgetsBindingObserver {
   AnimationController controller;
 
   double screenWidth;
@@ -23,6 +24,8 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
   List<Snowflake> snowflakeList = [];
 
   Timer timer;
+
+  bool resumed = true;
 
   @override
   Widget build(BuildContext context) {
@@ -43,14 +46,33 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
   void initState() {
     super.initState();
 
+    WidgetsBinding.instance.addObserver(this);
     createRaindropTimer();
     initController();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        resumed = true;
+        break;
+      case AppLifecycleState.inactive:
+        resumed = false;
+        break;
+      case AppLifecycleState.paused:
+        resumed = false;
+        break;
+      case AppLifecycleState.suspending:
+        resumed = false;
+        break;
+    }
   }
 
   void createRaindropTimer() {
     Duration duration = Duration(milliseconds: 100);
     timer = Timer.periodic(duration, (timer) {
-      if (Random().nextDouble() >= 0.5) {
+      if (Random().nextDouble() >= 0.5 && resumed) {
         createRaindrop();
       }
     });
@@ -73,6 +95,7 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
 
   void createRaindrop() {
     if (snowflakeList.length > 150) {
+      timer.cancel();
       return;
     }
 
@@ -195,6 +218,7 @@ class SnowAnimState extends BaseAnimState<SnowAnim> {
     super.dispose();
     controller.dispose();
     timer.cancel();
+    WidgetsBinding.instance.removeObserver(this);
   }
 }
 
