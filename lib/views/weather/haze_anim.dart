@@ -22,7 +22,7 @@ class HazeAnimState extends BaseAnimState<HazeAnim> {
 
   double screenHeight;
 
-  List<Snowflake> snowflakeList = [];
+  List<Dust> dustList = [];
 
   Timer timer;
 
@@ -34,12 +34,10 @@ class HazeAnimState extends BaseAnimState<HazeAnim> {
     return Container(
       child: CustomPaint(
         size: Size(double.infinity, double.infinity),
-        painter: RainPainter(snowflakeList, maskAlpha, widget.isDay),
+        painter: RainPainter(dustList, maskAlpha, widget.isDay),
       ),
       decoration: BoxDecoration(
-          color: widget.isDay
-              ? Color.fromARGB(255, 16, 109, 153)
-              : Color.fromARGB(255, 19, 47, 69)),
+          color: widget.isDay ? Color(0xFF475D6A) : Color(0xFF272B2D)),
     );
   }
 
@@ -54,9 +52,7 @@ class HazeAnimState extends BaseAnimState<HazeAnim> {
   void createRaindropTimer() {
     Duration duration = Duration(milliseconds: 100);
     timer = Timer.periodic(duration, (timer) {
-      if (Random().nextDouble() >= 0.5) {
-        createRaindrop();
-      }
+      createRaindrop();
     });
   }
 
@@ -65,9 +61,9 @@ class HazeAnimState extends BaseAnimState<HazeAnim> {
       vsync: this,
       duration: Duration(days: 1),
     )..addListener(() {
-        snowflakeList.forEach((snowflake) {
+        dustList.forEach((dust) {
           setState(() {
-            updateBall(snowflake);
+            updateBall(dust);
           });
         });
       });
@@ -76,7 +72,8 @@ class HazeAnimState extends BaseAnimState<HazeAnim> {
   }
 
   void createRaindrop() {
-    if (snowflakeList.length > 120) {
+    if (dustList.length > 600) {
+      timer.cancel();
       return;
     }
 
@@ -85,101 +82,73 @@ class HazeAnimState extends BaseAnimState<HazeAnim> {
     double radius;
     Color color;
 
-    double randomVx = Random().nextDouble() * 1.6;
-    vX = randomVx < 0.8 ? randomVx : 0.8 - randomVx;
+    double randomVx = Random().nextDouble() * 1;
+    vX = randomVx < 0.5 ? randomVx : 0.5 - randomVx;
 
     double random = Random().nextDouble() * 4.6;
     if (random < 0.9) {
-      vY = 1.8;
-      radius = 2;
-      color = randomColor(Color(0xFF264562));
+      vY = -0.6;
+      radius = 0.6;
+      color = widget.isDay ? Color(0x77F2BD5F) : Color(0x778B6C35);
     } else if (random < 1.8) {
-      vY = 1.9;
-      radius = 2.5;
-      color = randomColor(Color(0xFF305371));
-
-      if (Random().nextInt(3) == 0) {
-        randomVx = Random().nextDouble() * 4;
-        vX = randomVx < 2 ? randomVx : 2 - randomVx;
-        vY = 5;
-      }
+      vY = -0.61;
+      radius = 0.7;
+      color = widget.isDay ? Color(0x88F2BD5F) : Color(0x888B6C35);
     } else if (random < 2.6) {
-      vY = 2.0;
-      radius = 3;
-      color = randomColor(Color(0xFF375E7F));
-
-      if (Random().nextInt(3) == 0) {
-        randomVx = Random().nextDouble() * 4;
-        vX = randomVx < 2 ? randomVx : 2 - randomVx;
-        vY = 5;
-      }
+      vY = -0.62;
+      radius = 0.8;
+      color = widget.isDay ? Color(0x99F2BD5F) : Color(0x998B6C35);
     } else if (random < 3.4) {
-      vY = 2.1;
-      radius = 3.5;
-      color = randomColor(Color(0xFF5983AB));
-
-      if (Random().nextInt(4) == 0) {
-        randomVx = Random().nextDouble() * 4;
-        vX = randomVx < 2 ? randomVx : 2 - randomVx;
-        vY = 5;
-      }
+      vY = -0.63;
+      radius = 0.9;
+      color = widget.isDay ? Color(0xAAF2BD5F) : Color(0xAA8B6C35);
     } else if (random < 4.2) {
-      vY = 2.2;
-      radius = 4;
-      color = randomColor(Color(0xFF608BB5));
+      vY = -0.64;
+      radius = 1.0;
+      color = widget.isDay ? Color(0xBBF2BD5F) : Color(0xBB8B6C35);
     } else if (random < 4.4) {
-      vY = 2.3;
-      radius = (Random().nextInt(2) + 3).toDouble();
-      color = randomColor(Color(0xFF6F9BC2));
+      vY = -0.65;
+      radius = 1.1;
+      color = widget.isDay ? Color(0xCCF2BD5F) : Color(0xCC8B6C35);
     } else if (random < 4.5) {
-      vY = 2.4;
-      radius = (Random().nextInt(5) + 5).toDouble();
-      Color defaultColor = Color(0xFF81ABD5);
-      color = randomColor(defaultColor);
+      vY = -0.66;
+      radius = 1.2;
+      color = widget.isDay ? Color(0xDDF2BD5F) : Color(0xDD8B6C35);
     } else {
-      vY = 2.5;
-      radius = (Random().nextInt(5) + 10).toDouble();
-      Color defaultColor = Color(0xFF81ABD5);
-      color = randomColor(defaultColor);
+      vY = -0.67;
+      radius = 1.3;
+      color = widget.isDay ? Color(0xEEF2BD5F) : Color(0xEE8B6C35);
     }
 
-    snowflakeList.add(Snowflake(_randPosition(), 0, radius, vX, vY,
-        Random().nextDouble() / 20, color, Random().nextDouble()));
+    if (Random().nextInt(4) == 0) {
+      randomVx = Random().nextDouble() * 2;
+      vX = randomVx < 1 ? randomVx : 1 - randomVx;
+      vY = -1.5;
+    }
+
+    dustList.add(Dust(
+      _randomDouble(screenWidth),
+      _randomDouble(screenHeight),
+      radius,
+      vX,
+      vY,
+      color,
+    ));
   }
 
-  Color randomColor(Color defaultColor) {
-    Color color;
-    double num = Random().nextDouble();
-    if (num <= 0.05) {
-      color = Color.fromARGB(defaultColor.alpha, 86, 177, 159);
-    } else {
-      color = defaultColor;
-    }
-    return color;
-  }
+  void updateBall(Dust dust) {
+    dust.x += dust.vX;
+    dust.y += dust.vY;
 
-  void updateBall(Snowflake snowflake) {
-    snowflake.x += snowflake.vX;
-    snowflake.y += snowflake.vY;
-
-    if (snowflake.isHexagon && snowflake.y > 200) {
-      snowflake.radius -= snowflake.vRadius;
-    }
-
-    // 限定下边界
-    if (snowflake.y > screenHeight) {
-      snowflake.x = _randPosition();
-      snowflake.y = 0;
-      snowflake.radius = snowflake.oldRadius;
-    }
-
-    if (snowflake.vY == 2.3 && snowflake.y > 200) {
-      snowflake.radius -= snowflake.vRadius;
+    // 限定上边界
+    if (dust.y < 0) {
+      dust.x = _randomDouble(screenWidth);
+      dust.y = screenHeight;
     }
   }
 
-  double _randPosition() {
-    return Random().nextDouble() * screenWidth.toInt();
+  double _randomDouble(double range) {
+    return Random().nextDouble() * range;
   }
 
   @override
@@ -191,7 +160,7 @@ class HazeAnimState extends BaseAnimState<HazeAnim> {
 }
 
 class RainPainter extends CustomPainter {
-  List<Snowflake> snowflakeList;
+  List<Dust> dustList;
 
   double maskAlpha;
 
@@ -199,76 +168,19 @@ class RainPainter extends CustomPainter {
 
   Paint mPaint = new Paint()..style = PaintingStyle.fill;
 
-  RainPainter(this.snowflakeList, this.maskAlpha, this.isDay);
+  RainPainter(this.dustList, this.maskAlpha, this.isDay);
 
   @override
   void paint(Canvas canvas, Size size) {
-    snowflakeList.forEach((snowflake) {
+    dustList.forEach((snowflake) {
       mPaint.color = Color.fromARGB((snowflake.color.alpha * maskAlpha).toInt(),
           snowflake.color.red, snowflake.color.green, snowflake.color.blue);
-      _drawSnowflake(canvas, snowflake);
+      _drawDust(canvas, snowflake);
     });
   }
 
-  _drawSnowflake(Canvas canvas, Snowflake snowflake) {
-    if (snowflake.isHexagon) {
-      num radians = pi / 6;
-      Path path = Path();
-
-      List<double> point0 = rotatePoint(snowflake.x, snowflake.y, snowflake.x,
-          snowflake.y - snowflake.radius, snowflake.rotateRadians);
-      path.moveTo(point0.elementAt(0), point0.elementAt(1));
-
-      List<double> point1 = rotatePoint(
-          snowflake.x,
-          snowflake.y,
-          snowflake.x + cos(radians) * snowflake.radius,
-          snowflake.y - sin(radians) * snowflake.radius,
-          snowflake.rotateRadians);
-      path.lineTo(point1.elementAt(0), point1.elementAt(1));
-
-      List<double> point2 = rotatePoint(
-          snowflake.x,
-          snowflake.y,
-          snowflake.x + cos(radians) * snowflake.radius,
-          snowflake.y + sin(radians) * snowflake.radius,
-          snowflake.rotateRadians);
-      path.lineTo(point2.elementAt(0), point2.elementAt(1));
-
-      List<double> point3 = rotatePoint(snowflake.x, snowflake.y, snowflake.x,
-          snowflake.y + snowflake.radius, snowflake.rotateRadians);
-      path.lineTo(point3.elementAt(0), point3.elementAt(1));
-
-      List<double> point4 = rotatePoint(
-          snowflake.x,
-          snowflake.y,
-          snowflake.x - cos(radians) * snowflake.radius,
-          snowflake.y + sin(radians) * snowflake.radius,
-          snowflake.rotateRadians);
-      path.lineTo(point4.elementAt(0), point4.elementAt(1));
-
-      List<double> point5 = rotatePoint(
-          snowflake.x,
-          snowflake.y,
-          snowflake.x - cos(radians) * snowflake.radius,
-          snowflake.y - sin(radians) * snowflake.radius,
-          snowflake.rotateRadians);
-      path.lineTo(point5.elementAt(0), point5.elementAt(1));
-
-      path.close();
-      canvas.drawPath(path, mPaint);
-    } else {
-      canvas.drawCircle(
-          Offset(snowflake.x, snowflake.y), snowflake.radius, mPaint);
-    }
-  }
-
-  /// 计算任意点(x1,y1)，绕点(x0,y0)逆时针旋转radians弧度后的新坐标(x2,y2)
-  List<double> rotatePoint(
-      double x0, double y0, double x1, double y1, double radians) {
-    double x2 = (x1 - x0) * cos(radians) - (y1 - y0) * sin(radians) + x0;
-    double y2 = (x1 - x0) * sin(radians) + (y1 - y0) * cos(radians) + y0;
-    return [x2, y2];
+  _drawDust(Canvas canvas, Dust dust) {
+    canvas.drawCircle(Offset(dust.x, dust.y), dust.radius, mPaint);
   }
 
   @override
@@ -277,21 +189,13 @@ class RainPainter extends CustomPainter {
   }
 }
 
-class Snowflake {
+class Dust {
   double x;
   double y;
   double radius;
-  double oldRadius;
   double vX;
   double vY;
-  double vRadius;
   Color color;
-  bool isHexagon;
-  double rotateRadians;
 
-  Snowflake(this.x, this.y, this.radius, this.vX, this.vY, this.vRadius,
-      this.color, this.rotateRadians) {
-    this.oldRadius = radius;
-    this.isHexagon = oldRadius >= 5;
-  }
+  Dust(this.x, this.y, this.radius, this.vX, this.vY, this.color);
 }

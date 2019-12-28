@@ -11,6 +11,7 @@ import 'package:coolweather/views/weather/base_weather_state.dart';
 import 'package:coolweather/views/weather/cloudy_anim.dart';
 import 'package:coolweather/views/weather/cloudy_night_anim.dart';
 import 'package:coolweather/views/weather/empty_bg.dart';
+import 'package:coolweather/views/weather/haze_anim.dart';
 import 'package:coolweather/views/weather/overcast_anim.dart';
 import 'package:coolweather/views/weather/overcast_night_anim.dart';
 import 'package:coolweather/views/weather/rain_anim.dart';
@@ -361,6 +362,11 @@ class MainPageState extends State<MainPage> {
                 ? SnowAnim(key: _globalKey)
                 : SnowNightAnim(key: _globalKey);
           }
+          break;
+        case 'HAZE':
+          animWidget = HazeAnim(
+              weatherBean != null ? DateUtils.isDay(weatherBean) : true,
+              key: _globalKey);
           break;
         default:
           animWidget = EmptyBg();
