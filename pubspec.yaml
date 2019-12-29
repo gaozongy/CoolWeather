@@ -36,7 +36,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - images/bg_main.png
     - images/ic_location.png
     - images/ic_building.png
     - images/ic_launcher.png

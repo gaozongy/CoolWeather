@@ -255,23 +255,25 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
       DateTime dateTime = DateTime.parse(skycon.date);
       ImageIcon weatherIcon = _getWeatherIcon(skycon.value);
 
-      forecastRow.add(Column(
-        children: <Widget>[
-          _textLayout(DateUtils.getWhichDay(dateTime.weekday - 1)),
-          _textLayout('${dateTime.month}' + '月' + '${dateTime.day}' + '日'),
-          Padding(
-            padding: EdgeInsets.only(top: 8, bottom: 2),
-            //child: Icon(imageIcon, color: Colors.white),
-            child: weatherIcon,
-          ),
-          _textLayout(Translation.getWeatherDesc(skycon.value, intensity)),
-        ],
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      forecastRow.add(SizedBox(
+        width: screenWidth / 6,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            _textLayout(DateUtils.getWhichDay(dateTime.weekday - 1)),
+            _textLayout('${dateTime.month}' + '月' + '${dateTime.day}' + '日'),
+            Padding(
+              padding: EdgeInsets.only(top: 8, bottom: 2),
+              child: weatherIcon,
+            ),
+            _textLayout(Translation.getWeatherDesc(skycon.value, intensity)),
+          ],
+        ),
       ));
     }
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(12, 30, 12, 15),
+      padding: EdgeInsets.only(top: 30, bottom: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: forecastRow,

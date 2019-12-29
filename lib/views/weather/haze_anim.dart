@@ -50,7 +50,7 @@ class HazeAnimState extends BaseAnimState<HazeAnim> {
   }
 
   void createRaindropTimer() {
-    Duration duration = Duration(milliseconds: 50);
+    Duration duration = Duration(milliseconds: 10);
     timer = Timer.periodic(duration, (timer) {
       createRaindrop();
     });

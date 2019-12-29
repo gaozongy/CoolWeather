@@ -68,7 +68,7 @@ class MoreDayForecast extends StatelessWidget {
       forecastRow.add(SizedBox(
         width: screenWidth / 6,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             _textLayout(
                 DateUtils.getWhichDay(dateTime.weekday - 1, todayWeek: false)),
