@@ -63,7 +63,7 @@ class SnowNightAnimState extends BaseAnimState<SnowNightAnim>
       case AppLifecycleState.paused:
         resumed = false;
         break;
-      case AppLifecycleState.suspending:
+      case AppLifecycleState.detached:
         resumed = false;
         break;
     }

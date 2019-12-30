@@ -63,7 +63,7 @@ class SnowAnimState extends BaseAnimState<SnowAnim>
       case AppLifecycleState.paused:
         resumed = false;
         break;
-      case AppLifecycleState.suspending:
+      case AppLifecycleState.detached:
         resumed = false;
         break;
     }

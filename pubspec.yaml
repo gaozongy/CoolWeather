@@ -22,8 +22,7 @@ dependencies:
   package_info: ^0.4.0+6
   esys_flutter_share: ^1.0.2
   path_provider: ^1.4.0
-  flare_flutter: ^1.5.8
-  nima: ^1.0.0
+  flare_flutter: ^1.8.3
 
 dev_dependencies:
   flutter_test:
@@ -88,5 +87,4 @@ flutter:
     - images/bg_share/bg_downpour_share.png
     - images/bg_share/bg_snow_share.png
     - images/bg_share/bg_snow_night_share.png
-    - assets/Robot.nima
-    - assets/Robot.png
+    - assets/ic_launcher_anim.flr

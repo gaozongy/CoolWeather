@@ -1,3 +1,4 @@
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
@@ -46,14 +47,18 @@ class AboutPageState extends State<AboutPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  Image.asset(
-                    "images/ic_launcher.png",
-                    width: 100,
+                  SizedBox(
+                    width: 120,
+                    height: 120,
+                    child: FlareActor("assets/ic_launcher_anim.flr",
+                        alignment: Alignment.center,
+                        fit: BoxFit.contain,
+                        animation: "weather_change"),
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 20),
                     child: Text(
-                      appName + ' V' + version,
+                      "Cool" + appName + ' V' + version,
                       style: TextStyle(fontSize: 14),
                     ),
                   ),
