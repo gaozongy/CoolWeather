@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:amap_location/amap_location.dart';
 import 'package:coolweather/bean/weather_bean.dart';
+import 'package:coolweather/data/global.dart';
 import 'package:coolweather/utils/image_utils.dart';
 import 'package:coolweather/utils/translation_utils.dart';
 import 'package:coolweather/views/weather/base_weather_state.dart';
@@ -19,6 +21,7 @@ import 'package:coolweather/views/weather/snow_anim.dart';
 import 'package:coolweather/views/weather/snow_night_anim.dart';
 import 'package:coolweather/views/weather/sunny_anim.dart';
 import 'package:coolweather/views/weather/sunny_night_anim.dart';
+import 'package:device_info/device_info.dart';
 import 'package:esys_flutter_share/esys_flutter_share.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -71,6 +74,7 @@ class MainPageState extends State<MainPage> {
 
     _initPageController();
     _initData();
+    _getDeviceTypeAndId();
   }
 
   _initPageController() {
@@ -126,6 +130,19 @@ class MainPageState extends State<MainPage> {
           FocusDistrictListBean(districtList);
       prefs.setString(
           Constant.spFocusDistrictData, json.encode(focusDistrictListBean));
+    }
+  }
+
+  _getDeviceTypeAndId() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      Global.deviceType = Constant.androidDevice;
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      Global.deviceId = androidInfo.androidId;
+    } else if (Platform.isIOS) {
+      Global.deviceType = Constant.iOSDevice;
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      Global.deviceId = iosInfo.identifierForVendor;
     }
   }
 

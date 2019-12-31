@@ -23,7 +23,8 @@ dependencies:
   esys_flutter_share: ^1.0.2
   path_provider: ^1.4.0
   flare_flutter: ^1.8.3
-
+  device_info: ^0.4.1+4
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
