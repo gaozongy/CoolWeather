@@ -27,6 +27,7 @@ import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bean/focus_district_list_bean.dart';
+import 'data/constant.dart';
 import 'utils/date_utils.dart';
 import 'utils/screen_utils.dart';
 import 'weather_detail_page.dart';
@@ -91,8 +92,9 @@ class MainPageState extends State<MainPage> {
   _initData() async {
     districtList.clear();
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey('focus_district_data')) {
-      String focusDistrictListJson = prefs.getString('focus_district_data');
+    if (prefs.containsKey(Constant.spFocusDistrictData)) {
+      String focusDistrictListJson =
+          prefs.getString(Constant.spFocusDistrictData);
       if (focusDistrictListJson != null) {
         FocusDistrictListBean focusDistrictListBean =
             FocusDistrictListBean.fromJson(json.decode(focusDistrictListJson));
@@ -123,7 +125,7 @@ class MainPageState extends State<MainPage> {
       FocusDistrictListBean focusDistrictListBean =
           FocusDistrictListBean(districtList);
       prefs.setString(
-          'focus_district_data', json.encode(focusDistrictListBean));
+          Constant.spFocusDistrictData, json.encode(focusDistrictListBean));
     }
   }
 
@@ -159,7 +161,7 @@ class MainPageState extends State<MainPage> {
 
     Future<SharedPreferences> future = SharedPreferences.getInstance();
     future.then((prefs) {
-      prefs.setString('focus_district_data',
+      prefs.setString(Constant.spFocusDistrictData,
           json.encode(FocusDistrictListBean(districtList)));
     });
   }

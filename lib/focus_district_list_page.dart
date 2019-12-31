@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'bean/focus_district_list_bean.dart';
 import 'bean/weather_bean.dart';
+import 'data/constant.dart';
 import 'data/global.dart';
 import 'utils/translation_utils.dart';
 
@@ -45,7 +46,8 @@ class FocusDistrictListPageState extends State<FocusDistrictListPage> {
     List<DistrictWeather> resultList = List();
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String focusDistrictListJson = prefs.getString('focus_district_data');
+    String focusDistrictListJson =
+        prefs.getString(Constant.spFocusDistrictData);
     if (focusDistrictListJson != null) {
       FocusDistrictListBean bean =
           FocusDistrictListBean.fromJson(json.decode(focusDistrictListJson));
@@ -87,10 +89,9 @@ class FocusDistrictListPageState extends State<FocusDistrictListPage> {
       prefs.remove(district.name);
       temp.removeAt(pos);
     });
-    FocusDistrictListBean focusDistrictListBean =
-        FocusDistrictListBean(temp);
+    FocusDistrictListBean focusDistrictListBean = FocusDistrictListBean(temp);
     String focusCountyJson = jsonEncode(focusDistrictListBean.toJson());
-    prefs.setString('focus_district_data', focusCountyJson);
+    prefs.setString(Constant.spFocusDistrictData, focusCountyJson);
     closeEditMode();
     _initData();
     hasChanged = true;

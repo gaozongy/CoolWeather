@@ -1,3 +1,4 @@
+import 'package:coolweather/data/constant.dart';
 import 'package:coolweather/data/unit_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -22,7 +23,7 @@ class SettingPageState extends State<SettingPage> {
 
   void _initData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool isNotify = prefs.getBool('notify_open');
+    bool isNotify = prefs.getBool(Constant.spNotifyOpen);
     setState(() {
       isNotifyOpen = isNotify != null ? isNotify : false;
     });
@@ -133,7 +134,7 @@ class SettingPageState extends State<SettingPage> {
             activeColor: Colors.blue,
             value: isNotifyOpen,
             onChanged: (value) {
-              updateSpData('notify_open', value);
+              updateSpData(Constant.spNotifyOpen, value);
             },
           ),
         ],
@@ -141,7 +142,7 @@ class SettingPageState extends State<SettingPage> {
       onTap: () {
         setState(() {
           isNotifyOpen = !isNotifyOpen;
-          updateSpData('notify_open', isNotifyOpen);
+          updateSpData(Constant.spNotifyOpen, isNotifyOpen);
         });
       },
     );

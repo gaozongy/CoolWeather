@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:coolweather/bean/focus_district_list_bean.dart';
+import 'package:coolweather/data/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:quiver/strings.dart';
@@ -63,7 +64,7 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
   initFocusedCityData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     FocusDistrictListBean focusDistrictListBean;
-    String focusCountyJson = prefs.getString('focus_district_data');
+    String focusCountyJson = prefs.getString(Constant.spFocusDistrictData);
     if (!isEmpty(focusCountyJson)) {
       focusDistrictListBean =
           FocusDistrictListBean.fromJson(json.decode(focusCountyJson));
@@ -225,7 +226,7 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
       ),
       onTap: () {
         if (!hasAdded) {
-          if(district.level != "country" && district.level != "province") {
+          if (district.level != "country" && district.level != "province") {
             saveFocusCity(district);
           } else {
             Fluttertoast.showToast(
@@ -282,7 +283,7 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
   void saveFocusCity(District city) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     FocusDistrictListBean focusDistrictListBean;
-    String focusCountyJson = prefs.getString('focus_district_data');
+    String focusCountyJson = prefs.getString(Constant.spFocusDistrictData);
     if (!isEmpty(focusCountyJson)) {
       focusDistrictListBean =
           FocusDistrictListBean.fromJson(json.decode(focusCountyJson));
@@ -293,7 +294,7 @@ class _AddDistrictPageStateState extends State<AddDistrictPageState> {
     }
     focusDistrictListBean.districtList.add(city);
     focusCountyJson = jsonEncode(focusDistrictListBean.toJson());
-    prefs.setString('focus_district_data', focusCountyJson);
+    prefs.setString(Constant.spFocusDistrictData, focusCountyJson);
     Navigator.pop(context, true);
   }
 
