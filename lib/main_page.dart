@@ -85,7 +85,7 @@ class MainPageState extends State<MainPage> {
           currentPage = page;
           district = districtList.elementAt(page);
           if (district.weatherBean != null) {
-            updateWeatherState(weatherBean);
+            updateWeatherState(district.weatherBean);
           }
         });
       }
@@ -351,7 +351,9 @@ class MainPageState extends State<MainPage> {
   void changeAnimAlpha(double scrollProgress) {
     double progress = 1.0 - scrollProgress / 0.5;
     double alpha = progress >= 0 ? progress : 0;
-    _globalKey.currentState.setMaskAlpha(alpha);
+    if (_globalKey.currentState != null) {
+      _globalKey.currentState.setMaskAlpha(alpha);
+    }
   }
 
   /// 根据天气类型获取天气动画
@@ -467,46 +469,56 @@ class MainPageState extends State<MainPage> {
   }
 
   Widget _titleMenuIconLayout() {
+    List<Widget> menuList = List();
+//    if(weatherBean.result.realtime.) {
+    menuList.add(IconButton(
+      icon: Image(
+        image: AssetImage("images/ic_warning.png"),
+        width: 20,
+        height: 20,
+      ),
+      onPressed: _focusDistrictList,
+    ));
+//    }
+    menuList.add(IconButton(
+      icon: Image(
+        image: AssetImage("images/ic_building.png"),
+        width: 20,
+        height: 20,
+      ),
+      onPressed: _focusDistrictList,
+    ));
+    menuList.add(PopupMenuButton(
+      icon: Icon(
+        Icons.more_vert,
+        color: Colors.white,
+      ),
+      onSelected: (position) {
+        if (position == 0) {
+          _share();
+        } else if (position == 1) {
+          Navigator.of(context).pushNamed("setting");
+        }
+      },
+      itemBuilder: (BuildContext context) {
+        return <PopupMenuItem>[
+          PopupMenuItem(
+            value: 0,
+            child: Text("分享"),
+          ),
+          PopupMenuItem(
+            value: 1,
+            child: Text("设置"),
+          )
+        ];
+      },
+    ));
     return Padding(
       padding: EdgeInsets.only(right: 5),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          IconButton(
-            icon: Image(
-              image: AssetImage("images/ic_building.png"),
-              width: 20,
-              height: 20,
-            ),
-            onPressed: _focusDistrictList,
-          ),
-          PopupMenuButton(
-            icon: Icon(
-              Icons.more_vert,
-              color: Colors.white,
-            ),
-            onSelected: (position) {
-              if (position == 0) {
-                _share();
-              } else if (position == 1) {
-                Navigator.of(context).pushNamed("setting");
-              }
-            },
-            itemBuilder: (BuildContext context) {
-              return <PopupMenuItem>[
-                PopupMenuItem(
-                  value: 0,
-                  child: Text("分享"),
-                ),
-                PopupMenuItem(
-                  value: 1,
-                  child: Text("设置"),
-                )
-              ];
-            },
-          ),
-        ],
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: menuList,
       ),
     );
   }

@@ -42,6 +42,7 @@ flutter:
   assets:
     - images/ic_location.png
     - images/ic_building.png
+    - images/ic_warning.png
     - images/ic_weather/ic_cloud.png
     - images/ic_weather/ic_haze.png
     - images/ic_weather/ic_nosun.png

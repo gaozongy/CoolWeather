@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:amap_location/amap_location.dart';
 import 'package:amap_location/amap_location_option.dart';
 import 'package:coolweather/utils/image_utils.dart';
+import 'package:coolweather/utils/log_utils.dart';
 import 'package:coolweather/utils/screen_utils.dart';
 import 'package:coolweather/utils/unit_convert_utils.dart';
 import 'package:flutter/material.dart';
@@ -643,6 +644,8 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
           Global.caiYunKey +
           '/$longitude,$latitude/' +
           'weather.json?dailysteps=15&unit=metric:v1';
+
+      Log.d(url);
 
       var httpClient = new HttpClient();
       try {
