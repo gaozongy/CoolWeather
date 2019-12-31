@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
+/// 降雨趋势图
 class RainfallLine extends StatelessWidget {
   final double width;
   final List<double> precipitation2h;

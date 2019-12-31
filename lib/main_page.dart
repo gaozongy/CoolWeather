@@ -41,6 +41,7 @@ class MainPage extends StatefulWidget {
 }
 
 class MainPageState extends State<MainPage> {
+  /// 关注城市列表
   List<District> districtList = new List();
 
   int currentPage = 0;
@@ -58,11 +59,10 @@ class MainPageState extends State<MainPage> {
   double titleHeight = 50;
   double paddingTop = 10;
 
-  GlobalKey rootWidgetKey = GlobalKey();
-
   bool needLocation = true;
 
-  static GlobalKey<BaseAnimState> _globalKey = GlobalKey();
+  /// 用于局部刷新天气动画
+  GlobalKey<BaseAnimState> _globalKey = GlobalKey();
 
   @override
   void initState() {
@@ -80,12 +80,10 @@ class MainPageState extends State<MainPage> {
           currentPage = page;
           district = districtList.elementAt(page);
           if (district.weatherBean != null) {
-            weatherBean = district.weatherBean;
-            updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
+            updateWeatherState(weatherBean);
           }
         });
       }
-
       changeAnimAlpha(district.scrollProgress);
     });
   }
@@ -129,15 +127,24 @@ class MainPageState extends State<MainPage> {
     }
   }
 
+  /// PageView 子页面通知主界面当前天气数据
   setWeatherData(District district, WeatherBean weatherBean) {
+    // 当回调的城市信息和 PageView 当前页的城市是同一个，则直接更新天气数据
+    // 否则从 _pageController 事件回调中获取天气数据
     if (district == this.district) {
-      setState(() {
-        this.weatherBean = weatherBean;
-        this.updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
-      });
+      updateWeatherState(weatherBean);
     }
   }
 
+  /// 更新当前界面显示的天气信息
+  updateWeatherState(WeatherBean weatherBean) {
+    setState(() {
+      this.weatherBean = weatherBean;
+      this.updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
+    });
+  }
+
+  /// PageView 子页面回调方法
   setLocation(District district) {
     needLocation = false;
     List<District> list = List();
@@ -165,6 +172,7 @@ class MainPageState extends State<MainPage> {
     });
   }
 
+  /// 将天气信息生成卡片分享
   void _share() async {
     if (district != null &&
         district.latitude != -1 &&
@@ -320,12 +328,14 @@ class MainPageState extends State<MainPage> {
     return mainLayout;
   }
 
+  /// 修改天气动画透明度
   void changeAnimAlpha(double scrollProgress) {
     double progress = 1.0 - scrollProgress / 0.5;
     double alpha = progress >= 0 ? progress : 0;
     _globalKey.currentState.setMaskAlpha(alpha);
   }
 
+  /// 根据天气类型获取天气动画
   Widget _getWeatherAnimWidget() {
     Widget animWidget;
     if (weatherBean == null) {
@@ -376,6 +386,7 @@ class MainPageState extends State<MainPage> {
     return animWidget;
   }
 
+  /// 顶部标题栏
   Widget _titleWidget() {
     return Padding(
       padding: EdgeInsets.only(top: statsHeight + paddingTop),

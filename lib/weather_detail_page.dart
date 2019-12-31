@@ -30,8 +30,10 @@ import 'views/temp_line.dart';
 class WeatherDetailPage extends StatefulWidget {
   final District district;
 
+  /// 通过此方法可通知主界面天气数据
   final Function setWeatherData;
 
+  /// 通过此方法可通知主界面定位数据
   final Function setLocation;
 
   final double height;
@@ -49,6 +51,10 @@ class WeatherDetailPage extends StatefulWidget {
 
 class _WeatherDetailPageState extends State<WeatherDetailPage>
     with AutomaticKeepAliveClientMixin {
+  /// 日出日落标记
+  final double sunriseTag = -1001;
+  final double sunsetTag = 1001;
+
   double screenWidth;
 
   District district;
@@ -57,16 +63,20 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
 
   Result result;
 
+  /// 实时天气数据
   Realtime realtime;
 
+  /// 分钟天气数据
   Minutely minutely;
 
+  /// 小时天气数据
   Hourly hourly;
 
+  /// 每日天气数据
   Daily daily;
 
-  // 气温折线图使用
-  List<Temp> temperatureList = List();
+  /// 气温折线图使用
+  List<Temp> dayTempList = List();
 
   _WeatherDetailPageState(this.district);
 
@@ -74,6 +84,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
   void initState() {
     super.initState();
 
+    // 是当前定位区域且需要定位一次
     if (district.isLocation && widget.needLocation) {
       _checkPermission();
     } else {
@@ -81,6 +92,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
     }
   }
 
+  /// 检查APP是否具有定位权限
   void _checkPermission() async {
     await PermissionHandler().requestPermissions([PermissionGroup.location]);
     PermissionStatus status = await PermissionHandler()
@@ -96,7 +108,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
     }
   }
 
-  // 定位
+  /// 获取定位信息
   _initLocation() async {
     bool result = await AMapLocationClient.startup(
         AMapLocationOption(onceLocation: true));
@@ -127,8 +139,6 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
   }
 
   Widget weatherDetailLayout(BuildContext context) {
-    // 一加5 1080 / 731.4285714285714 = 1.4765625
-    // 红米note2 1080 / 640.0 = 1.6875
     if (weatherBean != null) {
       return Theme(
         data: Theme.of(context)
@@ -144,16 +154,16 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
                   width: double.infinity,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: _layout(),
+                    children: _mainInfoLayout(),
                   ),
                 ),
-                _tempLineLayout(), // 未来6天温度折线图
-                _moreForecastLayout(), // 未来15天天气预报
+                _tempLineLayout(),
+                _moreForecastLayout(),
                 _dividerLayout(edgeInsets: EdgeInsets.only(top: 20)),
-                _hourlyForecastLayout(), // 小时预报
+                _hourlyForecastLayout(),
                 _dividerLayout(),
-                _moreInfLayout(), // 更多信息，空气质量，风向风速，紫外线等。。。
-                _dataFromLayout(), // 数据来源
+                _moreInfLayout(),
+                _dataFromLayout(),
               ],
             ),
           ),
@@ -164,15 +174,15 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
     }
   }
 
-  List<Widget> _layout() {
+  /// 主要天气信息布局（当前气温，天气，提醒，以及未来6天天气）
+  List<Widget> _mainInfoLayout() {
     List<Widget> list = List();
-    list.add(_tempLayout()); // 当前气温
-    list.add(_weatherLayout()); // 当前天气
-    list.add(_tipsLayout()); // 温馨提示
+    list.add(_tempLayout());
+    list.add(_weatherLayout());
+    list.add(_tipsLayout());
 
     for (int i = 0; i < minutely.precipitation_2h.length; i++) {
       if (minutely.precipitation_2h.elementAt(i) > 0) {
-        // 2小时降雨趋势图
         list.add(Padding(
           padding: EdgeInsets.symmetric(vertical: 20),
           child: RainfallLine(
@@ -182,10 +192,11 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
       }
     }
 
-    list.add(_forecastLayout()); // 未来6天天气预报
+    list.add(_forecastLayout());
     return list;
   }
 
+  /// 当前气温
   Widget _tempLayout() {
     return Consumer<UnitModel>(
       builder: (context, unitModel, _) {
@@ -213,6 +224,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
     );
   }
 
+  /// 当前天气
   Widget _weatherLayout() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 28),
@@ -229,6 +241,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
     );
   }
 
+  /// 温馨提示
   Widget _tipsLayout() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 28, vertical: 5),
@@ -247,6 +260,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
     );
   }
 
+  /// 未来6天天气预报
   Widget _forecastLayout() {
     List<Widget> forecastRow = new List();
     for (int i = 0; i < 6; i++) {
@@ -293,14 +307,15 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
     );
   }
 
-  // 气温折线图
+  /// 气温折线图
   Widget _tempLineLayout() {
     return Padding(
       padding: EdgeInsets.only(top: 5, bottom: 20),
-      child: TempLine(screenWidth, temperatureList),
+      child: TempLine(screenWidth, dayTempList),
     );
   }
 
+  /// 未来15天天气预报
   Widget _moreForecastLayout() {
     return Padding(
       padding: EdgeInsets.only(top: 25),
@@ -324,7 +339,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
     );
   }
 
-  // 小时预报
+  /// 小时预报
   Widget _hourlyForecastLayout() {
     // 使用ListView
     return SizedBox(
@@ -343,9 +358,9 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
                   _getWeatherIcon(hourly.skycon.elementAt(position).value);
               String desc;
               double temp = hourly.temperature.elementAt(position).value;
-              if (temp == -1001) {
+              if (temp == sunriseTag) {
                 desc = '日出';
-              } else if (temp == 1001) {
+              } else if (temp == sunsetTag) {
                 desc = '日落';
               } else {
                 desc = temp.toStringAsFixed(0) + '°';
@@ -420,7 +435,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
 //    );
   }
 
-  //  更多信息
+  /// 更多信息，空气质量，风向风速，紫外线等...
   Widget _moreInfLayout() {
     // todo 可以使用 GridView 替换
     return Consumer<UnitModel>(
@@ -577,7 +592,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
     );
   }
 
-  // 数据来源
+  /// 数据来源声明
   Widget _dataFromLayout() {
     return Padding(
       padding: EdgeInsets.only(top: 10),
@@ -598,7 +613,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
     );
   }
 
-  // 分割线
+  /// 分割线
   Widget _dividerLayout({EdgeInsets edgeInsets}) {
     return Padding(
       padding: edgeInsets != null ? edgeInsets : EdgeInsets.all(0),
@@ -609,7 +624,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
     );
   }
 
-  // 查询天气信息
+  /// 查询天气信息
   Future<void> _queryWeather(District district, {bool force}) async {
     WeatherBean weatherBean;
     if (force == null || !force) {
@@ -628,8 +643,6 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
           Global.caiYunKey +
           '/$longitude,$latitude/' +
           'weather.json?dailysteps=15&unit=metric:v1';
-
-      print(url);
 
       var httpClient = new HttpClient();
       try {
@@ -660,55 +673,55 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
     });
   }
 
-  // 提前对数据进行处理，避免卡顿
+  /// 提前对数据进行处理，避免卡顿
   WeatherBean _processData(WeatherBean weatherBean) {
     Hourly hourly = weatherBean.result.hourly;
     Daily daily = weatherBean.result.daily;
 
-    // 小时天气
-    List<StringValue> skyconList = hourly.skycon.toList();
-    List<DoubleValue> tempList = hourly.temperature.toList();
+    // 小时天气（包含日出日落时间）
+    List<StringValue> hourSkyconList = hourly.skycon;
+    List<DoubleValue> hourTempList = hourly.temperature;
 
+    // 当前小时天气最小最大时间
     DateTime minDateTime = DateTime.parse(hourly.skycon.elementAt(0).datetime);
     DateTime maxDateTime = DateTime.parse(
         hourly.skycon.elementAt(hourly.skycon.length - 1).datetime);
 
+    // 如果日出日落时间点在上面的 minDateTime 和 maxDateTime 之间，
+    // 则将日出日落时间点添加到小时天气时间点上
     daily.astro.forEach((day) {
       String sunriseString = day.date + ' ' + day.sunrise.time;
       DateTime sunrise = DateTime.parse(sunriseString);
       if (sunrise.compareTo(minDateTime) >= 0 &&
           sunrise.compareTo(maxDateTime) <= 0) {
-        skyconList.add(StringValue('SUNRISE', sunriseString));
-        tempList.add(DoubleValue(-1001, sunriseString));
+        hourSkyconList.add(StringValue("SUNRISE", sunriseString));
+        hourTempList.add(DoubleValue(sunriseTag, sunriseString));
       }
 
       String sunsetString = day.date + ' ' + day.sunset.time;
       DateTime sunset = DateTime.parse(sunsetString);
       if (sunset.compareTo(minDateTime) >= 0 &&
           sunset.compareTo(maxDateTime) <= 0) {
-        skyconList.add(StringValue('SUNSET', sunsetString));
-        tempList.add(DoubleValue(1001, sunsetString));
+        hourSkyconList.add(StringValue("SUNSET", sunsetString));
+        hourTempList.add(DoubleValue(sunsetTag, sunsetString));
       }
     });
 
-    skyconList.sort((skycon1, skycon2) {
+    // 对小时天气按时间点进行排序
+    hourSkyconList.sort((skycon1, skycon2) {
       return DateTime.parse(skycon1.datetime)
           .compareTo(DateTime.parse(skycon2.datetime));
     });
-
-    tempList.sort((temp1, temp2) {
+    hourTempList.sort((temp1, temp2) {
       return DateTime.parse(temp1.datetime)
           .compareTo(DateTime.parse(temp2.datetime));
     });
 
-    hourly.skycon = skyconList;
-    hourly.temperature = tempList;
-
     // 6天天气
     var forecast = daily.temperature;
-    temperatureList.clear();
+    dayTempList.clear();
     for (int i = 0; i < 6; i++) {
-      temperatureList
+      dayTempList
           .add(Temp(forecast.elementAt(i).max, forecast.elementAt(i).min));
     }
 
