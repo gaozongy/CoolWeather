@@ -471,14 +471,14 @@ class MainPageState extends State<MainPage> {
   Widget _titleMenuIconLayout() {
     List<Widget> menuList = List();
 //    if(weatherBean.result.realtime.) {
-    menuList.add(IconButton(
-      icon: Image(
-        image: AssetImage("images/ic_warning.png"),
-        width: 20,
-        height: 20,
-      ),
-      onPressed: _focusDistrictList,
-    ));
+//    menuList.add(IconButton(
+//      icon: Image(
+//        image: AssetImage("images/ic_warning.png"),
+//        width: 20,
+//        height: 20,
+//      ),
+//      onPressed: _focusDistrictList,
+//    ));
 //    }
     menuList.add(IconButton(
       icon: Image(
