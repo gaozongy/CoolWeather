@@ -133,7 +133,7 @@ public class RoundAppWidget extends AppWidgetProvider {
 
         // 打开APP首页的Intent
         Intent launchIntent = new Intent(context, MainActivity.class);
-        PendingIntent launchPendingIntent = PendingIntent.getActivity(context, 2, launchIntent,
+        PendingIntent launchPendingIntent = PendingIntent.getActivity(context, 0, launchIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
         // 刷新的Intent
