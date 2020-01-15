@@ -1,7 +1,6 @@
 import 'package:coolweather/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:jpush_flutter/jpush_flutter.dart';
 import 'package:provider/provider.dart';
 
 import 'about_page.dart';
