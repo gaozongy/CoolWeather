@@ -85,7 +85,8 @@ class AboutPageState extends State<AboutPage> {
                           '2.优化6天天气预报布局\n'
                           '3.优化日出日落图标显示大小问题\n'
                           '4.添加更多动画资源，丰富用户体验\n'
-                          '5.修复了其他一些已知的小bug\n',
+                          '5.修复了其他一些已知的小bug\n'
+                          '6.移除极光推送Flutter插件，该插件目前问题较多，会造成部分机型闪退\n',
                           softWrap: true,
                           style: TextStyle(fontSize: 13),
                         ),
