@@ -1,39 +1,12 @@
 package www.gl.com.coolweather.widget;
 
-import android.Manifest;
 import android.app.PendingIntent;
-import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.widget.RemoteViews;
-
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-
-import com.amap.api.location.AMapLocationClient;
-import com.amap.api.location.AMapLocationClientOption;
-import com.amap.api.location.AMapLocationListener;
 
 import java.util.Calendar;
 import java.util.Date;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import www.gl.com.coolweather.MainActivity;
 import www.gl.com.coolweather.R;
 import www.gl.com.coolweather.bean.Daily;
 import www.gl.com.coolweather.bean.Realtime;
@@ -41,140 +14,79 @@ import www.gl.com.coolweather.bean.Result;
 import www.gl.com.coolweather.bean.Skycon;
 import www.gl.com.coolweather.bean.Temperature;
 import www.gl.com.coolweather.bean.WeatherBean;
-import www.gl.com.coolweather.net.ApiService;
 import www.gl.com.coolweather.utils.DateUtils;
 import www.gl.com.coolweather.utils.ImageUtils;
 import www.gl.com.coolweather.utils.TranslationUtils;
 
-
-public class RoundAppWidget extends AppWidgetProvider {
-
-    private static final String ACTION_UPDATE = "action_update";
-
-    private final int NO_LOCATION = 0x01;
-
-    private final int UPDATING = 0x02;
-
-    private final int UPDATE_SUCCESS = 0x03;
-
-    private final int UPDATE_FAIL = 0x04;
+/**
+ * 大圆角 Widget
+ */
+public class RoundAppWidget extends BaseAppWidget {
 
     @Override
-    public void onReceive(final Context context, Intent intent) {
-        super.onReceive(context, intent);
-
-        String action = intent.getAction();
-        if (ACTION_UPDATE.equals(action)) {
-            getLocationData(context);
-        }
+    protected int layoutId() {
+        return R.layout.app_widget_round;
     }
 
     @Override
-    public void onUpdate(final Context context, final AppWidgetManager appWidgetManager, final int[] appWidgetIds) {
-        getLocationData(context);
-    }
-
-    void getLocationData(Context context) {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            updateAppWidget(NO_LOCATION, context, context.getString(R.string.widget_no_location_permission), null);
-            return;
-        }
-
-        // 显示正在更新
-        updateAppWidget(UPDATING, context, "", null);
-
-        AMapLocationListener mLocationListener = aMapLocation -> {
-            if (aMapLocation.getErrorCode() == 0) {
-                String district = aMapLocation.getDistrict();
-                double longitude = aMapLocation.getLongitude();
-                double latitude = aMapLocation.getLatitude();
-                getWeatherData(context, district, longitude, latitude);
-            } else {
-                updateAppWidget(NO_LOCATION, context, context.getString(R.string.widget_location_failed), null);
-            }
-        };
-
-        AMapLocationClient locationClient = new AMapLocationClient(context);
-        locationClient.setLocationListener(mLocationListener);
-        AMapLocationClientOption locationOption = new AMapLocationClientOption();
-        locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
-        locationOption.setOnceLocation(true);
-        locationClient.setLocationOption(locationOption);
-        locationClient.stopLocation();
-        locationClient.startLocation();
-    }
-
-    void getWeatherData(final Context context, String district, double longitude, double latitude) {
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.caiyunapp.com/v2/TwsDo9aQUYewFhV8/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        ApiService apiService = retrofit.create(ApiService.class);
-        Call<WeatherBean> call = apiService.weather(longitude, latitude);
-        call.enqueue(new Callback<WeatherBean>() {
-            @Override
-            public void onResponse(@NonNull Call<WeatherBean> call, @NonNull Response<WeatherBean> response) {
-                WeatherBean weatherBean = response.body();
-                updateAppWidget(UPDATE_SUCCESS, context, district, weatherBean);
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<WeatherBean> call, @NonNull Throwable t) {
-                updateAppWidget(UPDATE_FAIL, context, district, null);
-            }
-        });
-    }
-
-    void updateAppWidget(int status, Context context, String district, WeatherBean weatherBean) {
-        ComponentName componentName = new ComponentName(context, RoundAppWidget.class);
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.app_widget_round);
-
+    protected void noLocation(Context context, RemoteViews remoteViews, String district, WeatherBean weatherBean) {
         // 打开APP首页的Intent
-        Intent launchIntent = new Intent(context, MainActivity.class);
-        PendingIntent launchPendingIntent = PendingIntent.getActivity(context, 0, launchIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-
+        PendingIntent launchPendingIntent = createLaunchPendingIntent(context);
         // 刷新的Intent
-        Intent updateIntent = new Intent(ACTION_UPDATE);
-        updateIntent.setClass(context, RoundAppWidget.class);
-        PendingIntent updatePendingIntent = PendingIntent.getBroadcast(context, 0, updateIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent updatePendingIntent = createUpdatePendingIntent(context);
 
-        if (status == NO_LOCATION) {
-            remoteViews.setTextViewText(R.id.widget_district_tv, district);
-            remoteViews.setTextViewText(R.id.widget_update_time_tv, context.getString(R.string.widget_unknown));
-            remoteViews.setOnClickPendingIntent(R.id.widget_rl, launchPendingIntent);
-            remoteViews.setOnClickPendingIntent(R.id.widget_update_fl, updatePendingIntent);
+        remoteViews.setTextViewText(R.id.widget_district_tv, district);
+        remoteViews.setTextViewText(R.id.widget_update_time_tv, context.getString(R.string.widget_unknown));
+        remoteViews.setOnClickPendingIntent(R.id.widget_rl, launchPendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.widget_update_fl, updatePendingIntent);
 
-            RemoteViews animViewDefault = new RemoteViews(context.getPackageName(), R.layout.app_widget_anim_view_default);
-            remoteViews.removeAllViews(R.id.widget_update_anim_fl);
-            remoteViews.addView(R.id.widget_update_anim_fl, animViewDefault);
-        } else if (status == UPDATING) {
-            remoteViews.setTextViewText(R.id.widget_update_time_tv, context.getString(R.string.widget_updating));
-            remoteViews.setOnClickPendingIntent(R.id.widget_rl, launchPendingIntent);
+        RemoteViews animViewDefault = new RemoteViews(context.getPackageName(), R.layout.app_widget_anim_view_default);
+        remoteViews.removeAllViews(R.id.widget_update_anim_fl);
+        remoteViews.addView(R.id.widget_update_anim_fl, animViewDefault);
+    }
 
-            RemoteViews animView = new RemoteViews(context.getPackageName(), R.layout.app_widget_anim_view);
-            remoteViews.removeAllViews(R.id.widget_update_anim_fl);
-            remoteViews.addView(R.id.widget_update_anim_fl, animView);
-        } else if (status == UPDATE_SUCCESS) {
-            showAppWidgetData(context, remoteViews, district, weatherBean);
-            remoteViews.setOnClickPendingIntent(R.id.widget_rl, launchPendingIntent);
-            remoteViews.setOnClickPendingIntent(R.id.widget_update_fl, updatePendingIntent);
+    @Override
+    protected void updating(Context context, RemoteViews remoteViews, String district, WeatherBean weatherBean) {
+        // 打开APP首页的Intent
+        PendingIntent launchPendingIntent = createLaunchPendingIntent(context);
+        remoteViews.setTextViewText(R.id.widget_update_time_tv, context.getString(R.string.widget_updating));
+        remoteViews.setOnClickPendingIntent(R.id.widget_rl, launchPendingIntent);
 
-            RemoteViews animViewDefault = new RemoteViews(context.getPackageName(), R.layout.app_widget_anim_view_default);
-            remoteViews.removeAllViews(R.id.widget_update_anim_fl);
-            remoteViews.addView(R.id.widget_update_anim_fl, animViewDefault);
-        } else if (status == UPDATE_FAIL) {
-            remoteViews.setTextViewText(R.id.widget_update_time_tv, context.getString(R.string.widget_update_failed));
-            remoteViews.setOnClickPendingIntent(R.id.widget_rl, launchPendingIntent);
-            remoteViews.setOnClickPendingIntent(R.id.widget_update_fl, updatePendingIntent);
+        RemoteViews animView = new RemoteViews(context.getPackageName(), R.layout.app_widget_anim_view);
+        remoteViews.removeAllViews(R.id.widget_update_anim_fl);
+        remoteViews.addView(R.id.widget_update_anim_fl, animView);
+    }
 
-            RemoteViews animViewDefault = new RemoteViews(context.getPackageName(), R.layout.app_widget_anim_view_default);
-            remoteViews.removeAllViews(R.id.widget_update_anim_fl);
-            remoteViews.addView(R.id.widget_update_anim_fl, animViewDefault);
-        }
-        AppWidgetManager.getInstance(context).updateAppWidget(componentName, remoteViews);
+    @Override
+    protected void updateSuccess(Context context, RemoteViews remoteViews, String district, WeatherBean weatherBean) {
+        // 打开APP首页的Intent
+        PendingIntent launchPendingIntent = createLaunchPendingIntent(context);
+        // 刷新的Intent
+        PendingIntent updatePendingIntent = createUpdatePendingIntent(context);
+
+        showAppWidgetData(context, remoteViews, district, weatherBean);
+        remoteViews.setOnClickPendingIntent(R.id.widget_rl, launchPendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.widget_update_fl, updatePendingIntent);
+
+        RemoteViews animViewDefault = new RemoteViews(context.getPackageName(), R.layout.app_widget_anim_view_default);
+        remoteViews.removeAllViews(R.id.widget_update_anim_fl);
+        remoteViews.addView(R.id.widget_update_anim_fl, animViewDefault);
+    }
+
+    @Override
+    protected void updateFail(Context context, RemoteViews remoteViews, String district, WeatherBean weatherBean) {
+        // 打开APP首页的Intent
+        PendingIntent launchPendingIntent = createLaunchPendingIntent(context);
+        // 刷新的Intent
+        PendingIntent updatePendingIntent = createUpdatePendingIntent(context);
+
+        remoteViews.setTextViewText(R.id.widget_update_time_tv, context.getString(R.string.widget_update_failed));
+        remoteViews.setOnClickPendingIntent(R.id.widget_rl, launchPendingIntent);
+        remoteViews.setOnClickPendingIntent(R.id.widget_update_fl, updatePendingIntent);
+
+        RemoteViews animViewDefault = new RemoteViews(context.getPackageName(), R.layout.app_widget_anim_view_default);
+        remoteViews.removeAllViews(R.id.widget_update_anim_fl);
+        remoteViews.addView(R.id.widget_update_anim_fl, animViewDefault);
     }
 
     private void showAppWidgetData(Context context, RemoteViews remoteViews, String district, WeatherBean weatherBean) {
@@ -183,21 +95,21 @@ public class RoundAppWidget extends AppWidgetProvider {
 
         remoteViews.setTextViewText(R.id.widget_district_tv, district);
         remoteViews.setTextViewText(R.id.widget_weather_tv, TranslationUtils.getWeatherDesc(realtime.skycon, realtime.precipitation.local.intensity));
-        remoteViews.setTextViewText(R.id.widget_temperature_tv, toInt(realtime.temperature) + "°");
+        remoteViews.setTextViewText(R.id.widget_temperature_tv, (int) realtime.temperature + "°");
 
         String updateDate = DateUtils.getFormatDate(weatherBean.server_time * 1000, DateUtils.HHmm);
         remoteViews.setTextViewText(R.id.widget_update_time_tv, context.getString(R.string.widget_update_time, updateDate));
 
-        remoteViews.setTextViewText(R.id.widget_max_min_tv, toInt(daily.temperature.get(0).max)
-                + " / " + toInt(daily.temperature.get(0).min) + "°");
+        remoteViews.setTextViewText(R.id.widget_max_min_tv, (int) daily.temperature.get(0).max
+                + " / " + (int) daily.temperature.get(0).min + "°");
 
         // 明天预报
         Skycon skycon1 = daily.skycon.get(1);
         Temperature temperature1 = daily.temperature.get(1);
         remoteViews.setTextViewText(R.id.widget_forecast_day_1_tv, context.getString(R.string.widget_tomorrow));
         remoteViews.setImageViewResource(R.id.widget_forecast_icon_1_iv, ImageUtils.getWeatherIcon(skycon1.value));
-        remoteViews.setTextViewText(R.id.widget_forecast_temperature_1_iv, toInt(temperature1.max)
-                + " / " + toInt(temperature1.min) + "°");
+        remoteViews.setTextViewText(R.id.widget_forecast_temperature_1_iv, (int) temperature1.max
+                + " / " + (int) temperature1.min + "°");
 
         Calendar calendar = Calendar.getInstance();
 
@@ -210,8 +122,8 @@ public class RoundAppWidget extends AppWidgetProvider {
             remoteViews.setTextViewText(R.id.widget_forecast_day_2_tv, DateUtils.getWeekday(
                     calendar.get(Calendar.DAY_OF_WEEK) - 1));
             remoteViews.setImageViewResource(R.id.widget_forecast_icon_2_iv, ImageUtils.getWeatherIcon(skycon2.value));
-            remoteViews.setTextViewText(R.id.widget_forecast_temperature_2_iv, toInt(temperature2.max)
-                    + " / " + toInt(temperature2.min) + "°");
+            remoteViews.setTextViewText(R.id.widget_forecast_temperature_2_iv, (int) temperature2.max
+                    + " / " + (int) temperature2.min + "°");
         }
 
         // 大后天预报
@@ -223,8 +135,8 @@ public class RoundAppWidget extends AppWidgetProvider {
             remoteViews.setTextViewText(R.id.widget_forecast_day_3_tv, DateUtils.getWeekday(calendar.get(
                     Calendar.DAY_OF_WEEK) - 1));
             remoteViews.setImageViewResource(R.id.widget_forecast_icon_3_iv, ImageUtils.getWeatherIcon(skycon3.value));
-            remoteViews.setTextViewText(R.id.widget_forecast_temperature_3_iv, toInt(temperature3.max)
-                    + " / " + toInt(temperature3.min) + "°");
+            remoteViews.setTextViewText(R.id.widget_forecast_temperature_3_iv, (int) temperature3.max
+                    + " / " + (int) temperature3.min + "°");
         }
 
         // 天气描述
@@ -241,9 +153,5 @@ public class RoundAppWidget extends AppWidgetProvider {
 
         // 设置背景
         remoteViews.setInt(R.id.widget_rl, "setBackgroundResource", ImageUtils.getRoundBgResourceId(weather, intensity, isDay));
-    }
-
-    int toInt(double value) {
-        return (int) (value + 0.5);
     }
 }

@@ -4,6 +4,7 @@
     android:id="@+id/widget_rl"
     android:layout_width="match_parent"
     android:layout_height="126dp"
+    android:background="@drawable/bg_widget_round_sunny"
     android:orientation="vertical"
     android:padding="2dp"
     tools:ignore="RtlSymmetry">
