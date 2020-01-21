@@ -28,6 +28,7 @@ import 'utils/translation_utils.dart';
 import 'views/rainfall_line.dart';
 import 'views/temp_line.dart';
 
+/// 天气详情信息 Tab 页
 class WeatherDetailPage extends StatefulWidget {
   final District district;
 

@@ -67,8 +67,7 @@ class MainPageState extends State<MainPage> {
   double statsHeight;
 
   /// title 栏高度
-  double titleHeight = 50;
-  double paddingTop = 10;
+  double titleHeight = 70;
 
   /// 是否需要定位
   bool needLocation = true;
@@ -241,7 +240,7 @@ class MainPageState extends State<MainPage> {
     List<Widget> layoutList = List();
 
     Widget weatherDetailWidget = Padding(
-      padding: EdgeInsets.only(top: statsHeight + paddingTop + titleHeight),
+      padding: EdgeInsets.only(top: statsHeight + titleHeight),
       child: PageView.builder(
         controller: _pageController,
         itemCount: districtList.length,
@@ -259,10 +258,8 @@ class MainPageState extends State<MainPage> {
                 setLocation,
                 setWeatherData,
                 screenHeight -
-
-                    /// ListView 内部自动加了一个 paddingTop，此 paddingTop 的值为 statsHeight
+                    // ListView 内部自动加了一个 paddingTop，此 paddingTop 的值为 statsHeight
                     statsHeight * 2 -
-                    paddingTop -
                     titleHeight,
                 needLocation),
           );
@@ -270,9 +267,9 @@ class MainPageState extends State<MainPage> {
       ),
     );
 
-    layoutList.add(_getWeatherAnimWidget());
+    layoutList.add(_createWeatherAnimWidget());
     layoutList.add(weatherDetailWidget);
-    layoutList.add(_titleWidget());
+    layoutList.add(_createTitleWidget());
 
     Widget mainLayout = Stack(
       children: layoutList,
@@ -291,7 +288,7 @@ class MainPageState extends State<MainPage> {
   }
 
   /// 根据天气类型获取天气动画
-  Widget _getWeatherAnimWidget() {
+  Widget _createWeatherAnimWidget() {
     Widget animWidget;
     if (weatherBean == null) {
       animWidget = EmptyBg();
@@ -342,14 +339,15 @@ class MainPageState extends State<MainPage> {
   }
 
   /// 顶部标题栏
-  Widget _titleWidget() {
+  Widget _createTitleWidget() {
     return Padding(
-      padding: EdgeInsets.only(top: statsHeight + paddingTop),
+      padding: EdgeInsets.only(top: statsHeight),
       child: SizedBox(
         height: titleHeight,
         width: double.infinity,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[_titleContentLayout(), _titleMenuIconLayout()],
         ),
       ),
