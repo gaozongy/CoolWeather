@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:amap_location/amap_location.dart';
 import 'package:coolweather/bean/weather_bean.dart';
 import 'package:coolweather/data/global.dart';
-import 'package:coolweather/utils/image_utils.dart';
-import 'package:coolweather/utils/translation_utils.dart';
+import 'package:coolweather/utils/share_utils.dart';
 import 'package:coolweather/views/weather/base_weather_state.dart';
 import 'package:coolweather/views/weather/cloudy_anim.dart';
 import 'package:coolweather/views/weather/cloudy_night_anim.dart';
@@ -35,6 +33,7 @@ import 'utils/date_utils.dart';
 import 'utils/screen_utils.dart';
 import 'weather_detail_page.dart';
 
+///  App 主界面
 class MainPage extends StatefulWidget {
   MainPage({Key key}) : super(key: key);
 
@@ -48,21 +47,30 @@ class MainPageState extends State<MainPage> {
   /// 关注城市列表
   List<District> districtList = new List();
 
+  /// PageView 当前页码
   int currentPage = 0;
 
+  /// 当前显示的城市
   District district;
 
+  /// 当前显示的天气
   WeatherBean weatherBean;
 
   PageController _pageController = new PageController();
 
   String updateTime = '努力加载中';
 
+  /// 屏幕高度
   double screenHeight;
+
+  /// 系统状态栏高度
   double statsHeight;
+
+  /// title 栏高度
   double titleHeight = 50;
   double paddingTop = 10;
 
+  /// 是否需要定位
   bool needLocation = true;
 
   /// 用于局部刷新天气动画
@@ -77,6 +85,7 @@ class MainPageState extends State<MainPage> {
     _getDeviceTypeAndId();
   }
 
+  /// 初始化 PageView Controller
   _initPageController() {
     _pageController.addListener(() {
       int page = (_pageController.page + 0.5).toInt();
@@ -93,32 +102,16 @@ class MainPageState extends State<MainPage> {
     });
   }
 
+  /// 初始化数据
   _initData() async {
     districtList.clear();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (prefs.containsKey(Constant.spFocusDistrictData)) {
-      String focusDistrictListJson =
-          prefs.getString(Constant.spFocusDistrictData);
-      if (focusDistrictListJson != null) {
-        FocusDistrictListBean focusDistrictListBean =
-            FocusDistrictListBean.fromJson(json.decode(focusDistrictListJson));
-        if (focusDistrictListBean != null) {
-          setState(() {
-            districtList.addAll(focusDistrictListBean.districtList);
-            if (currentPage == 0) {
-              this.district = focusDistrictListBean.districtList.elementAt(0);
-            }
-          });
-
-          districtList.forEach((district) {
-            String weatherJson = prefs.getString(district.name);
-            if (!isEmpty(weatherJson)) {
-              Map map = jsonDecode(weatherJson);
-              WeatherBean weatherBean = WeatherBean.fromJson(map);
-              district.weatherBean = weatherBean;
-            }
-          });
-        }
+      districtList = queryDistrictList(prefs);
+      if (currentPage == 0) {
+        setState(() {
+          this.district = districtList.elementAt(0);
+        });
       }
     } else {
       District district = District("", "", '未知', -1, -1, isLocation: true);
@@ -133,6 +126,30 @@ class MainPageState extends State<MainPage> {
     }
   }
 
+  /// 查询已关注城市列表及缓存的城市天气数据
+  List<District> queryDistrictList(SharedPreferences prefs) {
+    List<District> districtList = List();
+    String focusDistrictListJson =
+        prefs.getString(Constant.spFocusDistrictData);
+    if (focusDistrictListJson != null) {
+      FocusDistrictListBean focusDistrictListBean =
+          FocusDistrictListBean.fromJson(json.decode(focusDistrictListJson));
+      if (focusDistrictListBean != null) {
+        districtList.addAll(focusDistrictListBean.districtList);
+        districtList.forEach((district) {
+          String weatherJson = prefs.getString(district.name);
+          if (!isEmpty(weatherJson)) {
+            Map map = jsonDecode(weatherJson);
+            WeatherBean weatherBean = WeatherBean.fromJson(map);
+            district.weatherBean = weatherBean;
+          }
+        });
+      }
+    }
+    return districtList;
+  }
+
+  /// 获取设备类型和设备 id
   _getDeviceTypeAndId() async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     if (Platform.isAndroid) {
@@ -183,6 +200,7 @@ class MainPageState extends State<MainPage> {
     });
   }
 
+  /// 跳转关注城市列表页
   _focusDistrictList() {
     Navigator.of(context).pushNamed("focus_district_list").then((hasChanged) {
       if (hasChanged) {
@@ -197,97 +215,13 @@ class MainPageState extends State<MainPage> {
         district.latitude != -1 &&
         district.longitude != -1 &&
         weatherBean != null) {
+      String districtName = district.name;
       Share.file(
-          district.name + '天气分享',
-          district.name + DateUtils.getCurrentTimeMMDD() + '天气.png',
-          await _createWeatherCard(),
+          districtName + '天气分享',
+          districtName + DateUtils.getCurrentTimeMMDD() + '天气.png',
+          await ShareUtils.createWeatherCard(districtName, weatherBean),
           'image/png');
     }
-  }
-
-  Future<Uint8List> _createWeatherCard() async {
-    PictureRecorder recorder = new PictureRecorder();
-
-    Canvas canvas = new Canvas(recorder);
-
-    Result result = weatherBean.result;
-    // 天气描述
-    String weather = result.realtime.skycon;
-    // 降雨（雪）强度
-    double intensity = result.realtime.precipitation.local.intensity;
-    // 是否是白天
-    bool isDay = DateUtils.isDay(weatherBean);
-
-    // 背景图片
-    final ByteData bgByteData = await rootBundle
-        .load(ImageUtils.getWeatherShareBgUri(weather, intensity, isDay));
-    if (bgByteData == null) throw 'Unable to read data';
-    var codec = await instantiateImageCodec(bgByteData.buffer.asUint8List());
-    FrameInfo frame = await codec.getNextFrame();
-    canvas.drawImage(frame.image, new Offset(0, 0), new Paint());
-
-    TextPainter districtTp = getTextPainter(district.name, 45,
-        fontWeight: FontWeight.w600,
-        text2: '    ' + DateUtils.getCurrentTimeMMDD(),
-        fontSize2: 35);
-    districtTp.paint(canvas, Offset(50, 40));
-
-    TextPainter temperatureTp = getTextPainter(
-      weatherBean.result.realtime.temperature.toStringAsFixed(0) + "°",
-      140,
-      fontWeight: FontWeight.w300,
-    );
-    temperatureTp.paint(canvas, Offset(50, 180));
-
-    TextPainter weatherTp = getTextPainter(
-        Translation.getWeatherDesc(weatherBean.result.realtime.skycon,
-                weatherBean.result.realtime.precipitation.local.intensity) +
-            '  ' +
-            weatherBean.result.daily.temperature
-                .elementAt(0)
-                .max
-                .toStringAsFixed(0) +
-            ' / ' +
-            weatherBean.result.daily.temperature
-                .elementAt(0)
-                .min
-                .toStringAsFixed(0) +
-            '℃',
-        45);
-    weatherTp.paint(canvas, Offset(50, 350));
-
-    Picture picture = recorder.endRecording();
-    ByteData byteData = await (await picture.toImage(1038, 450))
-        .toByteData(format: ImageByteFormat.png);
-    return byteData.buffer.asUint8List();
-  }
-
-  TextPainter getTextPainter(
-    String text,
-    double fontSize, {
-    FontWeight fontWeight,
-    String text2,
-    double fontSize2,
-  }) {
-    return TextPainter(
-      textDirection: TextDirection.ltr,
-      text: TextSpan(children: [
-        TextSpan(
-          text: text,
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: fontSize,
-              fontWeight: fontWeight != null ? fontWeight : FontWeight.w400),
-        ),
-        TextSpan(
-          text: text2,
-          style: TextStyle(
-            color: Colors.white70,
-            fontSize: fontSize2,
-          ),
-        )
-      ]),
-    )..layout();
   }
 
   @override
@@ -422,6 +356,7 @@ class MainPageState extends State<MainPage> {
     );
   }
 
+  /// 标题栏布局
   Widget _titleContentLayout() {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -468,6 +403,7 @@ class MainPageState extends State<MainPage> {
     );
   }
 
+  /// 标题栏右侧菜单布局
   Widget _titleMenuIconLayout() {
     List<Widget> menuList = List();
 //    if(weatherBean.result.realtime.) {
