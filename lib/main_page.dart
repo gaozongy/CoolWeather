@@ -199,6 +199,11 @@ class MainPageState extends State<MainPage> {
     });
   }
 
+  /// 跳转警告信息页
+  _warning() {
+    Navigator.of(context).pushNamed("warning");
+  }
+
   /// 跳转关注城市列表页
   _focusDistrictList() {
     Navigator.of(context).pushNamed("focus_district_list").then((hasChanged) {
@@ -405,14 +410,14 @@ class MainPageState extends State<MainPage> {
   Widget _titleMenuIconLayout() {
     List<Widget> menuList = List();
 //    if(weatherBean.result.realtime.) {
-//    menuList.add(IconButton(
-//      icon: Image(
-//        image: AssetImage("images/ic_warning.png"),
-//        width: 20,
-//        height: 20,
-//      ),
-//      onPressed: _focusDistrictList,
-//    ));
+    menuList.add(IconButton(
+      icon: Image(
+        image: AssetImage("images/ic_warning.png"),
+        width: 20,
+        height: 20,
+      ),
+      onPressed: _warning,
+    ));
 //    }
     menuList.add(IconButton(
       icon: Image(

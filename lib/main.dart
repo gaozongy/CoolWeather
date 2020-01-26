@@ -1,14 +1,15 @@
 import 'package:coolweather/main_page.dart';
+import 'package:coolweather/warning_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'about_page.dart';
+import 'add_district_page.dart';
+import 'data/unit_model.dart';
 import 'focus_district_list_page.dart';
 import 'more_day_forecast_page.dart';
-import 'add_district_page.dart';
 import 'setting_page.dart';
-import 'data/unit_model.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,6 +46,7 @@ void main() {
         "select_district": (context) => AddDistrictPage(),
         "setting": (context) => SettingPage(),
         "about": (context) => AboutPage(),
+        "warning": (context) => WarningPage(),
       },
     ),
   ));

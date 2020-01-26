@@ -81,13 +81,14 @@ class AboutPageState extends State<AboutPage> {
                       Padding(
                         padding: EdgeInsets.only(top: 5),
                         child: Text(
-                          '1.新增雾霾天气动画背景\n'
-                          '2.优化6天天气预报布局\n'
-                          '3.优化日出日落图标显示大小问题\n'
-                          '4.添加更多动画资源，丰富用户体验\n'
-                          '5.解决高德定位API升级导致的崩溃问题\n'
-                          '6.移除极光推送Flutter插件，该插件目前问题较多，会造成部分机型闪退\n'
-                          '7.修复了其他一些已知的小bug\n',
+                          '1.新增新型冠状病毒肺炎疫情地图页\n'
+                          '2.新增雾霾天气动画背景\n'
+                          '3.优化6天天气预报布局\n'
+                          '4.优化日出日落图标显示大小问题\n'
+                          '5.添加更多动画资源，丰富用户体验\n'
+                          '6.解决高德定位API升级导致的崩溃问题\n'
+                          '7.移除极光推送Flutter插件，该插件目前问题较多，会造成部分机型闪退\n'
+                          '8.修复了其他一些已知的小bug\n',
                           softWrap: true,
                           style: TextStyle(fontSize: 13),
                         ),
