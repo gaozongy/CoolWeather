@@ -20,7 +20,7 @@ class WarningPageState extends State<WarningPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       child: WebView(
-        initialUrl: "https://voice.baidu.com/act/newpneumonia/newpneumonia",
+        initialUrl: "https://news.qq.com/zt2020/page/feiyan.htm",
         javascriptMode: JavascriptMode.unrestricted,
         onWebViewCreated: (WebViewController webViewController) {
           _controller.complete(webViewController);
