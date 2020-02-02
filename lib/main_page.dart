@@ -369,9 +369,9 @@ class MainPageState extends State<MainPage> {
         currentPage == 0
             ? Padding(
                 padding: EdgeInsets.only(left: 22),
-                child: Image(
-                  image: AssetImage("images/ic_location.png"),
-                  width: 22,
+                child: ImageIcon(
+                  AssetImage("images/ic_location.png"),
+                  size: 22,
                   color: Colors.white60,
                 ),
               )
@@ -411,19 +411,17 @@ class MainPageState extends State<MainPage> {
     List<Widget> menuList = List();
 //    if(weatherBean.result.realtime.) {
     menuList.add(IconButton(
-      icon: Image(
-        image: AssetImage("images/ic_warning.png"),
-        width: 20,
-        height: 20,
+      icon: ImageIcon(
+        AssetImage("images/ic_warning.png"),
+        size: 20,
       ),
       onPressed: _warning,
     ));
 //    }
     menuList.add(IconButton(
-      icon: Image(
-        image: AssetImage("images/ic_building.png"),
-        width: 20,
-        height: 20,
+      icon: ImageIcon(
+        AssetImage("images/ic_building.png"),
+        size: 20,
       ),
       onPressed: _focusDistrictList,
     ));
