@@ -96,17 +96,35 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
 
   /// 检查APP是否具有定位权限
   void _checkPermission() async {
-    await PermissionHandler().requestPermissions([PermissionGroup.location]);
-    PermissionStatus status = await PermissionHandler()
-        .checkPermissionStatus(PermissionGroup.location);
-    if (status == PermissionStatus.granted) {
-      _initLocation();
+    // 检查位置服务是否打开
+    ServiceStatus serviceStatus =
+        await PermissionHandler().checkServiceStatus(PermissionGroup.location);
+    if (serviceStatus == ServiceStatus.enabled) {
+      // 检查定位权限是否授权
+      PermissionStatus permissionStatus = await PermissionHandler()
+          .checkPermissionStatus(PermissionGroup.location);
+      if (permissionStatus != PermissionStatus.granted) {
+        // 申请定位权限
+        await PermissionHandler()
+            .requestPermissions([PermissionGroup.location]);
+        permissionStatus = await PermissionHandler()
+            .checkPermissionStatus(PermissionGroup.location);
+      }
+
+      if (permissionStatus == PermissionStatus.granted) {
+        _initLocation();
+      } else {
+        Fluttertoast.showToast(
+          toastLength: Toast.LENGTH_LONG,
+          msg: "为了更好的为您提供本地天气服务，请给予定位权限，然后重启APP",
+        );
+        await PermissionHandler().openAppSettings();
+      }
     } else {
       Fluttertoast.showToast(
         toastLength: Toast.LENGTH_LONG,
-        msg: "为了更好的为您提供本地天气服务，请在设置中给予定位权限，然后再次打开APP",
+        msg: "为了更好的为您提供本地天气服务，请打开位置服务，然后重启APP",
       );
-      await PermissionHandler().openAppSettings();
     }
   }
 
@@ -379,14 +397,14 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
                           DateUtils.getFormatTimeHHmm(
                               hourly.skycon.elementAt(position).datetime),
                           style:
-                          TextStyle(color: Colors.white54, fontSize: 14)),
+                              TextStyle(color: Colors.white54, fontSize: 14)),
                       Padding(
                         padding: EdgeInsets.only(top: 7, bottom: 7),
                         child: weatherIcon,
                       ),
                       Text(desc,
                           style:
-                          TextStyle(color: Colors.white54, fontSize: 14)),
+                              TextStyle(color: Colors.white54, fontSize: 14)),
                     ],
                   ),
                 ),
