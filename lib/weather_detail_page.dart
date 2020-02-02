@@ -183,6 +183,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
     list.add(_weatherLayout());
     list.add(_tipsLayout());
 
+    // 如果未来两小时有雨，则显示降雨趋势图
     for (int i = 0; i < minutely.precipitation_2h.length; i++) {
       if (minutely.precipitation_2h.elementAt(i) > 0) {
         list.add(Padding(
@@ -371,22 +372,21 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
               return SizedBox(
                 width: screenWidth / 6.5,
                 child: Padding(
-                  padding: EdgeInsets.only(top: 5, bottom: 10),
+                  padding: EdgeInsets.only(top: 15),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
                           DateUtils.getFormatTimeHHmm(
                               hourly.skycon.elementAt(position).datetime),
                           style:
-                              TextStyle(color: Colors.white54, fontSize: 14)),
+                          TextStyle(color: Colors.white54, fontSize: 14)),
                       Padding(
                         padding: EdgeInsets.only(top: 7, bottom: 7),
                         child: weatherIcon,
                       ),
                       Text(desc,
                           style:
-                              TextStyle(color: Colors.white54, fontSize: 14)),
+                          TextStyle(color: Colors.white54, fontSize: 14)),
                     ],
                   ),
                 ),
