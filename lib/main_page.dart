@@ -414,6 +414,7 @@ class MainPageState extends State<MainPage> {
       icon: ImageIcon(
         AssetImage("images/ic_warning.png"),
         size: 20,
+        color: Colors.white,
       ),
       onPressed: _warning,
     ));
@@ -422,6 +423,7 @@ class MainPageState extends State<MainPage> {
       icon: ImageIcon(
         AssetImage("images/ic_building.png"),
         size: 20,
+        color: Colors.white,
       ),
       onPressed: _focusDistrictList,
     ));
