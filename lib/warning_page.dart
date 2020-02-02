@@ -15,6 +15,7 @@ class WarningPage extends StatefulWidget {
 
 class WarningPageState extends State<WarningPage> {
   Completer<WebViewController> _controller = Completer<WebViewController>();
+  WebViewController _webViewController;
 
   @override
   Widget build(BuildContext context) {
@@ -24,18 +25,17 @@ class WarningPageState extends State<WarningPage> {
         javascriptMode: JavascriptMode.unrestricted,
         onWebViewCreated: (WebViewController webViewController) {
           _controller.complete(webViewController);
+          _webViewController = webViewController;
         },
       ),
       onWillPop: () async {
-        _controller.future.then((webViewController) {
-          Future<bool> canGoBack = webViewController.canGoBack();
-          canGoBack.then((bool) {
-            if (bool) {
-              webViewController.goBack();
-            } else {
-              Navigator.of(context).pop();
-            }
-          });
+        Future<bool> canGoBack = _webViewController.canGoBack();
+        canGoBack.then((bool) {
+          if (bool) {
+            _webViewController.goBack();
+          } else {
+            Navigator.of(context).pop();
+          }
         });
         return false;
       },
