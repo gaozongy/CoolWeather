@@ -19,26 +19,31 @@ class WarningPageState extends State<WarningPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      child: WebView(
-        initialUrl: "https://news.qq.com/zt2020/page/feiyan.htm",
-        javascriptMode: JavascriptMode.unrestricted,
-        onWebViewCreated: (WebViewController webViewController) {
-          _controller.complete(webViewController);
-          _webViewController = webViewController;
+    return Scaffold(
+      appBar: new AppBar(
+        title: new Text("实时统计"),
+      ),
+      body: WillPopScope(
+        child: WebView(
+          initialUrl: "https://news.qq.com/zt2020/page/feiyan.htm",
+          javascriptMode: JavascriptMode.unrestricted,
+          onWebViewCreated: (WebViewController webViewController) {
+            _controller.complete(webViewController);
+            _webViewController = webViewController;
+          },
+        ),
+        onWillPop: () async {
+          Future<bool> canGoBack = _webViewController.canGoBack();
+          canGoBack.then((bool) {
+            if (bool) {
+              _webViewController.goBack();
+            } else {
+              Navigator.of(context).pop();
+            }
+          });
+          return false;
         },
       ),
-      onWillPop: () async {
-        Future<bool> canGoBack = _webViewController.canGoBack();
-        canGoBack.then((bool) {
-          if (bool) {
-            _webViewController.goBack();
-          } else {
-            Navigator.of(context).pop();
-          }
-        });
-        return false;
-      },
     );
   }
 }
