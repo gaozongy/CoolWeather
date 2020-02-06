@@ -95,4 +95,5 @@ flutter:
     - images/bg_share/bg_downpour_share.png
     - images/bg_share/bg_snow_share.png
     - images/bg_share/bg_snow_night_share.png
+    - images/ic_guide_overlay.png
     - assets/ic_launcher_anim.flr

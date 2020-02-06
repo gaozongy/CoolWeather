@@ -7,6 +7,7 @@ import 'package:amap_location/amap_location.dart';
 import 'package:coolweather/bean/weather_bean.dart';
 import 'package:coolweather/data/global.dart';
 import 'package:coolweather/utils/share_utils.dart';
+import 'package:coolweather/views/guide_overlay.dart';
 import 'package:coolweather/views/weather/base_weather_state.dart';
 import 'package:coolweather/views/weather/cloudy_anim.dart';
 import 'package:coolweather/views/weather/cloudy_night_anim.dart';
@@ -44,6 +45,8 @@ class MainPage extends StatefulWidget {
 }
 
 class MainPageState extends State<MainPage> {
+  OverlayEntry overlayEntry;
+
   /// 关注城市列表
   List<District> districtList = new List();
 
@@ -123,6 +126,12 @@ class MainPageState extends State<MainPage> {
       prefs.setString(
           Constant.spFocusDistrictData, json.encode(focusDistrictListBean));
     }
+
+    if (!prefs.containsKey(Constant.newFunctionGuide)) {
+      overlayEntry = Guide.show(
+          context, 187, statsHeight + titleHeight - 20, "点击按钮查看最新疫情数据");
+      prefs.setBool(Constant.newFunctionGuide, false);
+    }
   }
 
   /// 查询已关注城市列表及缓存的城市天气数据
@@ -201,6 +210,10 @@ class MainPageState extends State<MainPage> {
 
   /// 跳转警告信息页
   _warning() {
+    if (overlayEntry != null) {
+      overlayEntry.remove();
+      overlayEntry = null;
+    }
     Navigator.of(context).pushNamed("warning");
   }
 

@@ -33,14 +33,12 @@ class WarningPageState extends State<WarningPage> {
           },
         ),
         onWillPop: () async {
-          Future<bool> canGoBack = _webViewController.canGoBack();
-          canGoBack.then((bool) {
-            if (bool) {
-              _webViewController.goBack();
-            } else {
-              Navigator.of(context).pop();
-            }
-          });
+          bool canGoBack = await _webViewController.canGoBack();
+          if (canGoBack) {
+            _webViewController.goBack();
+          } else {
+            Navigator.of(context).pop();
+          }
           return false;
         },
       ),
