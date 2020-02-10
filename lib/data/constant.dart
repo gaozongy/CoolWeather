@@ -8,7 +8,4 @@ class Constant {
   static const String androidDevice = "android_device";
   /// iOS 设备
   static const String iOSDevice = "ios_device";
-
-  /// 有新功能，需要显示功能提示
-  static const String newFunctionGuide = "new_function_guide";
 }

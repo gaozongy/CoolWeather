@@ -126,12 +126,6 @@ class MainPageState extends State<MainPage> {
       prefs.setString(
           Constant.spFocusDistrictData, json.encode(focusDistrictListBean));
     }
-
-    if (!prefs.containsKey(Constant.newFunctionGuide)) {
-      overlayEntry = Guide.show(
-          context, 187, statsHeight + titleHeight - 20, "点击按钮查看最新疫情数据");
-      prefs.setBool(Constant.newFunctionGuide, false);
-    }
   }
 
   /// 查询已关注城市列表及缓存的城市天气数据
