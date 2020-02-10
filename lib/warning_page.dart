@@ -21,7 +21,7 @@ class WarningPageState extends State<WarningPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
-        title: new Text("实时统计"),
+        title: new Text("实时追踪"),
       ),
       body: WillPopScope(
         child: WebView(
