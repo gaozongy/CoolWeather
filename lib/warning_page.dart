@@ -14,23 +14,24 @@ class WarningPage extends StatefulWidget {
 }
 
 class WarningPageState extends State<WarningPage> {
-  Completer<WebViewController> _controller = Completer<WebViewController>();
   WebViewController _webViewController;
+
+  /// 是否正在加载，WebView 加载完成后，页面还有其他请求，
+  /// 为了流畅性，延迟一段时间显示 WebView
+  bool hideWebView = true;
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> widgetList = createWebView();
+
     return Scaffold(
-      appBar: new AppBar(
-        title: new Text("实时追踪"),
+      appBar: AppBar(
+        title: Text("实时追踪"),
+        elevation: 0.6,
       ),
       body: WillPopScope(
-        child: WebView(
-          initialUrl: "https://news.qq.com/zt2020/page/feiyan.htm",
-          javascriptMode: JavascriptMode.unrestricted,
-          onWebViewCreated: (WebViewController webViewController) {
-            _controller.complete(webViewController);
-            _webViewController = webViewController;
-          },
+        child: Stack(
+          children: widgetList,
         ),
         onWillPop: () async {
           bool canGoBack = await _webViewController.canGoBack();
@@ -43,5 +44,35 @@ class WarningPageState extends State<WarningPage> {
         },
       ),
     );
+  }
+
+  List<Widget> createWebView() {
+    List<Widget> widgetList = List();
+    if (hideWebView) {
+      widgetList.add(Center(
+        child: CircularProgressIndicator(
+          backgroundColor: Colors.grey[200],
+          valueColor: AlwaysStoppedAnimation(Colors.blue),
+        ),
+      ));
+    }
+    widgetList.add(Offstage(
+      offstage: hideWebView,
+      child: WebView(
+        onPageFinished: (String url) {
+          Future.delayed(Duration(milliseconds: 1200), () {
+            setState(() {
+              hideWebView = false;
+            });
+          });
+        },
+        initialUrl: "https://news.qq.com/zt2020/page/feiyan.htm",
+        javascriptMode: JavascriptMode.unrestricted,
+        onWebViewCreated: (WebViewController webViewController) {
+          _webViewController = webViewController;
+        },
+      ),
+    ));
+    return widgetList;
   }
 }
