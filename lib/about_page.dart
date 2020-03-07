@@ -81,7 +81,7 @@ class AboutPageState extends State<AboutPage> {
                       Padding(
                         padding: EdgeInsets.only(top: 5),
                         child: Text(
-                          '1.新增新型冠状病毒肺炎疫情地图页，点击主界面右上角即可查看\n'
+                          '1.优化新型冠状病毒肺炎疫情地图页加载速度\n'
                           '2.修复了一些已知的小bug\n',
                           softWrap: true,
                           style: TextStyle(fontSize: 13),
