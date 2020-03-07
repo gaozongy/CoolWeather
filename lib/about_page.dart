@@ -100,7 +100,7 @@ class AboutPageState extends State<AboutPage> {
                   Padding(
                     padding: EdgeInsets.only(bottom: 6),
                     child: Text(
-                      '项目地址，https://github.com/GoodLuck-GL',
+                      '项目地址，https://github.com/GaozyDev',
                       style: TextStyle(fontSize: 12, color: Colors.grey[400]),
                     ),
                   )
