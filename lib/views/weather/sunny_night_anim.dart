@@ -1,9 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'base_weather_state.dart';
 
 class SunnyNightAnim extends StatefulWidget {
-
   SunnyNightAnim({Key key}) : super(key: key);
 
   @override
@@ -15,9 +16,20 @@ class _SunnyNightAnimState extends BaseAnimState<SunnyNightAnim> {
 
   double radians = 0;
 
+  List<StarTrails> starTrailsList = List();
+
   @override
   void initState() {
     super.initState();
+
+
+    for (int i = 0; i < 19; i++) {
+      double radius = Random().nextDouble() * 1045;
+      double startAngle = Random().nextDouble() * 6;
+      double sweepAngle = Random().nextDouble() * 6;
+      starTrailsList.add(StarTrails(radius, startAngle, sweepAngle));
+    }
+
     controller = AnimationController(
       vsync: this,
       duration: Duration(days: 1),
@@ -34,7 +46,7 @@ class _SunnyNightAnimState extends BaseAnimState<SunnyNightAnim> {
     return Container(
       child: CustomPaint(
           size: Size(double.infinity, double.infinity),
-          painter: SunnyNightPainter(radians, maskAlpha)),
+          painter: SunnyNightPainter(radians, maskAlpha, starTrailsList)),
       decoration: BoxDecoration(color: Color(0xFF061324)),
     );
   }
@@ -157,7 +169,9 @@ class SunnyNightPainter extends CustomPainter {
 
   double maskAlpha;
 
-  SunnyNightPainter(this.radians, this.maskAlpha);
+  List<StarTrails> starTrailsList;
+
+  SunnyNightPainter(this.radians, this.maskAlpha, this.starTrailsList);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -170,63 +184,64 @@ class SunnyNightPainter extends CustomPainter {
     calculateColor();
 
     canvas.drawCircle(offset, 400, paint_1);
+    starTrailsList.forEach((starTrails) {
+      canvas.drawArc(Rect.fromCircle(center: offset, radius: starTrails.radius),
+          starTrails.startAngle, starTrails.sweepAngle, false, paint_2);
+    });
 
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 420), 0, 2, false, paint_2);
-
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 440), 2, 4, false, paint_3);
-
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 490), 3, 5, false, paint_4);
-
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 540), 1, 3, false, paint_5);
-
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 560), 0, 1, false, paint_6);
-
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 586), 0.5, 2, false, paint_7);
-
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 610), 0.8, 2, false, paint_8);
-
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 633), 1.5, 2.5, false, paint_9);
-
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 645), 1.8, 3, false, paint_10);
-
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 660), 1.4, 4, false, paint_11);
-
-    canvas.drawArc(Rect.fromCircle(center: offset, radius: 685), 3.2, 4.2,
-        false, paint_12);
-
-    canvas.drawArc(Rect.fromCircle(center: offset, radius: 715), 1.2, 5.2,
-        false, paint_13);
-
-    canvas.drawArc(Rect.fromCircle(center: offset, radius: 740), 3.2, 5.5,
-        false, paint_14);
-
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 755), 2.1, 3, false, paint_15);
-
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 790), 2.1, 3, false, paint_16);
-
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 830), 3, 5, false, paint_17);
-
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 880), 3, 4.1, false, paint_18);
-
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 940), 2, 5.5, false, paint_19);
-
-    canvas.drawArc(
-        Rect.fromCircle(center: offset, radius: 1045), 1, 5, false, paint_20);
+//    canvas.drawArc(
+//        Rect.fromCircle(center: offset, radius: 440), 2, 4, false, paint_3);
+//
+//    canvas.drawArc(
+//        Rect.fromCircle(center: offset, radius: 490), 3, 5, false, paint_4);
+//
+//    canvas.drawArc(
+//        Rect.fromCircle(center: offset, radius: 540), 1, 3, false, paint_5);
+//
+//    canvas.drawArc(
+//        Rect.fromCircle(center: offset, radius: 560), 0, 1, false, paint_6);
+//
+//    canvas.drawArc(
+//        Rect.fromCircle(center: offset, radius: 586), 0.5, 2, false, paint_7);
+//
+//    canvas.drawArc(
+//        Rect.fromCircle(center: offset, radius: 610), 0.8, 2, false, paint_8);
+//
+//    canvas.drawArc(
+//        Rect.fromCircle(center: offset, radius: 633), 1.5, 2.5, false, paint_9);
+//
+//    canvas.drawArc(
+//        Rect.fromCircle(center: offset, radius: 645), 1.8, 3, false, paint_10);
+//
+//    canvas.drawArc(
+//        Rect.fromCircle(center: offset, radius: 660), 1.4, 4, false, paint_11);
+//
+//    canvas.drawArc(Rect.fromCircle(center: offset, radius: 685), 3.2, 4.2,
+//        false, paint_12);
+//
+//    canvas.drawArc(Rect.fromCircle(center: offset, radius: 715), 1.2, 5.2,
+//        false, paint_13);
+//
+//    canvas.drawArc(Rect.fromCircle(center: offset, radius: 740), 3.2, 5.5,
+//        false, paint_14);
+//
+//    canvas.drawArc(
+//        Rect.fromCircle(center: offset, radius: 755), 2.1, 3, false, paint_15);
+//
+//    canvas.drawArc(
+//        Rect.fromCircle(center: offset, radius: 790), 2.1, 3, false, paint_16);
+//
+//    canvas.drawArc(
+//        Rect.fromCircle(center: offset, radius: 830), 3, 5, false, paint_17);
+//
+//    canvas.drawArc(
+//        Rect.fromCircle(center: offset, radius: 880), 3, 4.1, false, paint_18);
+//
+//    canvas.drawArc(
+//        Rect.fromCircle(center: offset, radius: 940), 2, 5.5, false, paint_19);
+//
+//    canvas.drawArc(
+//        Rect.fromCircle(center: offset, radius: 1045), 1, 5, false, paint_20);
   }
 
   void calculateColor() {
@@ -258,4 +273,12 @@ class SunnyNightPainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) {
     return true;
   }
+}
+
+class StarTrails {
+  double radius;
+  double startAngle;
+  double sweepAngle;
+
+  StarTrails(this.radius, this.startAngle, this.sweepAngle);
 }
