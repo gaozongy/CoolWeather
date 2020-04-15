@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 import 'base_weather_state.dart';
@@ -18,61 +16,61 @@ class _SunnyNightAnimState extends BaseAnimState<SunnyNightAnim> {
 
   List<StarTrails> starTrailsList = List();
 
-  List<int> colors = [
-    0xFF8DE6E0,
-    0xFFD0FCFB,
-    0xFF739698,
-    0xFF749799,
-    0xFFC8FFF9,
-    0xFF84EADF,
-    0xFFCAFFF9,
-    0xFFFFFFFF,
-    0xFFCAFFF9,
-    0xFF94E3E0,
-    0xFFFFFFFF,
-    0xFF84EADF,
-    0xFF739698,
-    0xFF739698,
-    0xFFCAFFF9,
-    0xFFCAFFF9,
-    0xFF739698,
-    0xFF83EBE0,
-    0xFFFFFFFF,
-    0xFF739698,
-    0xFF739698,
-    0xFF739698,
-    0xFF739698,
-    0xFF739698,
-    0xFF739698
-  ];
-
   @override
   void initState() {
     super.initState();
 
-    for (int i = 0; i < 25; i++) {
-      double radius = 400 + 30 * i + Random().nextDouble() * 30;
-      double startAngle = Random().nextDouble() * 6;
-      double sweepAngle = Random().nextDouble() * 5;
-      double strokeWidth = 1 + Random().nextDouble() * 1.5;
-      if(i % 3 == 0) {
-        sweepAngle = Random().nextDouble();
-      }
-      if (i < 6) {
-        sweepAngle += 2.4;
-      } else if (i < 12) {
-        sweepAngle += 1.2;
-      }
-      starTrailsList.add(StarTrails(radius, startAngle, sweepAngle,
-          colors.elementAt(i), 6 - sweepAngle, strokeWidth));
-    }
+    //                            radius, startAngle, sweepAngle, strokeWidth, color, speed);
+    // 1
+    starTrailsList.add(StarTrails(400, 0, 7, 1.4, Color(0xFF82ECE1), 0));
+    // 2
+    starTrailsList.add(StarTrails(420, 0, 0.25, 1.4, Color(0xFFD0FCFB), 0.006));
+    starTrailsList.add(StarTrails(420, 3, 0.25, 1.4, Color(0xFFD0FCFB), 0.006));
+    // 3
+    starTrailsList.add(StarTrails(440, 0, 7, 1, Color(0xFF739698), 0));
+    // 4
+    starTrailsList.add(StarTrails(475, 0, 0.25, 2, Color(0xFFFFFFFF), 0.005));
+    starTrailsList.add(StarTrails(475, 3, 0.25, 2, Color(0xFFFFFFFF), 0.005));
+    // 5
+    starTrailsList.add(StarTrails(490, 0, 7, 1, Color(0xFF739698), 0));
+
+    // 6
+    starTrailsList.add(StarTrails(530, 0, 7, 1.5, Color(0xFFC8FFF9), 0));
+    // 7
+    starTrailsList.add(StarTrails(560, 1, 0.25, 1.4, Color(0xFF7FE7DE), 0.004));
+    starTrailsList.add(StarTrails(560, 4, 0.25, 1.4, Color(0xFF7FE7DE), 0.004));
+    // 8
+    starTrailsList.add(StarTrails(570, 0, 7, 1.5, Color(0xFFC8FFF9), 0));
+    // 9
+    starTrailsList.add(StarTrails(580, 2, 0.5, 2, Color(0xFFFFFFFF), 0.008));
+    starTrailsList.add(StarTrails(580, 5, 0.5, 2, Color(0xFFFFFFFF), 0.008));
+    // 10
+    starTrailsList.add(StarTrails(585, 3, 0.5, 1.2, Color(0xFFC8FFF9), 0.01));
+    starTrailsList.add(StarTrails(585, 5, 0.5, 1.2, Color(0xFFC8FFF9), 0.01));
+    // 11
+    starTrailsList.add(StarTrails(598, 0, 7, 1, Color(0xFF7FE7DE), 0));
+
+//    starTrailsList.add(StarTrails(620, 0, 7, 1, Color(0xFF84EADF), 0));
+//    starTrailsList.add(StarTrails(640, 0, 7, 1, Color(0xFF739698), 0));
+//    starTrailsList.add(StarTrails(660, 0, 7, 1, Color(0xFF739698), 0));
+//    starTrailsList.add(StarTrails(680, 0, 7, 1, Color(0xFFCAFFF9), 0));
+//    starTrailsList.add(StarTrails(700, 0, 7, 1, Color(0xFFCAFFF9), 0));
+//    starTrailsList.add(StarTrails(720, 0, 7, 1, Color(0xFF739698), 0));
+//    starTrailsList.add(StarTrails(740, 0, 7, 1, Color(0xFF83EBE0), 0));
+//    starTrailsList.add(StarTrails(760, 0, 7, 1, Color(0xFFFFFFFF), 0));
+//    starTrailsList.add(StarTrails(780, 0, 7, 1, Color(0xFF739698), 0));
+//    starTrailsList.add(StarTrails(800, 0, 7, 1, Color(0xFF739698), 0));
+//    starTrailsList.add(StarTrails(820, 0, 7, 1, Color(0xFF739698), 0));
+//    starTrailsList.add(StarTrails(840, 0, 7, 1, Color(0xFF739698), 0));
+//    starTrailsList.add(StarTrails(860, 0, 7, 1, Color(0xFF739698), 0));
+//    starTrailsList.add(StarTrails(880, 0, 7, 1, Color(0xFF739698), 0));
 
     controller = AnimationController(
       vsync: this,
       duration: Duration(days: 1),
     )..addListener(() {
         setState(() {
-          radians += 0.01;
+          radians += 0.001;
         });
       });
     controller.forward();
@@ -99,8 +97,7 @@ Paint maskPaint = new Paint()
   ..style = PaintingStyle.fill
   ..color = Color(0xFF061324);
 
-Paint starTrailsPaint = new Paint()
-  ..style = PaintingStyle.stroke;
+Paint starTrailsPaint = new Paint()..style = PaintingStyle.stroke;
 
 Offset offset = Offset(0, 0);
 
@@ -121,9 +118,9 @@ class SunnyNightPainter extends CustomPainter {
 //    calculateColor();
 
     starTrailsList.forEach((starTrails) {
-      starTrailsPaint.color = Color(starTrails.color);
+      starTrailsPaint.color = starTrails.color;
       starTrailsPaint.strokeWidth = starTrails.strokeWidth;
-      starTrails.startAngle = starTrails.startAngle + starTrails.speed / 500;
+      starTrails.startAngle = starTrails.startAngle + starTrails.speed;
       canvas.drawArc(Rect.fromCircle(center: offset, radius: starTrails.radius),
           starTrails.startAngle, starTrails.sweepAngle, false, starTrailsPaint);
     });
@@ -144,10 +141,10 @@ class StarTrails {
   double radius;
   double startAngle;
   double sweepAngle;
-  int color;
-  double speed;
   double strokeWidth;
+  Color color;
+  double speed;
 
-  StarTrails(this.radius, this.startAngle, this.sweepAngle, this.color,
-      this.speed, this.strokeWidth);
+  StarTrails(this.radius, this.startAngle, this.sweepAngle, this.strokeWidth,
+      this.color, this.speed);
 }
