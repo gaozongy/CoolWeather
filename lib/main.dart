@@ -18,8 +18,11 @@ void main() {
   final unitModel = UnitModel();
   unitModel.initUnit();
 
-  SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle.light.copyWith(statusBarColor: Colors.transparent));
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light.copyWith(
+    statusBarColor: Colors.transparent,
+    systemNavigationBarColor: Colors.transparent,
+    systemNavigationBarIconBrightness: Brightness.light,
+  ));
 
 //  initJPush();
 

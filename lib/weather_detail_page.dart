@@ -184,6 +184,9 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
                 _dividerLayout(),
                 _moreInfLayout(),
                 _dataFromLayout(),
+                Container(
+                  height: MediaQuery.of(context).viewInsets.bottom,
+                )
               ],
             ),
           ),

@@ -241,8 +241,12 @@ class MainPageState extends State<MainPage> {
     statsHeight = ScreenUtils.getSysStatsHeight(context);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
+      value: SystemUiOverlayStyle.light.copyWith(
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: _createLayout(),
       ),
     );

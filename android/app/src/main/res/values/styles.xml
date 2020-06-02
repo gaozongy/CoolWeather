@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
     <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
         <!-- Show a splash screen on the activity. Automatically removed when
              Flutter draws its first frame -->
         <item name="android:windowBackground">@drawable/launch_background</item>
+
+        <item name="android:windowDrawsSystemBarBackgrounds" tools:targetApi="lollipop">true</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@android:color/transparent</item>
+        <item name="android:navigationBarColor" tools:targetApi="lollipop">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:enforceNavigationBarContrast" tools:targetApi="q">false</item>
+    </style>
+
+    <style name="NormalTheme" parent="LaunchTheme">
+        <item name="android:windowBackground">@android:color/white</item>
     </style>
 </resources>
