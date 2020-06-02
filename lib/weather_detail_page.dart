@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:amap_location/amap_location.dart';
@@ -160,6 +161,7 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
 
   Widget weatherDetailLayout(BuildContext context) {
     if (weatherBean != null) {
+      var mediaQueryData = MediaQuery.of(context);
       return Theme(
         data: Theme.of(context)
             .copyWith(accentColor: Color.fromARGB(255, 51, 181, 229)),
@@ -185,7 +187,10 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
                 _moreInfLayout(),
                 _dataFromLayout(),
                 Container(
-                  height: MediaQuery.of(context).viewInsets.bottom,
+                  height: max(
+                    mediaQueryData.viewInsets.bottom,
+                    mediaQueryData.viewPadding.bottom,
+                  ),
                 )
               ],
             ),
