@@ -6,10 +6,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
+import java.util.Objects;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.android.SplashScreen;
+import www.gl.com.coolweather.widget.BackgroundDrawableSplashScreen;
 
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.M;
@@ -29,10 +33,7 @@ public class MainActivity extends FlutterActivity {
     @Nullable
     @Override
     public SplashScreen provideSplashScreen() {
-        SplashScreen splashScreen = super.provideSplashScreen();
-        if (splashScreen == null) {
-            return null;
-        }
+        SplashScreen splashScreen = new BackgroundDrawableSplashScreen(Objects.requireNonNull(ContextCompat.getDrawable(this, R.drawable.launch_background)));
         return new SplashScreen() {
             /**
              * FlutterActivity启动过程中会将windows.decorView的SystemUiVisibility设为[io.flutter.plugin.platform.PlatformPlugin.DEFAULT_SYSTEM_UI]
