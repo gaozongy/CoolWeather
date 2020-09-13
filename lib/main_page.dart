@@ -7,7 +7,6 @@ import 'package:amap_location/amap_location.dart';
 import 'package:coolweather/bean/weather_bean.dart';
 import 'package:coolweather/data/global.dart';
 import 'package:coolweather/utils/share_utils.dart';
-import 'package:coolweather/views/guide_overlay.dart';
 import 'package:coolweather/views/weather/base_weather_state.dart';
 import 'package:coolweather/views/weather/cloudy_anim.dart';
 import 'package:coolweather/views/weather/cloudy_night_anim.dart';
@@ -421,14 +420,14 @@ class MainPageState extends State<MainPage> {
   Widget _titleMenuIconLayout() {
     List<Widget> menuList = List();
 //    if(weatherBean.result.realtime.) {
-    menuList.add(IconButton(
-      icon: ImageIcon(
-        AssetImage("images/ic_warning.png"),
-        size: 20,
-        color: Colors.white,
-      ),
-      onPressed: _warning,
-    ));
+//    menuList.add(IconButton(
+//      icon: ImageIcon(
+//        AssetImage("images/ic_warning.png"),
+//        size: 20,
+//        color: Colors.white,
+//      ),
+//      onPressed: _warning,
+//    ));
 //    }
     menuList.add(IconButton(
       icon: ImageIcon(
