@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'base_weather_state.dart';
@@ -16,54 +18,53 @@ class _SunnyNightAnimState extends BaseAnimState<SunnyNightAnim> {
 
   List<StarTrails> starTrailsList = List();
 
+  List<Color> trailsColorList = [
+    Color(0xFFFFFFFF),
+    Color(0xFFD0FCFB),
+    Color(0xFFCAFFF9),
+    Color(0xFFC8FFF9),
+    Color(0xFF94E3E0),
+    Color(0xFF8DE6E0),
+    Color(0xFF84EADF),
+    Color(0xFF83EBE0),
+    Color(0xFF749799),
+    Color(0xFF739698)
+  ];
+
+  Color bgColor = Color(0xFF061324);
+
   @override
   void initState() {
     super.initState();
 
-    //                            radius, startAngle, sweepAngle, strokeWidth, color, speed);
-    // 1
-    starTrailsList.add(StarTrails(400, 0, 7, 1.4, Color(0xFF82ECE1), 0));
-    // 2
-    starTrailsList.add(StarTrails(420, 0, 0.25, 1.4, Color(0xFFD0FCFB), 0.006));
-    starTrailsList.add(StarTrails(420, 3, 0.25, 1.4, Color(0xFFD0FCFB), 0.006));
-    // 3
-    starTrailsList.add(StarTrails(440, 0, 7, 1, Color(0xFF739698), 0));
-    // 4
-    starTrailsList.add(StarTrails(475, 0, 0.25, 2, Color(0xFFFFFFFF), 0.005));
-    starTrailsList.add(StarTrails(475, 3, 0.25, 2, Color(0xFFFFFFFF), 0.005));
-    // 5
-    starTrailsList.add(StarTrails(490, 0, 7, 1, Color(0xFF739698), 0));
-
-    // 6
-    starTrailsList.add(StarTrails(530, 0, 7, 1.5, Color(0xFFC8FFF9), 0));
-    // 7
-    starTrailsList.add(StarTrails(560, 1, 0.25, 1.4, Color(0xFF7FE7DE), 0.004));
-    starTrailsList.add(StarTrails(560, 4, 0.25, 1.4, Color(0xFF7FE7DE), 0.004));
-    // 8
-    starTrailsList.add(StarTrails(570, 0, 7, 1.5, Color(0xFFC8FFF9), 0));
-    // 9
-    starTrailsList.add(StarTrails(580, 2, 0.5, 2, Color(0xFFFFFFFF), 0.008));
-    starTrailsList.add(StarTrails(580, 5, 0.5, 2, Color(0xFFFFFFFF), 0.008));
-    // 10
-    starTrailsList.add(StarTrails(585, 3, 0.5, 1.2, Color(0xFFC8FFF9), 0.01));
-    starTrailsList.add(StarTrails(585, 5, 0.5, 1.2, Color(0xFFC8FFF9), 0.01));
-    // 11
-    starTrailsList.add(StarTrails(598, 0, 7, 1, Color(0xFF7FE7DE), 0));
-
-//    starTrailsList.add(StarTrails(620, 0, 7, 1, Color(0xFF84EADF), 0));
-//    starTrailsList.add(StarTrails(640, 0, 7, 1, Color(0xFF739698), 0));
-//    starTrailsList.add(StarTrails(660, 0, 7, 1, Color(0xFF739698), 0));
-//    starTrailsList.add(StarTrails(680, 0, 7, 1, Color(0xFFCAFFF9), 0));
-//    starTrailsList.add(StarTrails(700, 0, 7, 1, Color(0xFFCAFFF9), 0));
-//    starTrailsList.add(StarTrails(720, 0, 7, 1, Color(0xFF739698), 0));
-//    starTrailsList.add(StarTrails(740, 0, 7, 1, Color(0xFF83EBE0), 0));
-//    starTrailsList.add(StarTrails(760, 0, 7, 1, Color(0xFFFFFFFF), 0));
-//    starTrailsList.add(StarTrails(780, 0, 7, 1, Color(0xFF739698), 0));
-//    starTrailsList.add(StarTrails(800, 0, 7, 1, Color(0xFF739698), 0));
-//    starTrailsList.add(StarTrails(820, 0, 7, 1, Color(0xFF739698), 0));
-//    starTrailsList.add(StarTrails(840, 0, 7, 1, Color(0xFF739698), 0));
-//    starTrailsList.add(StarTrails(860, 0, 7, 1, Color(0xFF739698), 0));
-//    starTrailsList.add(StarTrails(880, 0, 7, 1, Color(0xFF739698), 0));
+    for (int i = 0; i < 40; i++) {
+      double radius = 400 + 20 * (i - 1) + Random().nextDouble() * 25;
+      if (i > 22) {
+        radius = radius + 60 * (i - 22);
+      }
+      double startAngle = Random().nextDouble() * pi * 2;
+      double sweepAngle = pi / 3 + Random().nextDouble() * pi / 2;
+      double speed = (Random().nextInt(6) + 4) / 1000;
+      if (Random().nextDouble() < 0.85) {
+        double strokeWidth = Random().nextDouble() * 1.2 + 1;
+        int colorIndex = Random().nextInt(trailsColorList.length - 1);
+        starTrailsList.add(StarTrails(radius, startAngle, sweepAngle,
+            strokeWidth, trailsColorList[colorIndex], speed));
+        starTrailsList.add(StarTrails(radius, startAngle + pi, sweepAngle,
+            strokeWidth, trailsColorList[colorIndex], speed));
+      } else {
+        double strokeWidth = 2.2;
+        int colorIndex = 0;
+        starTrailsList.add(StarTrails(radius, startAngle, pi / 12, strokeWidth,
+            trailsColorList[colorIndex], speed));
+        starTrailsList.add(StarTrails(radius, startAngle + pi / 2, pi / 12,
+            strokeWidth, trailsColorList[colorIndex], speed));
+        starTrailsList.add(StarTrails(radius, startAngle + pi, pi / 12,
+            strokeWidth, trailsColorList[colorIndex], speed));
+        starTrailsList.add(StarTrails(radius, startAngle + pi * 3 / 2, pi / 12,
+            strokeWidth, trailsColorList[colorIndex], speed));
+      }
+    }
 
     controller = AnimationController(
       vsync: this,
@@ -82,7 +83,7 @@ class _SunnyNightAnimState extends BaseAnimState<SunnyNightAnim> {
       child: CustomPaint(
           size: Size(double.infinity, double.infinity),
           painter: SunnyNightPainter(radians, maskAlpha, starTrailsList)),
-      decoration: BoxDecoration(color: Color(0xFF061324)),
+      decoration: BoxDecoration(color: bgColor),
     );
   }
 
@@ -115,7 +116,7 @@ class SunnyNightPainter extends CustomPainter {
     canvas.translate(-350, -130);
     canvas.rotate(radians);
 
-//    calculateColor();
+    calculateColor();
 
     starTrailsList.forEach((starTrails) {
       starTrailsPaint.color = starTrails.color;
