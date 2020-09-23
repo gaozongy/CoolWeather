@@ -38,13 +38,13 @@ class _SunnyNightAnimState extends BaseAnimState<SunnyNightAnim> {
     super.initState();
 
     for (int i = 0; i < 40; i++) {
-      double radius = 400 + 20 * (i - 1) + Random().nextDouble() * 25;
+      double radius = 400 + 20 * (i - 1) + Random().nextDouble() * 18;
       if (i > 22) {
         radius = radius + 60 * (i - 22);
       }
       double startAngle = Random().nextDouble() * pi * 2;
-      double sweepAngle = pi / 3 + Random().nextDouble() * pi / 2;
-      double speed = (Random().nextInt(6) + 4) / 1000;
+      double sweepAngle = pi / 2 + Random().nextDouble() * pi / 2;
+      double speed = (Random().nextInt(10) + 2) / 1000;
       if (Random().nextDouble() < 0.85) {
         double strokeWidth = Random().nextDouble() * 1.2 + 1;
         int colorIndex = Random().nextInt(trailsColorList.length - 1);
@@ -55,13 +55,13 @@ class _SunnyNightAnimState extends BaseAnimState<SunnyNightAnim> {
       } else {
         double strokeWidth = 2.2;
         int colorIndex = 0;
-        starTrailsList.add(StarTrails(radius, startAngle, pi / 12, strokeWidth,
+        starTrailsList.add(StarTrails(radius, startAngle, pi / 18, strokeWidth,
             trailsColorList[colorIndex], speed));
-        starTrailsList.add(StarTrails(radius, startAngle + pi / 2, pi / 12,
+        starTrailsList.add(StarTrails(radius, startAngle + pi / 2, pi / 16,
             strokeWidth, trailsColorList[colorIndex], speed));
-        starTrailsList.add(StarTrails(radius, startAngle + pi, pi / 12,
+        starTrailsList.add(StarTrails(radius, startAngle + pi, pi / 17,
             strokeWidth, trailsColorList[colorIndex], speed));
-        starTrailsList.add(StarTrails(radius, startAngle + pi * 3 / 2, pi / 12,
+        starTrailsList.add(StarTrails(radius, startAngle + pi * 3 / 2, pi / 15,
             strokeWidth, trailsColorList[colorIndex], speed));
       }
     }
@@ -94,20 +94,14 @@ class _SunnyNightAnimState extends BaseAnimState<SunnyNightAnim> {
   }
 }
 
-Paint maskPaint = new Paint()
-  ..style = PaintingStyle.fill
-  ..color = Color(0xFF061324);
-
-Paint starTrailsPaint = new Paint()..style = PaintingStyle.stroke;
-
-Offset offset = Offset(0, 0);
-
 class SunnyNightPainter extends CustomPainter {
   double radians;
 
   double maskAlpha;
 
   List<StarTrails> starTrailsList;
+
+  Paint starTrailsPaint = new Paint()..style = PaintingStyle.stroke;
 
   SunnyNightPainter(this.radians, this.maskAlpha, this.starTrailsList);
 
@@ -116,20 +110,22 @@ class SunnyNightPainter extends CustomPainter {
     canvas.translate(-350, -130);
     canvas.rotate(radians);
 
-    calculateColor();
-
     starTrailsList.forEach((starTrails) {
-      starTrailsPaint.color = starTrails.color;
+      starTrailsPaint.color = calculateColor(starTrails.color);
       starTrailsPaint.strokeWidth = starTrails.strokeWidth;
       starTrails.startAngle = starTrails.startAngle + starTrails.speed;
-      canvas.drawArc(Rect.fromCircle(center: offset, radius: starTrails.radius),
-          starTrails.startAngle, starTrails.sweepAngle, false, starTrailsPaint);
+      canvas.drawArc(
+          Rect.fromCircle(center: Offset(0, 0), radius: starTrails.radius),
+          starTrails.startAngle,
+          starTrails.sweepAngle,
+          false,
+          starTrailsPaint);
     });
   }
 
-  void calculateColor() {
+  Color calculateColor(Color color) {
     int alpha = (255 * maskAlpha).toInt();
-    starTrailsPaint..color = Color.fromARGB(alpha, 208, 252, 251);
+    return Color.fromARGB(alpha, color.red, color.green, color.blue);
   }
 
   @override
