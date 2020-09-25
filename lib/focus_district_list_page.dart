@@ -11,7 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'bean/focus_district_list_bean.dart';
 import 'bean/weather_bean.dart';
 import 'data/constant.dart';
-import 'data/global.dart';
 import 'utils/translation_utils.dart';
 
 class FocusDistrictListPage extends StatefulWidget {
@@ -22,8 +21,8 @@ class FocusDistrictListPage extends StatefulWidget {
 }
 
 class FocusDistrictListPageState extends State<FocusDistrictListPage> {
-  /// 关注的城市列表是否有更改
-  bool hasChanged = false;
+  /// 0 无任何操作 -1 城市列表有增加 -2 城市列表有删除
+  int status = 0;
 
   List<District> dataList = List();
 
@@ -74,7 +73,7 @@ class FocusDistrictListPageState extends State<FocusDistrictListPage> {
     Navigator.of(context).pushNamed("select_district").then((bool) {
       if (bool) {
         _initData();
-        hasChanged = true;
+        status = -1;
       }
     });
   }
@@ -94,7 +93,7 @@ class FocusDistrictListPageState extends State<FocusDistrictListPage> {
     prefs.setString(Constant.spFocusDistrictData, focusCountyJson);
     closeEditMode();
     _initData();
-    hasChanged = true;
+    status = -2;
   }
 
   @override
@@ -118,7 +117,7 @@ class FocusDistrictListPageState extends State<FocusDistrictListPage> {
                   if (isEditMode) {
                     closeEditMode();
                   } else {
-                    Navigator.pop(context, hasChanged);
+                    Navigator.pop(context, [status, -1]);
                   }
                 },
               ),
@@ -160,7 +159,7 @@ class FocusDistrictListPageState extends State<FocusDistrictListPage> {
             closeEditMode();
             return false;
           } else {
-            Navigator.pop(context, hasChanged);
+            Navigator.pop(context, [status, -1]);
             return false;
           }
         });
@@ -222,21 +221,24 @@ class FocusDistrictListPageState extends State<FocusDistrictListPage> {
             ),
           ),
           onTap: () {
-            if (position == 0) {
-              deleteInhibitToast();
-              return;
-            }
             if (isEditMode) {
-              setState(() {
-                if (!selectedPos.contains(position)) {
-                  selectedPos.add(position);
-                } else {
-                  selectedPos.remove(position);
-                  if (selectedPos.length == 0) {
-                    isEditMode = false;
+              if (position == 0) {
+                deleteInhibitToast();
+              } else {
+                setState(() {
+                  if (!selectedPos.contains(position)) {
+                    selectedPos.add(position);
+                  } else {
+                    selectedPos.remove(position);
+                    if (selectedPos.length == 0) {
+                      isEditMode = false;
+                    }
                   }
-                }
-              });
+                });
+              }
+            } else {
+              Navigator.pop(
+                  context, [status, position]);
             }
           },
           onLongPress: () {

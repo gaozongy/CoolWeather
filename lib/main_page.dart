@@ -212,9 +212,19 @@ class MainPageState extends State<MainPage> {
 
   /// 跳转关注城市列表页
   _focusDistrictList() {
-    Navigator.of(context).pushNamed("focus_district_list").then((hasChanged) {
-      if (hasChanged) {
-        _initData();
+    Navigator.of(context).pushNamed("focus_district_list").then((value) async {
+      List<int> params = value;
+      int status = params[0];
+      int page = params[1];
+      if (status != 0) {
+        await _initData();
+        if (status == -2 && page == -1) {
+          _pageController.jumpToPage(0);
+        }
+      }
+
+      if (page != -1) {
+        _pageController.jumpToPage(page);
       }
     });
   }
@@ -475,6 +485,7 @@ class MainPageState extends State<MainPage> {
   @override
   void dispose() {
     AMapLocationClient.shutdown();
+    _pageController.dispose();
     super.dispose();
   }
 }
