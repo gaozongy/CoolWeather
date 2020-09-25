@@ -295,7 +295,7 @@ class MainPageState extends State<MainPage> {
 
   /// 修改天气动画透明度
   void changeAnimAlpha(double scrollProgress) {
-    double progress = 1.0 - scrollProgress / 0.5;
+    double progress = 1.0 - scrollProgress / 0.3;
     double alpha = progress >= 0 ? progress : 0;
     if (_globalKey.currentState != null) {
       _globalKey.currentState.setMaskAlpha(alpha);
