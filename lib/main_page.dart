@@ -218,8 +218,17 @@ class MainPageState extends State<MainPage> {
       int page = params[1];
       if (status != 0) {
         await _initData();
+        // 新增 && 跳转到指定页
+        if (status == -1 && page != -1) {
+          // todo _pageController 回调未触发
+          _pageController.jumpToPage(page);
+          return;
+        }
+        // 删除 && 直接返回
         if (status == -2 && page == -1) {
+          // todo
           _pageController.jumpToPage(0);
+          return;
         }
       }
 
