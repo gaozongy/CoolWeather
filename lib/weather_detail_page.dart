@@ -672,8 +672,6 @@ class _WeatherDetailPageState extends State<WeatherDetailPage>
           '/$longitude,$latitude/' +
           'weather.json?dailysteps=15&unit=metric:v1';
 
-      Log.d(url);
-
       var httpClient = new HttpClient();
       try {
         var request = await httpClient.getUrl(Uri.parse(url));
