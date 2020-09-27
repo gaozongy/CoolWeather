@@ -174,9 +174,9 @@ class TemperatureLinePainter extends CustomPainter {
     path.lineTo(width, dots.elementAt(dots.length - 1).max);
     path.lineTo(width, dots.elementAt(dots.length - 1).min + margin);
 
-    for (int i = 0; i < dots.length; i++) {
-      double x = distance * (dots.length - 1 - i) + distance / 2;
-      path.lineTo(x, dots.elementAt(dots.length - 1 - i).min + margin);
+    for (int i = dots.length - 1; i >= 0; i--) {
+      double x = distance * i + distance / 2;
+      path.lineTo(x, dots.elementAt(i).min + margin);
     }
 
     path.lineTo(0, dots.elementAt(0).min + margin);

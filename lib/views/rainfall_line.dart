@@ -48,8 +48,22 @@ class RainfallLinePainter extends CustomPainter {
       ..color = Colors.white60
       ..strokeWidth = 1.2;
 
+    Gradient gradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        Colors.white30,
+        Colors.white10,
+      ],
+    );
+
+    Rect arcRect = Rect.fromLTRB(0, 0, 0, 100);
+    Paint bgPaint = Paint()
+      ..style = PaintingStyle.fill
+      ..shader = gradient.createShader(arcRect);
+
     double distance = width / precipitation2h.length;
-    drawLine(precipitation2h, distance, canvas, trendLinePaint);
+    // drawLine(precipitation2h, distance, canvas, trendLinePaint);
 
     canvas.drawLine(Offset(0, 0), Offset(width, 0), bottomLinePaint);
 
@@ -70,6 +84,9 @@ class RainfallLinePainter extends CustomPainter {
 
     TextPainter tpTwoHour = getTextPainter('2小时');
     tpTwoHour.paint(canvas, Offset(width - tpTwoHour.width, 0));
+
+    // 画背景颜色
+    drawBg(precipitation2h, distance, width, canvas, bgPaint);
   }
 
   // 画文字
@@ -100,8 +117,9 @@ class RainfallLinePainter extends CustomPainter {
     canvas.drawParagraph(paragraph, offset);
   }
 
-  void drawLine(List<double> precipitation2h, double distance, Canvas canvas, Paint trendLinePaint) {
-    for (int i = 0; i < precipitation2h.length - 1; i++) {
+  void drawLine(List<double> precipitation2h, double distance, Canvas canvas,
+      Paint trendLinePaint) {
+    for (int i = 0; i < precipitation2h.length; i++) {
       double x = distance * i + distance / 2;
       int multiple = 200;
 
@@ -115,15 +133,39 @@ class RainfallLinePainter extends CustomPainter {
             Offset(0, -precipitation2h.elementAt(0) * multiple),
             Offset(distance / 2, -precipitation2h.elementAt(0) * multiple),
             trendLinePaint);
-      } else if (i == precipitation2h.length - 2) {
+      } else if (i == precipitation2h.length - 1) {
         canvas.drawLine(
-            Offset(x + distance,
-                -precipitation2h.elementAt(precipitation2h.length - 1) * multiple),
-            Offset(x + distance + distance / 2,
-                -precipitation2h.elementAt(precipitation2h.length - 1) * multiple),
+            Offset(
+                x + distance,
+                -precipitation2h.elementAt(precipitation2h.length - 1) *
+                    multiple),
+            Offset(
+                x + distance + distance / 2,
+                -precipitation2h.elementAt(precipitation2h.length - 1) *
+                    multiple),
             trendLinePaint);
       }
     }
+  }
+
+  void drawBg(List<double> precipitation2h, double distance, double width,
+      Canvas canvas, Paint bgPaint) {
+    int multiple = 200;
+    Path path = new Path();
+    path.moveTo(0, 0);
+    path.lineTo(0, -precipitation2h.elementAt(0) * multiple);
+
+    for (int i = 0; i < precipitation2h.length; i++) {
+      double x = distance * i + distance / 2;
+      path.lineTo(x, -precipitation2h.elementAt(i) * multiple);
+    }
+
+    path.lineTo(width,
+        -precipitation2h.elementAt(precipitation2h.length - 1) * multiple);
+    path.lineTo(width, 0);
+    path.close();
+
+    canvas.drawPath(path, bgPaint);
   }
 
   @override
