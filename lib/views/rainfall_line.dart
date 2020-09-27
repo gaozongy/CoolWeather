@@ -33,39 +33,18 @@ class RainfallLinePainter extends CustomPainter {
 
     canvas.translate(0, height);
 
-    Paint bottomLinePaint = new Paint()
-      ..style = PaintingStyle.stroke
-      ..color = Colors.white38
-      ..strokeWidth = 1;
-
     Paint auxiliaryLinePaint = new Paint()
       ..style = PaintingStyle.stroke
       ..color = Colors.white12
       ..strokeWidth = 1;
 
-    Paint trendLinePaint = new Paint()
-      ..style = PaintingStyle.stroke
-      ..color = Colors.white60
-      ..strokeWidth = 1.2;
-
-    Gradient gradient = LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [
-        Colors.white30,
-        Colors.white10,
-      ],
-    );
-
-    Rect arcRect = Rect.fromLTRB(0, 0, 0, 100);
     Paint bgPaint = Paint()
       ..style = PaintingStyle.fill
-      ..shader = gradient.createShader(arcRect);
+      ..color = Colors.white30;
 
     double distance = width / precipitation2h.length;
-    // drawLine(precipitation2h, distance, canvas, trendLinePaint);
 
-    canvas.drawLine(Offset(0, 0), Offset(width, 0), bottomLinePaint);
+    canvas.drawLine(Offset(0, 0), Offset(width, 0), auxiliaryLinePaint);
 
     canvas.drawLine(Offset(0, -height / 3 * 1), Offset(width, -height / 3 * 1),
         auxiliaryLinePaint);
@@ -115,37 +94,6 @@ class RainfallLinePainter extends CustomPainter {
     pb.addText(text);
     Paragraph paragraph = pb.build()..layout(pc);
     canvas.drawParagraph(paragraph, offset);
-  }
-
-  void drawLine(List<double> precipitation2h, double distance, Canvas canvas,
-      Paint trendLinePaint) {
-    for (int i = 0; i < precipitation2h.length; i++) {
-      double x = distance * i + distance / 2;
-      int multiple = 200;
-
-      canvas.drawLine(
-          Offset(x, -precipitation2h.elementAt(i) * multiple),
-          Offset(x + distance, -precipitation2h.elementAt(i + 1) * multiple),
-          trendLinePaint);
-
-      if (i == 0) {
-        canvas.drawLine(
-            Offset(0, -precipitation2h.elementAt(0) * multiple),
-            Offset(distance / 2, -precipitation2h.elementAt(0) * multiple),
-            trendLinePaint);
-      } else if (i == precipitation2h.length - 1) {
-        canvas.drawLine(
-            Offset(
-                x + distance,
-                -precipitation2h.elementAt(precipitation2h.length - 1) *
-                    multiple),
-            Offset(
-                x + distance + distance / 2,
-                -precipitation2h.elementAt(precipitation2h.length - 1) *
-                    multiple),
-            trendLinePaint);
-      }
-    }
   }
 
   void drawBg(List<double> precipitation2h, double distance, double width,
