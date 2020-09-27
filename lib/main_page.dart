@@ -90,17 +90,38 @@ class MainPageState extends State<MainPage> {
   _initPageController() {
     _pageController.addListener(() {
       int page = (_pageController.page + 0.5).toInt();
-      if (page != currentPage) {
-        setState(() {
-          currentPage = page;
-          district = districtList.elementAt(page);
-          if (district.weatherBean != null) {
-            updateWeatherState(district.weatherBean);
-          }
-        });
-      }
-      changeAnimAlpha(district.scrollProgress);
+      updatePageNum(page);
     });
+  }
+
+  updatePageNum(int page) {
+    if (page != currentPage) {
+      setState(() {
+        currentPage = page;
+        district = districtList.elementAt(page);
+        if (district.weatherBean != null) {
+          updateWeatherState(district.weatherBean);
+        }
+      });
+    }
+    changeAnimAlpha(district.scrollProgress);
+  }
+
+  /// 更新当前界面显示的天气信息
+  updateWeatherState(WeatherBean weatherBean) {
+    setState(() {
+      this.weatherBean = weatherBean;
+      this.updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
+    });
+  }
+
+  /// 修改天气动画透明度
+  void changeAnimAlpha(double scrollProgress) {
+    double progress = 1.0 - scrollProgress / 0.3;
+    double alpha = progress >= 0 ? progress : 0;
+    if (_globalKey.currentState != null) {
+      _globalKey.currentState.setMaskAlpha(alpha);
+    }
   }
 
   /// 初始化数据
@@ -131,10 +152,10 @@ class MainPageState extends State<MainPage> {
   List<District> queryDistrictList(SharedPreferences prefs) {
     List<District> districtList = List();
     String focusDistrictListJson =
-        prefs.getString(Constant.spFocusDistrictData);
+    prefs.getString(Constant.spFocusDistrictData);
     if (focusDistrictListJson != null) {
       FocusDistrictListBean focusDistrictListBean =
-          FocusDistrictListBean.fromJson(json.decode(focusDistrictListJson));
+      FocusDistrictListBean.fromJson(json.decode(focusDistrictListJson));
       if (focusDistrictListBean != null) {
         districtList.addAll(focusDistrictListBean.districtList);
         districtList.forEach((district) {
@@ -171,14 +192,6 @@ class MainPageState extends State<MainPage> {
     if (district == this.district) {
       updateWeatherState(weatherBean);
     }
-  }
-
-  /// 更新当前界面显示的天气信息
-  updateWeatherState(WeatherBean weatherBean) {
-    setState(() {
-      this.weatherBean = weatherBean;
-      this.updateTime = DateUtils.getTimeDesc(weatherBean.server_time) + '更新';
-    });
   }
 
   /// PageView 子页面回调方法
@@ -218,15 +231,9 @@ class MainPageState extends State<MainPage> {
       int page = params[1];
       if (status != 0) {
         await _initData();
-        // 新增 && 跳转到指定页
-        if (status == -1 && page != -1) {
-          // todo _pageController 回调未触发
-          _pageController.jumpToPage(page);
-          return;
-        }
         // 删除 && 直接返回
         if (status == -2 && page == -1) {
-          // todo
+          // todo 直接返回到第一页，不太友好
           _pageController.jumpToPage(0);
           return;
         }
@@ -235,6 +242,9 @@ class MainPageState extends State<MainPage> {
       if (page != -1) {
         _pageController.jumpToPage(page);
       }
+
+      // 手动触发一次，防止 _pageController 不回调
+      updatePageNum(page);
     });
   }
 
@@ -310,15 +320,6 @@ class MainPageState extends State<MainPage> {
     );
 
     return mainLayout;
-  }
-
-  /// 修改天气动画透明度
-  void changeAnimAlpha(double scrollProgress) {
-    double progress = 1.0 - scrollProgress / 0.3;
-    double alpha = progress >= 0 ? progress : 0;
-    if (_globalKey.currentState != null) {
-      _globalKey.currentState.setMaskAlpha(alpha);
-    }
   }
 
   /// 根据天气类型获取天气动画
