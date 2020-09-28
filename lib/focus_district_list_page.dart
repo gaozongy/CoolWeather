@@ -73,7 +73,9 @@ class FocusDistrictListPageState extends State<FocusDistrictListPage> {
     Navigator.of(context).pushNamed("select_district").then((bool) {
       if (bool) {
         _initData();
-        status = -1;
+        if (status == 0) {
+          status = -1;
+        }
       }
     });
   }
@@ -237,8 +239,7 @@ class FocusDistrictListPageState extends State<FocusDistrictListPage> {
                 });
               }
             } else {
-              Navigator.pop(
-                  context, [status, position]);
+              Navigator.pop(context, [status, position]);
             }
           },
           onLongPress: () {

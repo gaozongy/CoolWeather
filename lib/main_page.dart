@@ -90,19 +90,21 @@ class MainPageState extends State<MainPage> {
   _initPageController() {
     _pageController.addListener(() {
       int page = (_pageController.page + 0.5).toInt();
-      updatePageNum(page);
+      if (currentPage != page) {
+        updatePageNum(page);
+      }
     });
   }
 
+  /// 更新当前页码
+  /// page 页码
   updatePageNum(int page) {
-    if (page != currentPage) {
-      setState(() {
-        currentPage = page;
-        district = districtList.elementAt(page);
-        if (district.weatherBean != null) {
-          updateWeatherState(district.weatherBean);
-        }
-      });
+    setState(() {
+      currentPage = page;
+      district = districtList.elementAt(page);
+    });
+    if (district.weatherBean != null) {
+      updateWeatherState(district.weatherBean);
     }
     changeAnimAlpha(district.scrollProgress);
   }
@@ -152,10 +154,10 @@ class MainPageState extends State<MainPage> {
   List<District> queryDistrictList(SharedPreferences prefs) {
     List<District> districtList = List();
     String focusDistrictListJson =
-    prefs.getString(Constant.spFocusDistrictData);
+        prefs.getString(Constant.spFocusDistrictData);
     if (focusDistrictListJson != null) {
       FocusDistrictListBean focusDistrictListBean =
-      FocusDistrictListBean.fromJson(json.decode(focusDistrictListJson));
+          FocusDistrictListBean.fromJson(json.decode(focusDistrictListJson));
       if (focusDistrictListBean != null) {
         districtList.addAll(focusDistrictListBean.districtList);
         districtList.forEach((district) {
@@ -241,10 +243,9 @@ class MainPageState extends State<MainPage> {
 
       if (page != -1) {
         _pageController.jumpToPage(page);
+        // PageController 有时不回调，只好手动触发 (ˉ▽ˉ；)...
+        updatePageNum(page);
       }
-
-      // 手动触发一次，防止 _pageController 不回调
-      updatePageNum(page);
     });
   }
 
