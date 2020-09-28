@@ -42,9 +42,9 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-//        ndk {
-//            abiFilters 'armeabi', 'armeabi-v7a', 'x86', 'x86_64', 'mips', 'mips64', 'arm64-v8a'
-//        }
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a'
+        }
         // 高德地图 极光推送 key
         manifestPlaceholders = [
                 // 高德地图
